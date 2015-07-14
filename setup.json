@@ -1,0 +1,187 @@
+{
+    "name": "My Test System",
+    "description": "Just a stupid description",
+    "userAuth": true,
+    "teardownFile": "TestSystemTeardown.json",
+    "infoFile": "TestSystemInfo.json",
+    "developer": {
+        "email": "thedev@developer.com",
+        "password": "IAmTheDev",
+        "firstname": "Freddie",
+        "lastname": "Foobar",
+        "org": "SomeplaceThatIsNotThere"
+    },
+    "roles": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e"
+    ],
+    "users": [
+        {
+            "email": "foo@bar.com",
+            "password": "IAmFoo",
+            "roles": ["a", "b", "c"]
+        },
+        {
+            "email": "swm@clearblade.com",
+            "password": "IAmSWM",
+            "roles": ["a", "b"]
+        }
+    ],
+    "collections": [
+        {
+            "name": "DaCollection",
+            "count": 5,
+            "columns": {
+                "Name": "string",
+                "Age": "int",
+                "HairColor":"string"
+            },
+            "roles":{
+                "Authenticated": 15,
+                "Anonymous": 0,
+                "a": 3
+            },
+            "items": [
+                {
+                    "Name": "Steve",
+                    "Age": 87,
+                    "HairColor": "None",
+                    "count": 10
+                },
+                {
+                    "Name": "Aaron",
+                    "Age": 22,
+                    "HairColor": "Brown"
+                }
+            ]
+        },
+        {
+            "name": "DuhCollection",
+            "columns": {
+                "Name": "string",
+                "Address": "string"
+            },
+            "roles": {
+                "Authenticated": 15,
+                "Anonymous": 1,
+                "a": 15
+            },
+            "items": [
+                {
+                    "Name": "Steve",
+                    "Address": "123 4th St."
+                },
+                {
+                    "Name": "Aaron",
+                    "Address": "567 8th St.",
+                    "count": 10
+                }
+            ]
+        }
+    ],
+    "codeServices": [
+        {
+            "name": "example",
+            "code": "@code/example.js",
+            "dependencies": "TestLibrary",
+            "parameters": ["badabada"],
+            "roles":{
+                "a": 1,
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        },
+        {
+            "name": "itemCreatedTrigger",
+            "code": "@code/itemCreatedTrigger.js",
+            "dependencies": "TriggerLib",
+            "parameters": [],
+            "roles":{
+                "a": 1,
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        }
+    ],
+    "codeLibraries": [
+        {
+            "name": "TestLibrary",
+            "code": "@code/exampleLib.js",
+            "description": "Kinda useless",
+            "dependencies":""
+        },
+        {
+            "name": "TriggerLib",
+            "code": "@code/triggerLib.js",
+            "description": "publishes trigger event over mqtt",
+            "dependencies":"clearblade"
+        }
+    ],
+    "triggers": [
+        {
+            "name": "PublishHandler",
+            "service_name":"example",
+            "def_module": "Messaging",
+            "def_name": "Publish",
+            "key_value_pairs": {
+                "topic": "/foo/#"
+            }
+        },
+        {
+            "name": "Added A Row",
+            "service_name": "itemCreatedTrigger",
+            "def_module": "Data",
+            "def_name": "ItemCreated",
+            "key_value_pairs": {
+                "collectionName":"DuhCollection"
+            }
+        }
+    ],
+    "timers": [
+        {
+            "name": "DoSomething",
+            "description": "Does something",
+            "start_time": "Now",
+            "repeats": 1,
+            "frequency": 1,
+            "service_name":"example"
+        }
+    ],
+    "codeLibraries": [
+        {
+            "name": "TestLibrary",
+            "code": "@code/exampleLib.js",
+            "description": "Kinda useless",
+            "dependencies":""
+        },
+        {
+            "name": "TriggerLib",
+            "code": "@code/triggerLib.js",
+            "description": "publishes trigger event over mqtt",
+            "dependencies":"clearblade"
+        }
+    ],
+    "triggers": [
+        {
+            "name": "PublishHandler",
+            "service_name":"example",
+            "def_module": "Messaging",
+            "def_name": "Publish",
+            "key_value_pairs": {
+                "topic": "/foo/#"
+            }
+        },
+        {
+            "name": "Added A Row",
+            "service_name": "itemCreatedTrigger",
+            "def_module": "Data",
+            "def_name": "ItemCreated",
+            "key_value_pairs": {
+                "collectionName":"DuhCollection"
+            }
+        }
+    ]
+}
