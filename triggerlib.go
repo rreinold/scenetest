@@ -13,7 +13,6 @@ func init() {
 }
 
 func createTrigger(ctx map[string]interface{}, args []interface{}) error {
-	fmt.Printf("In createTrigger: %+v\n", args)
 	return nil
 }
 
@@ -46,7 +45,6 @@ func waitTrigger(ctx map[string]interface{}, args []interface{}) error {
 	if err := validateTrigger(eClass, eType, realStuff); err != nil {
 		return err
 	}
-	fmt.Printf("Son bitch\n")
 	return nil
 }
 

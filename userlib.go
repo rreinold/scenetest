@@ -15,7 +15,6 @@ func setUser(ctx map[string]interface{}, args []interface{}) error {
 	email := getArg(args, 0).(string)
 	userInfo := scriptVars["users"].(map[string]interface{})[email].(map[string]interface{})
 	password := userInfo["password"].(string)
-	fmt.Printf("K/S: %s/%s\n", sysKey, sysSec)
 	userClient := cb.NewUserClient(sysKey, sysSec, email, password)
 	if err := userClient.Authenticate(); err != nil {
 		return err
