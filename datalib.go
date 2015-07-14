@@ -7,6 +7,7 @@ import (
 
 func init() {
 	funcMap["query"] = query
+	funcMap["select"] = query // just a synonym
 	funcMap["createItem"] = createItem
 }
 
@@ -26,6 +27,27 @@ func createItem(context map[string]interface{}, args []interface{}) error {
 	}
 	return nil
 }
+
+//
+//  Query format is:
+//  ["query|select", "colName", [<columns>], [<optFilters>],
+//			[<optOrderBy>], <optPageNumber>, <optPageSize>]
+//
+//  Where each of the <>'s are:
+//		columns: array of strings, empty means all columns.
+//		filter[[["field", "op", val],["a","==","b"]],[["j","!=","q"]]]
+//      ^^^^^^^^This means ((field op val && a == b) || j != q)
+//      orderby: opt -- ["fred", "desc", "flint", "asc"] -- [] == no ordering
+//      page num and page size: ints
+//
+//
+//  Examples:
+//		["query", "theCollection"]
+//			-- gets everything from theCollection
+//		["query", "theCol", ["Age"]]
+//			-- gets all the Age column values
+//      ["query", "theCol", [], [[["id","==","xyz"]]]
+//			-- gets all rows where id eq xyz
 
 func query(context map[string]interface{}, args []interface{}) error {
 	return nil

@@ -77,6 +77,7 @@ func runOneStep(context map[string]interface{}, step []interface{}) {
 			fmt.Printf("%s:%s succeeded!\n", myName, method)
 		} else {
 			fmt.Printf("%s:%s failed!: %s\n", myName, method, err.Error())
+			fatal("Exiting because of error")
 		}
 	} else {
 		fmt.Printf("Unknown function %s\n", method)

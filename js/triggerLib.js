@@ -5,9 +5,9 @@ function publishTrigger(resp, sysKey, sysSec, userToken, msgClass, msgType) {
     };
 
     var publishMessage = function() {
-        log("DOH");
         var messaging = ClearBlade.Messaging({}, function(){});
         messaging.publish("/clearblade/internal/trigger", JSON.stringify(msgInfo));
+        log("PUBLISHED")
     };
 
     var fiddlestix = {
@@ -18,9 +18,7 @@ function publishTrigger(resp, sysKey, sysSec, userToken, msgClass, msgType) {
     };
 
     try {
-        log("DAH");
         ClearBlade.init(fiddlestix);
-        log("DEEG");
     }
     catch(err) {
         log("Caught exception: " + err.message)

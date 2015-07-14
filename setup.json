@@ -85,7 +85,7 @@
     "codeServices": [
         {
             "name": "example",
-            "code": "@code/example.js",
+            "code": "@js/example.js",
             "dependencies": "TestLibrary",
             "parameters": ["badabada"],
             "roles":{
@@ -96,7 +96,7 @@
         },
         {
             "name": "itemCreatedTrigger",
-            "code": "@code/itemCreatedTrigger.js",
+            "code": "@js/itemCreatedTrigger.js",
             "dependencies": "TriggerLib",
             "parameters": [],
             "roles":{
@@ -109,13 +109,13 @@
     "codeLibraries": [
         {
             "name": "TestLibrary",
-            "code": "@code/exampleLib.js",
+            "code": "@js/exampleLib.js",
             "description": "Kinda useless",
             "dependencies":""
         },
         {
             "name": "TriggerLib",
-            "code": "@code/triggerLib.js",
+            "code": "@js/triggerLib.js",
             "description": "publishes trigger event over mqtt",
             "dependencies":"clearblade"
         }
@@ -153,13 +153,13 @@
     "codeLibraries": [
         {
             "name": "TestLibrary",
-            "code": "@code/exampleLib.js",
+            "code": "@js/exampleLib.js",
             "description": "Kinda useless",
             "dependencies":""
         },
         {
             "name": "TriggerLib",
-            "code": "@code/triggerLib.js",
+            "code": "@js/triggerLib.js",
             "description": "publishes trigger event over mqtt",
             "dependencies":"clearblade"
         }

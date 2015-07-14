@@ -1,19 +1,18 @@
 {
     "name": "Name of this test run",
-    "scenarios": [ "scenario1", "scenario2" ],
+    "scenarios": [ "scenario1", "scenario1" ],
     "sequencing": "Parallel",
     "scenario1": {
         "name": "Just do stuff",
         "steps": [
             ["setUser", "foo@bar.com"],
-            ["createItem", "DuhCollection", {"Name":"Fred","Address":"Homeless"}],
-            ["waitTrigger", "Data", "ItemCreated", 5]
-        ]
-    },
-    "scenario2": {
-        "name": "I'm tired",
-        "steps": [
-            ["sleep", 3]
+            ["repeat", 10000, 
+                [
+                    ["createItem", "DuhCollection", {"Name":"Fred","Address":"Homeless"}],
+                    ["waitTrigger", "Data", "ItemCreated", 5],
+                    ["call", "example", {}]
+                ]
+            ]
         ]
     }
 }
