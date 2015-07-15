@@ -8,8 +8,8 @@
             ["setUser", "foo@bar.com"],
             ["repeat", 10000, 
                 [
-                    ["createItem", "DuhCollection", {"Name":"Fred","Address":"Homeless"}],
-                    ["waitTrigger", "Data", "ItemCreated", 5],
+                    ["createItem", "DuhCollection", {"name":"Fred","address":"Homeless"}],
+                    ["waitTrigger", "Data", "ItemCreated", 30],
                     ["call", "example", {}]
                 ]
             ]

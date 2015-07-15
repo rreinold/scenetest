@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"reflect"
 	"strings"
 )
 
@@ -50,4 +51,20 @@ func saveSetupState(originalJson map[string]interface{}) {
 	if err != nil {
 		fatal(fmt.Sprintf("Could not save setup state: %s\n", err.Error()))
 	}
+}
+
+func argCheck(args []interface{}, mandatory int, argTypes ...interface{}) error {
+	if len(args) < mandatory {
+		return fmt.Errorf("Not enough arguments")
+	}
+	if len(args) > len(argTypes) {
+		return fmt.Errorf("Too many arguments")
+	}
+	for i, argType := range argTypes {
+		actualArg := args[i]
+		if reflect.TypeOf(actualArg) != reflect.TypeOf(argType) {
+			return fmt.Errorf("Argument #%d has type mismatch: %v != %v", reflect.TypeOf(actualArg), reflect.TypeOf(argType))
+		}
+	}
+	return nil
 }

@@ -50,6 +50,10 @@ func createItem(context map[string]interface{}, args []interface{}) error {
 //			-- gets all rows where id eq xyz
 
 func query(context map[string]interface{}, args []interface{}) error {
+	if err := argCheck(args, 1, "", []interface{}{}, []interface{}{}, []interface{}{}, 1, 1); err != nil {
+		return fmt.Errorf("query: Bad argument(s): %s", err.Error())
+	}
+
 	return nil
 }
 
@@ -59,4 +63,28 @@ func collectionNameToId(colName string) (string, error) {
 		return colId.(string), nil
 	}
 	return "", fmt.Errorf("Could not find collection %s", colName)
+}
+
+//  This is absurd
+func buildFilter(f []interface{}) ([][]cb.Filter, error) {
+	rval := [][]cb.Filter{}
+	for orIdx, pitter := range f {
+		rval = append(rval, []cb.Filter{})
+		orList := pitter.([]interface{})
+		for _, patter := range orList {
+			filterArray := patter.([]interface{})
+			filter, err := makeFilter(filterArray)
+			if err != nil {
+				return nil, err
+			}
+			rval[orIdx] = append(rval[orIdx], filter)
+		}
+	}
+	return rval, nil
+}
+
+func makeFilter(stuff []interface{}) (cb.Filter, error) {
+	rval := cb.Filter{}
+
+	return rval, nil
 }

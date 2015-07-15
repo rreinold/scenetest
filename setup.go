@@ -319,7 +319,7 @@ func setupCodeServiceRoles(svc map[string]interface{}) {
 
 func setupColumn(collectionId, columnName, columnType string) {
 	fmt.Printf("Adding column %s(%s)\n", columnName, columnType)
-	if err := adminClient.AddColumn(collectionId, columnName, columnType); err != nil {
+	if err := adminClient.AddColumn(collectionId, strings.ToLower(columnName), columnType); err != nil {
 		fatal(err.Error())
 	}
 }

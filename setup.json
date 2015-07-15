@@ -25,6 +25,11 @@
             "roles": ["a", "b", "c"]
         },
         {
+            "email": "bar@bar.com",
+            "password": "IAmBar",
+            "roles": ["a", "b", "c"]
+        },
+        {
             "email": "swm@clearblade.com",
             "password": "IAmSWM",
             "roles": ["a", "b"]
@@ -35,9 +40,9 @@
             "name": "DaCollection",
             "count": 5,
             "columns": {
-                "Name": "string",
-                "Age": "int",
-                "HairColor":"string"
+                "name": "string",
+                "age": "int",
+                "hair_color":"string"
             },
             "roles":{
                 "Authenticated": 15,
@@ -46,23 +51,23 @@
             },
             "items": [
                 {
-                    "Name": "Steve",
-                    "Age": 87,
-                    "HairColor": "None",
+                    "name": "Steve",
+                    "age": 87,
+                    "hair_color": "None",
                     "count": 10
                 },
                 {
-                    "Name": "Aaron",
-                    "Age": 22,
-                    "HairColor": "Brown"
+                    "name": "Aaron",
+                    "age": 22,
+                    "hair_color": "Brown"
                 }
             ]
         },
         {
             "name": "DuhCollection",
             "columns": {
-                "Name": "string",
-                "Address": "string"
+                "name": "string",
+                "address": "string"
             },
             "roles": {
                 "Authenticated": 15,
@@ -71,12 +76,12 @@
             },
             "items": [
                 {
-                    "Name": "Steve",
-                    "Address": "123 4th St."
+                    "name": "Steve",
+                    "address": "123 4th St."
                 },
                 {
-                    "Name": "Aaron",
-                    "Address": "567 8th St.",
+                    "name": "Aaron",
+                    "address": "567 8th St.",
                     "count": 10
                 }
             ]
