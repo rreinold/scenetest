@@ -49,7 +49,7 @@ func waitMessage(context map[string]interface{}, args []interface{}) error {
 
 func publish(context map[string]interface{}, args []interface{}) error {
 	if len(args) != 3 {
-		fmt.Errorf("Usage: [publish, topic, message_body]")
+		fmt.Errorf("Usage: [publish, topic, message_body, qos]")
 	}
 	userClient := context["userClient"].(*cb.UserClient)
 	fmt.Printf("ARGS ARE: %+v\n", args)
