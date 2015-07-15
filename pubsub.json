@@ -1,5 +1,5 @@
 {
-    "name": "Name of this test run",
+    "name": "Let's do producers and consumers with mqtt",
     "scenarios": [ "producer", "producer", "producer", "consumer" ],
     "sequencing": "Parallel",
     "producer": {
