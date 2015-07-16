@@ -28,7 +28,7 @@ func setUser(ctx map[string]interface{}, args []interface{}) error {
 		return err
 	}
 
-	triggerChan, err := userClient.Subscribe("/clearblade/internal/trigger", 2)
+	triggerChan, err := userClient.Subscribe("/clearblade/internal/trigger", 0)
 	if err != nil {
 		return fmt.Errorf("Subscribe failed: %s", err.Error())
 	}

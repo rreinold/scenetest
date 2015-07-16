@@ -60,8 +60,8 @@ func argCheck(args []interface{}, mandatory int, argTypes ...interface{}) error 
 	if len(args) > len(argTypes) {
 		return fmt.Errorf("Too many arguments")
 	}
-	for i, argType := range argTypes {
-		actualArg := args[i]
+	for i, actualArg := range args {
+		argType := argTypes[i]
 		if reflect.TypeOf(actualArg) != reflect.TypeOf(argType) {
 			return fmt.Errorf("Argument #%d has type mismatch: %v != %v", reflect.TypeOf(actualArg), reflect.TypeOf(argType))
 		}

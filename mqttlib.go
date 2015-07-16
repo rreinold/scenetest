@@ -42,7 +42,6 @@ func waitMessage(context map[string]interface{}, args []interface{}) error {
 		return fmt.Errorf("Timed out waiting for message to arrive on %s", topic)
 	}
 	realStuff := string(stuff.Payload)
-	fmt.Printf("Got message %s\n", realStuff)
 	context["returnValue"] = realStuff
 	return nil
 }
@@ -52,7 +51,6 @@ func publish(context map[string]interface{}, args []interface{}) error {
 		fmt.Errorf("Usage: [publish, topic, message_body, qos]")
 	}
 	userClient := context["userClient"].(*cb.UserClient)
-	fmt.Printf("ARGS ARE: %+v\n", args)
 	topic := args[0].(string)
 	body := []byte(args[1].(string))
 	qos := int(args[2].(float64))

@@ -1,0 +1,17 @@
+{
+    "name": "Name of this test run",
+    "scenarios": [ "scenario1", "scenario1" ],
+    "sequencing": "Parallel",
+    "scenario1": {
+        "name": "Just do stuff",
+        "steps": [
+            ["setUser", "foo@bar.com"],
+            ["repeat", 10000, 
+                [
+                    ["createItem", "DaCollection", {"name":"Fred", "age": 33, "hair_color":"hot pink"}],
+                    ["query", "DaCollection", [], [[["age", "!=", 87]]] ]
+                ]
+            ]
+        ]
+    }
+}

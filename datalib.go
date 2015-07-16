@@ -53,6 +53,28 @@ func query(context map[string]interface{}, args []interface{}) error {
 	if err := argCheck(args, 1, "", []interface{}{}, []interface{}{}, []interface{}{}, 1, 1); err != nil {
 		return fmt.Errorf("query: Bad argument(s): %s", err.Error())
 	}
+	myQuery := cb.Query{}
+	var err error
+	collectionName := args[0].(string)
+	collection, err := collectionNameToId(collectionName)
+	if err != nil {
+		return err
+	}
+	if len(args) > 1 {
+		myQuery.Columns, err = buildColumns(args[1].([]interface{}))
+	}
+	if len(args) > 2 {
+		myQuery.Filters, err = buildFilter(args[2].([]interface{}))
+		if err != nil {
+			return fmt.Errorf("query: Bad filter: %s", err.Error())
+		}
+	}
+	userClient := context["userClient"].(*cb.UserClient)
+	stuff, err := userClient.GetData(collection, &myQuery)
+	if err != nil {
+		return err
+	}
+	context["returnValue"] = stuff
 
 	return nil
 }
@@ -77,14 +99,38 @@ func buildFilter(f []interface{}) ([][]cb.Filter, error) {
 			if err != nil {
 				return nil, err
 			}
-			rval[orIdx] = append(rval[orIdx], filter)
+			rval[orIdx] = append(rval[orIdx], *filter)
 		}
 	}
 	return rval, nil
 }
 
-func makeFilter(stuff []interface{}) (cb.Filter, error) {
-	rval := cb.Filter{}
+func makeFilter(stuff []interface{}) (*cb.Filter, error) {
+	if len(stuff) != 3 {
+		return nil, fmt.Errorf("Each filter needs the values")
+	}
+	field := stuff[0].(string)
+	operator := stuff[1].(string)
+	value := stuff[2]
+	rval := cb.Filter{
+		Field:    field,
+		Operator: operator,
+		Value:    value,
+	}
 
+	return &rval, nil
+}
+
+// More absurdity
+func buildColumns(cols []interface{}) ([]string, error) {
+	rval := []string{}
+	for _, col := range cols {
+		switch col.(type) {
+		case string:
+			rval = append(rval, col.(string))
+		default:
+			return nil, fmt.Errorf("All columns must be strings")
+		}
+	}
 	return rval, nil
 }

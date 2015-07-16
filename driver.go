@@ -90,6 +90,3 @@ func getVar(name string, script map[string]interface{}, defaultVal interface{}) 
 	}
 	return defaultVal
 }
-
-func setupMQTT() {
-}
