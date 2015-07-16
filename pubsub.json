@@ -1,13 +1,13 @@
 {
     "name": "Let's do producers and consumers with mqtt",
-    "scenarios": [ "producer", "producer", "producer", "consumer" ],
+    "scenarios": [ "producer", "producer", "producer", "consumer", "consumer" ],
     "sequencing": "Parallel",
     "producer": {
         "name": "Spewing out MQTT",
         "steps": [
             ["setUser", "foo@bar.com"],
             ["sleep", 5],
-            ["repeat", 10000, 
+            ["repeat", 1000000, 
                 [
                     ["publish", "/clearblade/test/spewer", "This is the spew", 2]
                 ]
@@ -19,7 +19,7 @@
         "steps": [
             ["setUser", "bar@bar.com"],
             ["subscribe", "/clearblade/test/spewer", 2],
-            ["repeat", 30000, 
+            ["repeat", 1500000, 
                 [
                     ["waitMessage", "/clearblade/test/spewer", 30]
                 ]
