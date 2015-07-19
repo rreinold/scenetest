@@ -33,6 +33,11 @@ func setUser(ctx map[string]interface{}, args []interface{}) error {
 		return fmt.Errorf("Subscribe failed: %s", err.Error())
 	}
 	ctx["userClient"] = userClient
+	fmt.Printf("MQTT CLIENT IS %p\n", userClient.MQTTClient)
+	fmt.Printf("Client id is %s\n", userClient.MQTTClient.Clientid)
+	if err := userClient.Publish("/who/am/i", []byte(fmt.Sprintf("%p", userClient.MQTTClient)), 2); err != nil {
+		return err
+	}
 	ctx["email"] = email
 	ctx["triggerChannel"] = triggerChan
 

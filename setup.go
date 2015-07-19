@@ -97,12 +97,6 @@ func setupSystem(system map[string]interface{}) {
 		warn("No code libraries found")
 	}
 
-	if subscriptions, ok := system["subscriptions"]; ok {
-		setupSubscriptions(subscriptions.([]interface{}))
-	} else {
-		warn("No subscriptions found")
-	}
-
 	if triggers, ok := system["triggers"]; ok {
 		setupTriggers(triggers.([]interface{}))
 	} else {
@@ -193,6 +187,7 @@ func setupUser(user map[string]interface{}) {
 	email := user["email"].(string)
 	password := user["password"].(string)
 	userClient := cb.NewUserClient(sysKey, sysSec, email, password)
+	fmt.Printf("SETUP USER CLIENT IS %p\n", userClient)
 	newUser, err := userClient.RegisterUser(email, password)
 	if err != nil {
 		fatal(err.Error())
@@ -385,16 +380,6 @@ func setupCodeLibrary(lib map[string]interface{}) {
 	libMap[libName] = newLib
 	appendState("libraries", libName)
 	fmt.Printf("Set up code library %+v\n", newLib)
-}
-
-func setupSubscriptions(subs []interface{}) {
-	for _, sub := range subs {
-		setupSubscription(sub.(map[string]interface{}))
-	}
-}
-
-func setupSubscription(sub map[string]interface{}) {
-	fmt.Printf("Setting up subscription for %+v\n", sub["topic"])
 }
 
 func setupTriggers(triggers []interface{}) {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	cb "github.com/clearblade/Go-SDK"
 )
 
 var script map[string]interface{}
@@ -73,6 +74,11 @@ func runOneStep(context map[string]interface{}, step []interface{}) {
 	args := step[1:]
 	if theFunc, ok := funcMap[method]; ok {
 		err := theFunc(context, args)
+		//  TODO -- remove this debug code right here
+		if _, ok := context["userClient"]; ok {
+			uc := context["userClient"].(*cb.UserClient)
+			fmt.Printf("MQTT: %p\n", uc.MQTTClient)
+		}
 		if err == nil {
 			fmt.Printf("%s:%s succeeded!\n", myName, method)
 		} else {

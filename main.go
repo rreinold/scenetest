@@ -37,7 +37,6 @@ func init() {
 	scriptVars["items"] = map[string]interface{}{}
 	scriptVars["codeServices"] = map[string]interface{}{}
 	scriptVars["codeLibraries"] = map[string]interface{}{}
-	scriptVars["subscriptions"] = map[string]interface{}{}
 	scriptVars["triggers"] = map[string]interface{}{}
 	scriptVars["timers"] = map[string]interface{}{}
 }
@@ -83,8 +82,4 @@ func getJSON(filename string) map[string]interface{} {
 func goodbye(err error) {
 	fmt.Printf("Exiting with panic error: %s\n", err.Error())
 	os.Exit(1)
-}
-
-func doTheFileThing() {
-
 }

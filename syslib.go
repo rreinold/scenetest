@@ -8,11 +8,23 @@ import (
 func init() {
 	funcMap["sleep"] = sleep
 	funcMap["repeat"] = repeat
+	funcMap["print"] = doPrint
 }
 
 func sleep(ctx map[string]interface{}, args []interface{}) error {
 	secs := time.Duration(getArg(args, 0).(float64))
-	time.Sleep(secs * time.Second)
+	time.Sleep(secs * time.Millisecond)
+	return nil
+}
+
+func doPrint(ctx map[string]interface{}, args []interface{}) error {
+	for idx, arg := range args {
+		if idx > 0 {
+			fmt.Printf(" ")
+		}
+		fmt.Printf("%+v", arg)
+	}
+	fmt.Println("")
 	return nil
 }
 
