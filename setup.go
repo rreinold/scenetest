@@ -36,8 +36,6 @@ func performSetup(setupInfo interface{}) {
 	switch setupInfo.(type) {
 	case map[string]interface{}:
 		setupSystem(setupInfo.(map[string]interface{}))
-	case []interface{}:
-		setupSystems(setupInfo.([]interface{}))
 	default:
 		fmt.Printf("Incorrect type of outer json object")
 		os.Exit(1)
@@ -49,12 +47,6 @@ func performSetup(setupInfo interface{}) {
 		fatal(fmt.Sprintf("Could not marshal: %s\n", err.Error()))
 	}
 	fmt.Printf("HERE'S THE STUFF: %s\n", string(marshalled))
-}
-
-func setupSystems(systems []interface{}) {
-	for _, system := range systems {
-		setupSystem(system.(map[string]interface{}))
-	}
 }
 
 func setupSystem(system map[string]interface{}) {

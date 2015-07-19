@@ -39,6 +39,9 @@ func saveSetupState(originalJson map[string]interface{}) {
 		fatal(fmt.Sprintf("Could not save setup state: %s\n", err.Error()))
 	}
 
+	scriptVars["platformUrl"] = PlatformAddr
+	scriptVars["messagingUrl"] = MsgAddr
+
 	marshalled, err = json.MarshalIndent(scriptVars, "", "    ")
 	if err != nil {
 		fatal(fmt.Sprintf("MarshalIndent failed: %s\n", err.Error()))
