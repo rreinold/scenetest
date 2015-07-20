@@ -6,9 +6,10 @@ import (
 )
 
 func init() {
-	funcMap["query"] = query
-	funcMap["select"] = query // just a synonym
-	funcMap["createItem"] = createItem
+	funcMap["query"] = &Statement{query, queryHelp}
+	funcMap["select"] = &Statement{query, queryHelp} // just a synonym
+	funcMap["createItem"] = &Statement{createItem, createItemHelp}
+	funcMap["deleteItem"] = &Statement{deleteItem, deleteItemHelp}
 }
 
 func createItem(context map[string]interface{}, args []interface{}) error {
@@ -16,15 +17,53 @@ func createItem(context map[string]interface{}, args []interface{}) error {
 	if len(args) != 2 {
 		return fmt.Errorf("Usage: [createItem, <colName>, <argMap>]")
 	}
-	colName := args[0].(string)
-	rowInfo := args[1].(map[string]interface{})
+	colName := valueOf(context, args[0]).(string)
+	rowInfo := valueOf(context, args[1]).(map[string]interface{})
 	colId, err := collectionNameToId(colName)
 	if err != nil {
 		return err
 	}
-	if err = userClient.InsertData(colId, rowInfo); err != nil {
+	resp, err := userClient.CreateData(colId, rowInfo)
+	if err != nil {
 		return err
 	}
+	if len(resp) != 1 {
+		return fmt.Errorf("Wrong number if items returned by createItem: %d", len(resp))
+	}
+	val := resp[0].(map[string]interface{})
+	context["returnValue"] = val["item_id"]
+	return nil
+}
+
+func deleteItem(context map[string]interface{}, args []interface{}) error {
+	if err := argCheck(args, 2, "", ""); err != nil {
+		return fmt.Errorf("query: Bad argument(s): %s", err.Error())
+	}
+	colName := args[0].(string)
+	colId, err := collectionNameToId(colName)
+	if err != nil {
+		return err
+	}
+	itemId := args[1].(string)
+	userClient := context["userClient"].(*cb.UserClient)
+
+	query := &cb.Query{
+		Filters: [][]cb.Filter{
+			[]cb.Filter{
+				cb.Filter{
+					Field:    "item_id",
+					Operator: "=",
+					Value:    itemId,
+				},
+			},
+		},
+	}
+
+	if err := userClient.DeleteData(colId, query); err != nil {
+		context["returnValue"] = err.Error()
+		return err
+	}
+	context["returnValue"] = nil
 	return nil
 }
 
@@ -61,10 +100,10 @@ func query(context map[string]interface{}, args []interface{}) error {
 		return err
 	}
 	if len(args) > 1 {
-		myQuery.Columns, err = buildColumns(args[1].([]interface{}))
+		myQuery.Columns, err = buildColumns(valueOf(context, args[1]).([]interface{}))
 	}
 	if len(args) > 2 {
-		myQuery.Filters, err = buildFilter(args[2].([]interface{}))
+		myQuery.Filters, err = buildFilter(valueOf(context, args[2]).([]interface{}))
 		if err != nil {
 			return fmt.Errorf("query: Bad filter: %s", err.Error())
 		}
@@ -74,7 +113,8 @@ func query(context map[string]interface{}, args []interface{}) error {
 	if err != nil {
 		return err
 	}
-	context["returnValue"] = stuff
+	context["returnValue"] = stuff["DATA"]
+	context["returnCount"] = stuff["TOTAL"]
 
 	return nil
 }
@@ -133,4 +173,16 @@ func buildColumns(cols []interface{}) ([]string, error) {
 		}
 	}
 	return rval, nil
+}
+
+func queryHelp() string {
+	return "query help not yet implemented"
+}
+
+func createItemHelp() string {
+	return "createItem help not yet implemented"
+}
+
+func deleteItemHelp() string {
+	return "deleteItem help not yet implemented"
 }

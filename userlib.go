@@ -6,13 +6,15 @@ import (
 )
 
 func init() {
-	funcMap["setUser"] = setUser
+	funcMap["setUser"] = &Statement{setUser, setUserHelp}
 }
 
 func setUser(ctx map[string]interface{}, args []interface{}) error {
 	sysKey := scriptVars["systemKey"].(string)
 	sysSec := scriptVars["systemSecret"].(string)
-	email := getArg(args, 0).(string)
+	fmt.Printf("DUH: %+v\n", valueOf(ctx, "swm@clearblade.com"))
+	fmt.Printf("setUser: Args are %+v\n", args)
+	email := valueOf(ctx, getArg(args, 0)).(string)
 	userInfo := scriptVars["users"].(map[string]interface{})[email].(map[string]interface{})
 	password := userInfo["password"].(string)
 	userClient := cb.NewUserClient(sysKey, sysSec, email, password)
@@ -33,8 +35,6 @@ func setUser(ctx map[string]interface{}, args []interface{}) error {
 		return fmt.Errorf("Subscribe failed: %s", err.Error())
 	}
 	ctx["userClient"] = userClient
-	fmt.Printf("MQTT CLIENT IS %p\n", userClient.MQTTClient)
-	fmt.Printf("Client id is %s\n", userClient.MQTTClient.Clientid)
 	if err := userClient.Publish("/who/am/i", []byte(fmt.Sprintf("%p", userClient.MQTTClient)), 2); err != nil {
 		return err
 	}
@@ -42,6 +42,10 @@ func setUser(ctx map[string]interface{}, args []interface{}) error {
 	ctx["triggerChannel"] = triggerChan
 
 	return nil
+}
+
+func setUserHelp() string {
+	return "setUser help not yet implemented"
 }
 
 func getArg(args []interface{}, index int) interface{} {

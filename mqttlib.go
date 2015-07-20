@@ -8,17 +8,17 @@ import (
 )
 
 func init() {
-	funcMap["subscribe"] = subscribe
-	funcMap["publish"] = publish
-	funcMap["waitMessage"] = waitMessage
+	funcMap["subscribe"] = &Statement{subscribe, subscribeHelp}
+	funcMap["publish"] = &Statement{publish, publishHelp}
+	funcMap["waitMessage"] = &Statement{waitMessage, waitMessageHelp}
 }
 
 func subscribe(context map[string]interface{}, args []interface{}) error {
 	if len(args) != 2 {
 		return fmt.Errorf("Usage: [subscribe, topic, qos(int)]")
 	}
-	topic := args[0].(string)
-	qos := int(args[1].(float64))
+	topic := valueOf(context, args[0]).(string)
+	qos := int(valueOf(context, args[1]).(float64))
 	userClient := context["userClient"].(*cb.UserClient)
 	trigChan, err := userClient.Subscribe(topic, qos)
 	if err != nil {
@@ -28,11 +28,15 @@ func subscribe(context map[string]interface{}, args []interface{}) error {
 	return nil
 }
 
+func subscribeHelp() string {
+	return "subscribe help not yet implemented"
+}
+
 func waitMessage(context map[string]interface{}, args []interface{}) error {
 	if len(args) != 2 {
 		fmt.Errorf("Usage: [waitMessage, topic, timeout]")
 	}
-	topic := args[0].(string)
+	topic := valueOf(context, args[0]).(string)
 	timeout := time.Duration(args[1].(float64))
 	trigChan := context[topic].(<-chan *mqtt.Publish)
 	var stuff *mqtt.Publish
@@ -46,16 +50,24 @@ func waitMessage(context map[string]interface{}, args []interface{}) error {
 	return nil
 }
 
+func waitMessageHelp() string {
+	return "waitMessage help not yet implemented"
+}
+
 func publish(context map[string]interface{}, args []interface{}) error {
 	if len(args) != 3 {
 		fmt.Errorf("Usage: [publish, topic, message_body, qos]")
 	}
 	userClient := context["userClient"].(*cb.UserClient)
-	topic := args[0].(string)
-	body := []byte(args[1].(string))
-	qos := int(args[2].(float64))
+	topic := valueOf(context, args[0]).(string)
+	body := []byte(valueOf(context, args[1]).(string))
+	qos := int(valueOf(context, args[2]).(float64))
 	if err := userClient.Publish(topic, body, qos); err != nil {
 		return fmt.Errorf("Publish failed: %s", err.Error())
 	}
 	return nil
+}
+
+func publishHelp() string {
+	return "publish help not yet implemented"
 }

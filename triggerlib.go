@@ -8,21 +8,25 @@ import (
 )
 
 func init() {
-	funcMap["createTrigger"] = createTrigger
-	funcMap["waitTrigger"] = waitTrigger
+	funcMap["createTrigger"] = &Statement{createTrigger, createTriggerHelp}
+	funcMap["waitTrigger"] = &Statement{waitTrigger, waitTriggerHelp}
 }
 
 func createTrigger(ctx map[string]interface{}, args []interface{}) error {
 	return nil
 }
 
+func createTriggerHelp() string {
+	return "createTrigger help not yet implemented"
+}
+
 func waitTrigger(ctx map[string]interface{}, args []interface{}) error {
 	if len(args) != 3 {
 		return fmt.Errorf("Wrong number of arguments to waitTrigger: %d", len(args))
 	}
-	eClass := args[0].(string)
-	eType := args[1].(string)
-	timeout := time.Duration(args[2].(float64))
+	eClass := valueOf(ctx, args[0]).(string)
+	eType := valueOf(ctx, args[1]).(string)
+	timeout := time.Duration(valueOf(ctx, args[2]).(float64))
 
 	if _, ok := ctx["triggerChannel"]; !ok {
 		return fmt.Errorf("No trigger channel to wait on...")
@@ -46,6 +50,10 @@ func waitTrigger(ctx map[string]interface{}, args []interface{}) error {
 		return err
 	}
 	return nil
+}
+
+func waitTriggerHelp() string {
+	return "waitTrigger help not yet implemented"
 }
 
 func validateTrigger(trigClass, trigType string, msgBody map[string]interface{}) error {

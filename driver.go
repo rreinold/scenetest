@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	cb "github.com/clearblade/Go-SDK"
+	//cb "github.com/clearblade/Go-SDK"
 )
 
 var script map[string]interface{}
@@ -71,14 +71,9 @@ func runOneStep(context map[string]interface{}, step []interface{}) {
 		return
 	}
 	method := step[0].(string)
-	args := step[1:]
-	if theFunc, ok := funcMap[method]; ok {
-		err := theFunc(context, args)
-		//  TODO -- remove this debug code right here
-		if _, ok := context["userClient"]; ok {
-			uc := context["userClient"].(*cb.UserClient)
-			fmt.Printf("MQTT: %p\n", uc.MQTTClient)
-		}
+	args := dereferenceVariables(context, step[1:])
+	if theStmt, ok := funcMap[method]; ok {
+		err := theStmt.RunFunc(context, args)
 		if err == nil {
 			fmt.Printf("%s:%s succeeded!\n", myName, method)
 		} else {
@@ -95,4 +90,12 @@ func getVar(name string, script map[string]interface{}, defaultVal interface{}) 
 		return val
 	}
 	return defaultVal
+}
+
+func dereferenceVariables(context map[string]interface{}, args []interface{}) []interface{} {
+	rval := []interface{}{}
+	for _, arg := range args {
+		rval = append(rval, valueOf(context, arg))
+	}
+	return rval
 }

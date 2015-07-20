@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"reflect"
+	"sort"
 	"strings"
 )
 
@@ -65,9 +66,42 @@ func argCheck(args []interface{}, mandatory int, argTypes ...interface{}) error 
 	}
 	for i, actualArg := range args {
 		argType := argTypes[i]
+		if argType == nil {
+			continue // nil means interface{}
+		}
 		if reflect.TypeOf(actualArg) != reflect.TypeOf(argType) {
 			return fmt.Errorf("Argument #%d has type mismatch: %v != %v", reflect.TypeOf(actualArg), reflect.TypeOf(argType))
 		}
 	}
 	return nil
+}
+
+func valueOf(context map[string]interface{}, thing interface{}) interface{} {
+	switch thing.(type) {
+	case string:
+		thingStr := thing.(string)
+		if strings.HasPrefix(thingStr, "@") {
+			varName := strings.TrimPrefix(thingStr, "@")
+			if val, ok := context[varName]; ok {
+				return val
+			}
+			fmt.Printf("DEAD __ CONTEXT: %+v\n", context)
+			fatal(fmt.Sprintf("Undefined variable: %s", varName))
+		}
+	}
+	return thing
+}
+
+func showHelp() {
+	keys := make([]string, len(funcMap))
+	i := 0
+	for k := range funcMap {
+		keys[i] = k
+		i += 1
+	}
+	sort.Strings(keys)
+	for _, funcName := range keys {
+		stmt := funcMap[funcName]
+		fmt.Printf("%s\n", stmt.HelpFunc())
+	}
 }

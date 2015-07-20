@@ -6,7 +6,7 @@ import (
 )
 
 func init() {
-	funcMap["call"] = call
+	funcMap["call"] = &Statement{call, callHelp}
 }
 
 func call(context map[string]interface{}, args []interface{}) error {
@@ -19,9 +19,8 @@ func call(context map[string]interface{}, args []interface{}) error {
 	if _, ok := args[1].(map[string]interface{}); !ok {
 		return fmt.Errorf("Service params must be a map")
 	}
-	fmt.Printf("CONTEXT: %+v\n", context)
-	svcName := args[0].(string)
-	params := args[1].(map[string]interface{})
+	svcName := valueOf(context, args[0]).(string)
+	params := valueOf(context, args[1]).(map[string]interface{})
 	sysKey := scriptVars["systemKey"].(string)
 	userClient := context["userClient"].(*cb.UserClient)
 	resp, err := userClient.CallService(sysKey, svcName, params)
@@ -30,4 +29,8 @@ func call(context map[string]interface{}, args []interface{}) error {
 	}
 	context["returnValue"] = resp
 	return nil
+}
+
+func callHelp() string {
+	return "[\"call\", \"<serviceName>\", {<arg key/value pairs}]"
 }

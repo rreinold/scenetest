@@ -1,7 +1,7 @@
 package main
 
 import (
-	"encoding/json"
+	//"encoding/json"
 	"fmt"
 	cb "github.com/clearblade/Go-SDK"
 	"os"
@@ -41,12 +41,6 @@ func performSetup(setupInfo interface{}) {
 		os.Exit(1)
 	}
 	saveSetupState(setupInfo.(map[string]interface{}))
-
-	marshalled, err := json.MarshalIndent(scriptVars, "", "    ")
-	if err != nil {
-		fatal(fmt.Sprintf("Could not marshal: %s\n", err.Error()))
-	}
-	fmt.Printf("HERE'S THE STUFF: %s\n", string(marshalled))
 }
 
 func setupSystem(system map[string]interface{}) {
@@ -111,6 +105,8 @@ func setupDeveloper(dev map[string]interface{}) {
 	}
 	devEmail = dev["email"].(string)
 	devPassword = dev["password"].(string)
+	setupState["dev_email"] = devEmail
+	setupState["dev_password"] = devPassword
 	adminClient = cb.NewDevClient(devEmail, devPassword)
 
 	fname := dev["firstname"].(string)
@@ -119,8 +115,6 @@ func setupDeveloper(dev map[string]interface{}) {
 
 	if theDev, err := adminClient.RegisterUser(devEmail, devPassword, fname, lname, org); err == nil {
 		setupState["developer"] = theDev["user_id"]
-		setupState["dev_email"] = devEmail
-		setupState["dev_password"] = devPassword
 		return
 	} else if strings.Contains(err.Error(), "That user already exists") {
 		if authErr := adminClient.Authenticate(); authErr != nil {
@@ -179,7 +173,6 @@ func setupUser(user map[string]interface{}) {
 	email := user["email"].(string)
 	password := user["password"].(string)
 	userClient := cb.NewUserClient(sysKey, sysSec, email, password)
-	fmt.Printf("SETUP USER CLIENT IS %p\n", userClient)
 	newUser, err := userClient.RegisterUser(email, password)
 	if err != nil {
 		fatal(err.Error())
@@ -187,7 +180,6 @@ func setupUser(user map[string]interface{}) {
 
 	addUserToRoles(user, newUser["user_id"].(string))
 
-	fmt.Printf("Set up user %+v\n", newUser)
 	usersMap := scriptVars["users"].(map[string]interface{})
 	newUser["password"] = password
 	usersMap[email] = newUser
