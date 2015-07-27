@@ -17,12 +17,5 @@ function publishTrigger(resp, sysKey, sysSec, userToken, msgClass, msgType) {
         callback: publishMessage
     };
 
-    try {
-        ClearBlade.init(fiddlestix);
-    }
-    catch(err) {
-        log("Caught exception: " + err.message)
-    }
+    ClearBlade.init(fiddlestix);
 }
-
-

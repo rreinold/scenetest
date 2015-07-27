@@ -131,6 +131,7 @@ func createSystem(system map[string]interface{}) {
 	descr := system["description"].(string)
 
 	sysStr, sysErr := adminClient.NewSystem(name, descr, userAuth)
+	fmt.Printf("NEW SYS: %+v\n", sysStr)
 	if sysErr != nil {
 		fatal(sysErr.Error())
 	}

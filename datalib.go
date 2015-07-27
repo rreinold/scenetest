@@ -99,14 +99,20 @@ func query(context map[string]interface{}, args []interface{}) error {
 	if err != nil {
 		return err
 	}
-	if len(args) > 1 {
+	if len(args) >= 2 {
 		myQuery.Columns, err = buildColumns(valueOf(context, args[1]).([]interface{}))
 	}
-	if len(args) > 2 {
+	if len(args) >= 3 {
 		myQuery.Filters, err = buildFilter(valueOf(context, args[2]).([]interface{}))
 		if err != nil {
 			return fmt.Errorf("query: Bad filter: %s", err.Error())
 		}
+	}
+	if len(args) >= 4 {
+	}
+	if len(args) >= 5 {
+	}
+	if len(args) >= 6 {
 	}
 	userClient := context["userClient"].(*cb.UserClient)
 	stuff, err := userClient.GetData(collection, &myQuery)

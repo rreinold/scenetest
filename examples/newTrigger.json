@@ -1,6 +1,6 @@
 {
     "name": "Name of this test run",
-    "scenarios": [ "scenario1", "scenario1" ],
+    "scenarios": [ ["Scenario 1", 200] ],
     "sequencing": "Parallel",
     "scenario1": {
         "name": "Just do stuff",

@@ -1,20 +1,18 @@
 {
     "name": "Name of this test run",
-    "scenarios": [ "scenario1" ],
+    "scenarios": [ "scenario1", "scenario1", "scenario1", "scenario1", "scenario1" ],
     "sequencing": "Parallel",
     "scenario1": {
         "name": "Just do stuff",
         "steps": [
             ["setUser", "foo@bar.com"],
-            ["repeat", 10,
+            ["repeat", 1000,
                 [
                     ["createItem", "DaCollection", {"name": "bubba", "age": 6, "hair_color":"red-neck"}],
                     ["set", "newItemId", "@returnValue"],
                     ["query", "DaCollection", [], [[["hair_color", "==", "red-neck"]]]],
-                    ["assert", "@returnCount", 1],
                     ["deleteItem", "DaCollection", "@newItemId"],
-                    ["query", "DaCollection", [], [[["hair_color", "==", "red-neck"]]]],
-                    ["assert", "@returnCount", 0]
+                    ["query", "DaCollection", [], [[["hair_color", "==", "red-neck"]]]]
                 ]
             ]
         ]
