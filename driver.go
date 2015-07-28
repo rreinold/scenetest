@@ -125,7 +125,7 @@ func runOneStep(context map[string]interface{}, step []interface{}) {
 		if err == nil {
 			fmt.Printf("%s(%s):%s succeeded!\n", myName, timeStr, method)
 		} else {
-			fmt.Printf("%s(%s):%s failed!: %s\n", myName, timeStr, err.Error())
+			fmt.Printf("%s(%s):%s failed!: %s\n", myName, timeStr, method, err.Error())
 			fatal("Exiting because of error")
 		}
 	} else {

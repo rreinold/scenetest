@@ -30,16 +30,18 @@ func setUser(ctx map[string]interface{}, args []interface{}) error {
 		return err
 	}
 
-	triggerChan, err := userClient.Subscribe("/clearblade/internal/trigger", 0)
-	if err != nil {
-		return fmt.Errorf("Subscribe failed: %s", err.Error())
-	}
+	/*
+		triggerChan, err := userClient.Subscribe("/clearblade/internal/trigger", 0)
+		if err != nil {
+			return fmt.Errorf("Subscribe failed: %s", err.Error())
+		}
+	*/
 	ctx["userClient"] = userClient
 	if err := userClient.Publish("/who/am/i", []byte(fmt.Sprintf("%p", userClient.MQTTClient)), 2); err != nil {
 		return err
 	}
 	ctx["email"] = email
-	ctx["triggerChannel"] = triggerChan
+	//ctx["triggerChannel"] = triggerChan
 
 	return nil
 }

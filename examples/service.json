@@ -6,6 +6,7 @@
         "name": "Just do stuff",
         "steps": [
             ["setUser", "foo@bar.com"],
+            ["subscribeTriggers"],
             ["repeat", 10000, 
                 [
                     ["call", "itemCreatedTrigger", {}]

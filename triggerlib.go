@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	cb "github.com/clearblade/Go-SDK"
 	mqtt "github.com/clearblade/mqtt_parsing"
 	"time"
 )
@@ -10,6 +11,8 @@ import (
 func init() {
 	funcMap["createTrigger"] = &Statement{createTrigger, createTriggerHelp}
 	funcMap["waitTrigger"] = &Statement{waitTrigger, waitTriggerHelp}
+	funcMap["subscribeTriggers"] = &Statement{subscribeTriggers, subscribeTriggersHelp}
+	funcMap["subscribeTrigger"] = &Statement{subscribeTriggers, subscribeTriggersHelp}
 }
 
 func createTrigger(ctx map[string]interface{}, args []interface{}) error {
@@ -18,6 +21,24 @@ func createTrigger(ctx map[string]interface{}, args []interface{}) error {
 
 func createTriggerHelp() string {
 	return "createTrigger help not yet implemented"
+}
+
+func subscribeTriggers(ctx map[string]interface{}, args []interface{}) error {
+	// No args
+	if len(args) != 0 {
+		return fmt.Errorf("subscribeTriggers takes no arguments")
+	}
+	userClient := ctx["userClient"].(*cb.UserClient)
+	triggerChan, err := userClient.Subscribe("/clearblade/internal/trigger", 0)
+	if err != nil {
+		return err
+	}
+	ctx["triggerChannel"] = triggerChan
+	return nil
+}
+
+func subscribeTriggersHelp() string {
+	return "[\"subscribeTriggers\"]"
 }
 
 func waitTrigger(ctx map[string]interface{}, args []interface{}) error {
