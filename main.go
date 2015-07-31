@@ -29,6 +29,7 @@ var (
 //var funcMap = map[string]func(map[string]interface{}, []interface{}) error{}
 var funcMap = map[string]*Statement{}
 var scriptVars = map[string]interface{}{}
+var nestingLevel = 0
 
 func init() {
 	flag.StringVar(&MsgAddr, "messaging-url", "undefined", "Msg service location")
@@ -57,6 +58,10 @@ func main() {
 		showHelp()
 		return
 	}
+	if JustParse {
+		parseProvidedFiles()
+		return
+	}
 	if SetupFile != "Do Not Setup" && InfoFile != "Do Not Get Info" {
 		fatal("Can't have both a setup file and an info file. I know. Confusing.")
 	}
@@ -65,6 +70,8 @@ func main() {
 	}
 	if InfoFile != "Do Not Get Info" {
 		scriptVars = getJSON(InfoFile)
+		cb.CB_ADDR = scriptVars["platformUrl"].(string)
+		cb.CB_MSG_ADDR = scriptVars["messagingUrl"].(string)
 	}
 	if ScriptFile != "Do Not Run Script" {
 		executeTestScript(getJSON(ScriptFile))
@@ -91,6 +98,24 @@ func getJSON(filename string) map[string]interface{} {
 }
 
 func goodbye(err error) {
-	fmt.Printf("Exiting with panic error: %s\n", err.Error())
+	fmt.Printf("%s\n", err.Error())
 	os.Exit(1)
+}
+
+func parseProvidedFiles() {
+	if SetupFile != "Do Not Setup" {
+		fmt.Printf("Parsing %s... ", SetupFile)
+		getJSON(SetupFile)
+		fmt.Printf("ok\n")
+	}
+	if TeardownFile != "Do Not Teardown" {
+		fmt.Printf("Parsing %s... ", TeardownFile)
+		getJSON(TeardownFile)
+		fmt.Printf("ok\n")
+	}
+	if ScriptFile != "Do Not Run Script" {
+		fmt.Printf("Parsing %s... ", ScriptFile)
+		getJSON(ScriptFile)
+		fmt.Printf("ok\n")
+	}
 }

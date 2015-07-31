@@ -39,7 +39,13 @@ func doPrintHelp() string {
 	return "[\"print\", <arg>, ...]"
 }
 
+func decrNestingLevel() {
+	nestingLevel--
+}
+
 func repeat(ctx map[string]interface{}, args []interface{}) error {
+	nestingLevel++
+	defer decrNestingLevel()
 	if len(args) != 2 {
 		return fmt.Errorf("Usage: [repeat, <num>, [<stmt>...]]")
 	}

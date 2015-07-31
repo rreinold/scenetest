@@ -51,7 +51,7 @@ func waitMessage(context map[string]interface{}, args []interface{}) error {
 }
 
 func waitMessageHelp() string {
-	return "waitMessage help not yet implemented"
+	return "[\"waitMessage\", \"topic\", timeout]"
 }
 
 func publish(context map[string]interface{}, args []interface{}) error {

@@ -109,10 +109,15 @@ func query(context map[string]interface{}, args []interface{}) error {
 		}
 	}
 	if len(args) >= 4 {
+		if myQuery.Order, err = buildOrdering(args[3].([]interface{})); err != nil {
+			return fmt.Errorf("Bad query ordering: %s", err.Error())
+		}
 	}
 	if len(args) >= 5 {
+		myQuery.PageNumber = int(args[4].(float64))
 	}
 	if len(args) >= 6 {
+		myQuery.PageSize = int(args[5].(float64))
 	}
 	userClient := context["userClient"].(*cb.UserClient)
 	stuff, err := userClient.GetData(collection, &myQuery)
@@ -177,6 +182,26 @@ func buildColumns(cols []interface{}) ([]string, error) {
 		default:
 			return nil, fmt.Errorf("All columns must be strings")
 		}
+	}
+	return rval, nil
+}
+
+func buildOrdering(ordering []interface{}) ([]cb.Ordering, error) {
+	if len(ordering) == 0 {
+		return nil, nil
+	}
+	if len(ordering)%2 != 0 {
+		return nil, fmt.Errorf("Ordering arguments must be pairs")
+	}
+	rval := []cb.Ordering{}
+	for i := 0; i < len(ordering); i += 2 {
+		field := ordering[i].(string)
+		direction := ordering[i+1].(string)
+		dirBool := false
+		if direction == "asc" || direction == "ascend" || direction == "ascending" {
+			dirBool = true
+		}
+		rval = append(rval, cb.Ordering{SortOrder: dirBool, OrderKey: field})
 	}
 	return rval, nil
 }
