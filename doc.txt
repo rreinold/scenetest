@@ -1,0 +1,31 @@
+Using scenetest
+
+scenetest allows you to perform a system setup, run some tests, and tear things down. All of these steps are optional. Usually, I do a setup, and then run a bunch of tests. As usual, I always forget to tear things down.
+
+examples/setup.json shows you how to set things up. Let's say you are using that amazon testing machine. 
+To execute that file you do the following:
+
+        ./scenetest -platform-url "http://ec2-54-157-191-138.compute-1.amazonaws.com" 
+                        -messaging-url "ec2-54-157-191-138.compute-1.amazonaws.com:1883" -setup examples/setup.json
+
+That command above will end up creating a file called TestSystemInfo.json, which has all the handy ids of those things
+created during setup. Also, it creates a teardown file -- in this case it is called TestSystemTeardown.json.
+Now, to run tests, do this (for example):
+
+        ./scenetest -platform-url "http://ec2-54-157-191-138.compute-1.amazonaws.com" 
+                -messaging-url "ec2-54-157-191-138.compute-1.amazonaws.com:1883" -info TestSystemInfo.json 
+                -run examples/newTrigger.json
+
+to tear them down, do:
+        ./scenetest -platform-url "http://ec2-54-157-191-138.compute-1.amazonaws.com" 
+                -messaging-url "ec2-54-157-191-138.compute-1.amazonaws.com:1883" -teardown TestSystemTeardown.json 
+
+Obviously, use your favorite host -- you don't have to use the amazon testing box.
+
+Best thing I can tell you to do is look at the examples. Good ones are pubsub.json newTrigger.json, etc.
+
+Word of warning: if you subscribe to triggers (see newTrigger.json) be damned sure you make the correct number of
+waitTrigger calls, or else you'll kill the server. Comforting.
+
+If you need to create new statements (and you will), have a looksee at mqttlib.go (publish and subscribe) and data.go 
+(createItem). codelib.go has the "call" statement which invokes a code service
