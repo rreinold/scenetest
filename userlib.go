@@ -12,8 +12,6 @@ func init() {
 func setUser(ctx map[string]interface{}, args []interface{}) error {
 	sysKey := scriptVars["systemKey"].(string)
 	sysSec := scriptVars["systemSecret"].(string)
-	fmt.Printf("DUH: %+v\n", valueOf(ctx, "swm@clearblade.com"))
-	fmt.Printf("setUser: Args are %+v\n", args)
 	email := valueOf(ctx, getArg(args, 0)).(string)
 	userInfo := scriptVars["users"].(map[string]interface{})[email].(map[string]interface{})
 	password := userInfo["password"].(string)
@@ -23,7 +21,7 @@ func setUser(ctx map[string]interface{}, args []interface{}) error {
 	}
 
 	// Now, might as well set up mqtt
-	if err := userClient.InitializeMQTT(email, "", 60); err != nil {
+	if err := userClient.InitializeMQTT("", "", 60); err != nil {
 		return err
 	}
 	if err := userClient.ConnectMQTT(nil, nil); err != nil {

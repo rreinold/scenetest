@@ -29,3 +29,15 @@ waitTrigger calls, or else you'll kill the server. Comforting.
 
 If you need to create new statements (and you will), have a looksee at mqttlib.go (publish and subscribe) and data.go 
 (createItem). codelib.go has the "call" statement which invokes a code service
+
+
+Random note about triggers. If you want to be notified when a trigger runs, you have to do several things.
+
+    1. Your service should depend on library triggerLib.js found in the js subdir.
+    2. Your service should call the publishTrigger() method in that library. For an
+       example, see itemCreatedTrigger.js
+    3. Your execution json file should contain a call ["subscribeTriggers"]
+    4. Finally (important) execute one ["waitTrigger", ...] call for each trigger generated.
+       see ./examples/newTrigger.json for an example of how to do this. Note the number of calls (30)
+       to wait trigger per createItem. That's cuz we're running 30 instances of the same scenario in
+       parallel.

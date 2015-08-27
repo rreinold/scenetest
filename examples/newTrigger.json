@@ -7,7 +7,7 @@
         "steps": [
             ["setUser", "foo@bar.com"],
             ["subscribeTriggers"],
-            ["sleep", 5000],
+            ["sleep", 5],
             ["repeat", 1000, [
                 ["createItem", "DuhCollection", {"name":"Fred","address":"Homeless"}],
                 ["repeat", 30, [ ["waitTrigger", "Data", "ItemCreated", 300] ] ],
