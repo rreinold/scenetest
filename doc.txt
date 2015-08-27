@@ -16,6 +16,9 @@ Now, to run tests, do this (for example):
                 -messaging-url "ec2-54-157-191-138.compute-1.amazonaws.com:1883" -info TestSystemInfo.json 
                 -run examples/newTrigger.json
 
+NOTE: the platform-url and the messaging-url flags are optional. The TestSystemInfo.json file
+contains the appropriate values and uses those when these args are not passed in.
+
 to tear them down, do:
         ./scenetest -platform-url "http://ec2-54-157-191-138.compute-1.amazonaws.com" 
                 -messaging-url "ec2-54-157-191-138.compute-1.amazonaws.com:1883" -teardown TestSystemTeardown.json 
