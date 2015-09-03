@@ -113,7 +113,7 @@ func setupDeveloper(dev map[string]interface{}) {
 	lname := dev["lastname"].(string)
 	org := dev["org"].(string)
 
-	if theDev, err := adminClient.RegisterUser(devEmail, devPassword, fname, lname, org); err == nil {
+	if theDev, err := adminClient.RegisterDevUser(devEmail, devPassword, fname, lname, org); err == nil {
 		setupState["developer"] = theDev["user_id"]
 		return
 	} else if strings.Contains(err.Error(), "That user already exists") {
