@@ -3,8 +3,17 @@ package main
 import (
 	"fmt"
 	"reflect"
+	"sync"
 	"time"
 )
+
+type SyncStuff struct {
+	count int
+	c     chan bool
+}
+
+var syncMap = map[string]*SyncStuff{}
+var syncLock *sync.Mutex
 
 func init() {
 	funcMap["sleep"] = &Statement{sleep, sleepHelp}
@@ -12,6 +21,40 @@ func init() {
 	funcMap["print"] = &Statement{doPrint, doPrintHelp}
 	funcMap["set"] = &Statement{doSet, doSetHelp}
 	funcMap["assert"] = &Statement{doAssert, doAssertHelp}
+	funcMap["sync"] = &Statement{doSync, doSyncHelp}
+	syncLock = new(sync.Mutex)
+}
+
+func doSync(ctx map[string]interface{}, args []interface{}) error {
+	if len(args) != 2 {
+		return fmt.Errorf("Usage: %s", doSyncHelp())
+	}
+	syncKey := args[0].(string)
+	syncCount := int(args[1].(float64))
+	syncLock.Lock()
+	fmt.Printf("IN: %v, %v\n", syncKey, syncCount)
+	mySyncStuff, ok := syncMap[syncKey]
+	if !ok {
+		fmt.Printf("Making new one\n")
+		mySyncStuff = &SyncStuff{0, make(chan bool, syncCount)}
+		syncMap[syncKey] = mySyncStuff
+	}
+	mySyncStuff.count++
+	if mySyncStuff.count >= syncCount {
+		fmt.Printf("Unsyncing\n")
+		for i := 0; i < syncCount; i++ {
+			mySyncStuff.c <- true
+		}
+		mySyncStuff.count = 0
+	}
+	syncLock.Unlock()
+	fmt.Printf("Waiting nicely\n")
+	<-mySyncStuff.c
+	return nil
+}
+
+func doSyncHelp() string {
+	return "[\"sync\", <lockName>, count]"
 }
 
 func sleep(ctx map[string]interface{}, args []interface{}) error {

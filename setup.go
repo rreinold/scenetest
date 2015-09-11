@@ -113,16 +113,17 @@ func setupDeveloper(dev map[string]interface{}) {
 	lname := dev["lastname"].(string)
 	org := dev["org"].(string)
 
-	if theDev, err := adminClient.RegisterDevUser(devEmail, devPassword, fname, lname, org); err == nil {
-		setupState["developer"] = theDev["user_id"]
-		return
-	} else if strings.Contains(err.Error(), "That user already exists") {
-		if authErr := adminClient.Authenticate(); authErr != nil {
-			fatal(authErr.Error())
+	theDev, err := adminClient.RegisterDevUser(devEmail, devPassword, fname, lname, org)
+	if err != nil {
+		if !strings.Contains(err.Error(), "That user already exists") {
+			fatal(err.Error())
 		}
-	} else {
-		fatal(err.Error())
 	}
+	if authErr := adminClient.Authenticate(); authErr != nil {
+		fatal(authErr.Error())
+	}
+	setupState["developer"] = theDev["user_id"]
+	setupState["adminClient"] = adminClient
 }
 
 func createSystem(system map[string]interface{}) {
@@ -173,8 +174,11 @@ func setupUsers(users []interface{}) {
 func setupUser(user map[string]interface{}) {
 	email := user["email"].(string)
 	password := user["password"].(string)
-	userClient := cb.NewUserClient(sysKey, sysSec, email, password)
-	newUser, err := userClient.RegisterUser(email, password)
+	sysKey := setupState["systemKey"].(string)
+	sysSec := setupState["systemSecret"].(string)
+	//userClient := cb.NewUserClient(sysKey, sysSec, email, password)
+	adminClient = setupState["adminClient"].(*cb.DevClient)
+	newUser, err := adminClient.RegisterNewUser(email, password, sysKey, sysSec)
 	if err != nil {
 		fatal(err.Error())
 	}

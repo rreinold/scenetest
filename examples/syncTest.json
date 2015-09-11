@@ -1,0 +1,11 @@
+{
+    "name": "A sync tested",
+    "scenarios": [ ["Scenario 1", 100] ],
+    "sequencing": "Parallel",
+    "Scenario 1": {
+        "name": "Just do stuff",
+        "steps": [
+            ["sync", "fred", 100]
+        ]
+    }
+}

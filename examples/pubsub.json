@@ -5,10 +5,10 @@
     "producer": {
         "name": "Spewing out MQTT",
         "steps": [
-            ["sleep", 3000],
             ["setUser", "foo@bar.com"],
             ["print", "producer initialized"],
-            ["repeat", 100000, 
+            ["sync", "all subscribed", 5],
+            ["repeat", 500, 
                 [
                     ["publish", "/clearblade/test/spewer", "This is the spew", 0]
                 ]
@@ -21,7 +21,8 @@
             ["setUser", "bar@bar.com"],
             ["print", "consumer initialized"],
             ["subscribe", "/clearblade/test/spewer", 0],
-            ["repeat", 150000, 
+            ["sync", "all subscribed", 5],
+            ["repeat", 1500, 
                 [
                     ["waitMessage", "/clearblade/test/spewer", 300]
                 ]
