@@ -59,6 +59,12 @@ func setupSystem(system map[string]interface{}) {
 		warn("No roles found")
 	}
 
+	if userColumns, ok := system["userColumns"]; ok {
+		setupUserColumns(userColumns.([]interface{}))
+	} else {
+		warn("No user columns found")
+	}
+
 	if users, ok := system["users"]; ok {
 		setupUsers(users.([]interface{}))
 	} else {
@@ -165,6 +171,21 @@ func setupRoles(roles []interface{}) {
 	}
 }
 
+func setupUserColumns(userColumns []interface{}) {
+	for _, userColumn := range userColumns {
+		setupUserColumn(userColumn.(map[string]interface{}))
+	}
+}
+
+func setupUserColumn(userColumn map[string]interface{}) {
+	sysKey := setupState["systemKey"].(string)
+	adminClient = setupState["adminClient"].(*cb.DevClient)
+	if err := adminClient.CreateUserColumn(sysKey, userColumn["column_name"].(string), userColumn["type"].(string)); err != nil {
+		fatal(err.Error())
+	}
+	fmt.Printf("Added column to user table: %s\n", userColumn["column_name"].(string))
+}
+
 func setupUsers(users []interface{}) {
 	for _, user := range users {
 		setupUser(user.(map[string]interface{}))
@@ -176,7 +197,6 @@ func setupUser(user map[string]interface{}) {
 	password := user["password"].(string)
 	sysKey := setupState["systemKey"].(string)
 	sysSec := setupState["systemSecret"].(string)
-	//userClient := cb.NewUserClient(sysKey, sysSec, email, password)
 	adminClient = setupState["adminClient"].(*cb.DevClient)
 	newUser, err := adminClient.RegisterNewUser(email, password, sysKey, sysSec)
 	if err != nil {
