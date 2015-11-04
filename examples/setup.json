@@ -101,7 +101,7 @@
         {
             "name": "example",
             "code": "@js/example.js",
-            "dependencies": "TestLibrary",
+            "dependencies": "TestLibrary,log",
             "parameters": ["badabada"],
             "roles":{
                 "a": 1,
@@ -112,7 +112,7 @@
         {
             "name": "itemCreatedTrigger",
             "code": "@js/itemCreatedTrigger.js",
-            "dependencies": "TriggerLib",
+            "dependencies": "TriggerLib,log",
             "parameters": [],
             "roles":{
                 "a": 1,
@@ -126,13 +126,13 @@
             "name": "TestLibrary",
             "code": "@js/exampleLib.js",
             "description": "Kinda useless",
-            "dependencies":""
+            "dependencies":"log"
         },
         {
             "name": "TriggerLib",
             "code": "@js/triggerLib.js",
             "description": "publishes trigger event over mqtt",
-            "dependencies":"clearblade"
+            "dependencies":"clearblade,log"
         }
     ],
     "triggers": [
@@ -163,40 +163,6 @@
             "repeats": 1,
             "frequency": 1,
             "service_name":"example"
-        }
-    ],
-    "codeLibraries": [
-        {
-            "name": "TestLibrary",
-            "code": "@js/exampleLib.js",
-            "description": "Kinda useless",
-            "dependencies":""
-        },
-        {
-            "name": "TriggerLib",
-            "code": "@js/triggerLib.js",
-            "description": "publishes trigger event over mqtt",
-            "dependencies":"clearblade"
-        }
-    ],
-    "triggers": [
-        {
-            "name": "PublishHandler",
-            "service_name":"example",
-            "def_module": "Messaging",
-            "def_name": "Publish",
-            "key_value_pairs": {
-                "topic": "/foo/#"
-            }
-        },
-        {
-            "name": "Added A Row",
-            "service_name": "itemCreatedTrigger",
-            "def_module": "Data",
-            "def_name": "ItemCreated",
-            "key_value_pairs": {
-                "collectionName":"DuhCollection"
-            }
         }
     ]
 }
