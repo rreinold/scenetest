@@ -8,6 +8,7 @@ import (
 	cb "github.com/clearblade/Go-SDK"
 	"io/ioutil"
 	"os"
+	"sync"
 )
 
 type Statement struct {
@@ -26,10 +27,11 @@ var (
 	GetSomeHelp  bool
 )
 
-//var funcMap = map[string]func(map[string]interface{}, []interface{}) error{}
 var funcMap = map[string]*Statement{}
 var scriptVars = map[string]interface{}{}
 var nestingLevel = 0
+var globals = map[string]interface{}{}
+var globalLock = sync.RWMutex{}
 
 func init() {
 	flag.StringVar(&MsgAddr, "messaging-url", "undefined", "Msg service location")
@@ -118,4 +120,23 @@ func parseProvidedFiles() {
 		getJSON(ScriptFile)
 		fmt.Printf("ok\n")
 	}
+}
+
+func weInTheHouse() {
+	globalLock.Lock()
+}
+
+func weOuttaTheHouse() {
+	globalLock.Unlock()
+}
+
+func getGlobal(name string) interface{} {
+	if val, ok := globals[name]; ok {
+		return val
+	}
+	return nil
+}
+
+func setGlobal(name string, val interface{}) {
+	globals[name] = val
 }

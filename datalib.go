@@ -10,6 +10,7 @@ func init() {
 	funcMap["select"] = &Statement{query, queryHelp} // just a synonym
 	funcMap["createItem"] = &Statement{createItem, createItemHelp}
 	funcMap["deleteItem"] = &Statement{deleteItem, deleteItemHelp}
+	funcMap["deleteAllItems"] = &Statement{deleteAllItems, deleteAllItemsHelp}
 }
 
 func createItem(context map[string]interface{}, args []interface{}) error {
@@ -60,6 +61,24 @@ func deleteItem(context map[string]interface{}, args []interface{}) error {
 	}
 
 	if err := userClient.DeleteData(colId, query); err != nil {
+		context["returnValue"] = err.Error()
+		return err
+	}
+	context["returnValue"] = nil
+	return nil
+}
+
+func deleteAllItems(context map[string]interface{}, args []interface{}) error {
+	userClient := context["userClient"].(*cb.UserClient)
+	if err := argCheck(args, 1, ""); err != nil {
+		return fmt.Errorf("deleteAll: Bad Arguments(s): %s\n", err.Error())
+	}
+	colName := args[0].(string)
+	colId, err := collectionNameToId(colName)
+	if err != nil {
+		return err
+	}
+	if err := userClient.DeleteData(colId, &cb.Query{}); err != nil {
 		context["returnValue"] = err.Error()
 		return err
 	}
@@ -204,6 +223,10 @@ func buildOrdering(ordering []interface{}) ([]cb.Ordering, error) {
 		rval = append(rval, cb.Ordering{SortOrder: dirBool, OrderKey: field})
 	}
 	return rval, nil
+}
+
+func deleteAllItemsHelp() string {
+	return "query help not yet implemented"
 }
 
 func queryHelp() string {

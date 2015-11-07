@@ -1,15 +1,30 @@
 {
     "name": "Name of this test run",
-    "scenarios": [ ["Scenario 1", 20] ],
+    "scenarios": [ ["Bloated Pig", 20], ["Cleaning Lady", 1] ],
     "sequencing": "Parallel",
-    "Scenario 1": {
-        "name": "Just do stuff",
+    "globals": {"RemainingPigs":0},
+    "Bloated Pig": {
+        "name": "Makin' the Bacon",
         "steps": [
             ["setUser", "foo@bar.com"],
             ["subscribeTriggers"],
-            ["repeat", 1000, [
+            ["incrGlobal", "RemainingPigs"],
+            ["sync", "We're Ready", 21],
+            ["repeat", 10, [
                 ["createItem", "DuhCollection", {"name":"Fred","address":"Homeless"}],
                 ["call", "example", {}] ]
+            ],
+            ["decrGlobal", "RemainingPigs"]
+        ]
+    },
+    "Cleaning Lady": {
+        "name": "Keep the db from getting too big",
+        "steps": [
+            ["setUser", "swm@clearblade.com"],
+            ["sync", "We're Ready", 21],
+            ["while", "RemainingPigs", "!=", 0, [
+                ["sleep", 200],
+                ["deleteAllItems", "DuhCollection"]]
             ]
         ]
     }

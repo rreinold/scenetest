@@ -1,14 +1,14 @@
 {
     "name": "Name of this test run",
-    "scenarios": [ ["Scenario 1", 30] ],
+    "scenarios": [ ["Creator", 30] ],
     "sequencing": "Parallel",
-    "Scenario 1": {
+    "Creator": {
         "name": "Just do stuff",
         "steps": [
             ["setUser", "foo@bar.com"],
             ["subscribeTriggers"],
             ["sync", "all subscribed", 30],
-            ["repeat", 100, [
+            ["repeat", 1000, [
                 ["createItem", "DuhCollection", {"name":"Fred","address":"Homeless"}],
                 ["repeat", 30, [ ["waitTrigger", "Data", "ItemCreated", 300] ] ],
                 ["call", "example", {}] ]

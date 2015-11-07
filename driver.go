@@ -7,13 +7,13 @@ import (
 
 var script map[string]interface{}
 
-func init() {
-}
-
 func executeTestScript(theScript map[string]interface{}) {
 	script = theScript
 	sequencing := getVar("sequencing", script, "Parallel").(string)
 	scenarios := getVar("scenarios", script, []string{}).([]interface{})
+	if glbs, ok := script["globals"].(map[string]interface{}); ok {
+		globals = glbs
+	}
 	if sequencing == "Serial" {
 		runSerial(scenarios)
 	} else if sequencing == "Parallel" {
@@ -40,35 +40,6 @@ func runSerial(scenarios []interface{}) {
 		}
 	}
 }
-
-/*
-func runSerial(scenarios []interface{}) {
-	for _, scenarioName := range scenarios {
-		if scenario, ok := script[scenarioName.(string)]; ok {
-			runOneScenario(scenario.(map[string]interface{}), nil)
-		} else {
-			panic(fmt.Errorf("Scenario %s not found", scenarioName.(string)))
-		}
-	}
-}
-*/
-
-/*
-func runParallel(scenarios []interface{}) {
-	doneChan := make(chan bool)
-	for _, scenarioName := range scenarios {
-		if scenario, ok := script[scenarioName.(string)]; ok {
-			go runOneScenario(scenario.(map[string]interface{}), doneChan)
-		} else {
-			panic(fmt.Errorf("Scenario %s not found", scenarioName.(string)))
-		}
-	}
-
-	for i := 0; i < len(scenarios); i++ {
-		<-doneChan
-	}
-}
-*/
 
 func runParallel(scenarios []interface{}) {
 	totalCount := 0
