@@ -32,12 +32,12 @@ func init() {
 func performSetup(setupInfo interface{}) {
 	//  We're passed either an array of systems, or just one system.
 	//  Thus, the type checking stuff.
-	//fmt.Printf("THE WHOLE SHABANG IS: %+v\n", setupInfo)
+	//myPrintf("THE WHOLE SHABANG IS: %+v\n", setupInfo)
 	switch setupInfo.(type) {
 	case map[string]interface{}:
 		setupSystem(setupInfo.(map[string]interface{}))
 	default:
-		fmt.Printf("Incorrect type of outer json object")
+		myPrintf("Incorrect type of outer json object")
 		os.Exit(1)
 	}
 	saveSetupState(setupInfo.(map[string]interface{}))
@@ -47,7 +47,7 @@ func setupSystem(system map[string]interface{}) {
 	if dev, ok := system["developer"]; ok {
 		setupDeveloper(dev.(map[string]interface{}))
 	} else {
-		fmt.Printf("Must provide a developer for system setup\n")
+		myPrintf("Must provide a developer for system setup\n")
 		os.Exit(1)
 	}
 
@@ -138,7 +138,7 @@ func createSystem(system map[string]interface{}) {
 	descr := system["description"].(string)
 
 	sysStr, sysErr := adminClient.NewSystem(name, descr, userAuth)
-	fmt.Printf("NEW SYS: %+v\n", sysStr)
+	myPrintf("NEW SYS: %+v\n", sysStr)
 	if sysErr != nil {
 		fatal(sysErr.Error())
 	}
@@ -165,7 +165,7 @@ func setupRoles(roles []interface{}) {
 		if err != nil {
 			fatal(err.Error())
 		}
-		fmt.Printf("Created Role: %+v\n", res)
+		myPrintf("Created Role: %+v\n", res)
 		rolesMap[role.(string)] = res.(map[string]interface{})["role_id"]
 		appendState("roles", rolesMap[role.(string)].(string))
 	}
@@ -183,7 +183,7 @@ func setupUserColumn(userColumn map[string]interface{}) {
 	if err := adminClient.CreateUserColumn(sysKey, userColumn["column_name"].(string), userColumn["type"].(string)); err != nil {
 		fatal(err.Error())
 	}
-	fmt.Printf("Added column to user table: %s\n", userColumn["column_name"].(string))
+	myPrintf("Added column to user table: %s\n", userColumn["column_name"].(string))
 }
 
 func setupUsers(users []interface{}) {
@@ -243,7 +243,7 @@ func setupCollections(cols []interface{}) {
 }
 
 func setupCollection(col map[string]interface{}) {
-	fmt.Printf("Setting up collection %+v\n", col["name"])
+	myPrintf("Setting up collection %+v\n", col["name"])
 	//  Create the collection
 	colId, err := adminClient.NewCollection(sysKey, col["name"].(string))
 	if err != nil {
@@ -322,7 +322,7 @@ func setupCodeServiceRoles(svc map[string]interface{}) {
 }
 
 func setupColumn(collectionId, columnName, columnType string) {
-	fmt.Printf("Adding column %s(%s)\n", columnName, columnType)
+	myPrintf("Adding column %s(%s)\n", columnName, columnType)
 	if err := adminClient.AddColumn(collectionId, strings.ToLower(columnName), columnType); err != nil {
 		fatal(err.Error())
 	}
@@ -333,7 +333,7 @@ func setupItem(items []map[string]interface{}, colId string) {
 	if err != nil {
 		fatal(fmt.Sprintf("Error creating item: %s\n", err.Error()))
 	}
-	fmt.Printf("Created item(s): %+v\n", newItems)
+	myPrintf("Created item(s): %+v\n", newItems)
 }
 
 func setupCodeServices(svcs []interface{}) {
@@ -374,7 +374,7 @@ func setupCodeService(svc map[string]interface{}) {
 		"dependencies": svcDeps,
 	}
 	appendState("services", svcName)
-	fmt.Printf("Set up code service %+v\n", svcMap[svcName])
+	myPrintf("Set up code service %+v\n", svcMap[svcName])
 }
 
 func setupCodeLibraries(libs []interface{}) {
@@ -384,7 +384,7 @@ func setupCodeLibraries(libs []interface{}) {
 }
 
 func setupCodeLibrary(lib map[string]interface{}) {
-	fmt.Printf("Setting up code library %+v\n", lib["name"])
+	myPrintf("Setting up code library %+v\n", lib["name"])
 	libName := lib["name"].(string)
 	delete(lib, "name")
 	libCode := getVarOrFile(lib, "code")
@@ -396,7 +396,7 @@ func setupCodeLibrary(lib map[string]interface{}) {
 	libMap := scriptVars["codeLibraries"].(map[string]interface{})
 	libMap[libName] = newLib
 	appendState("libraries", libName)
-	fmt.Printf("Set up code library %+v\n", newLib)
+	myPrintf("Set up code library %+v\n", newLib)
 }
 
 func setupTriggers(triggers []interface{}) {
@@ -415,7 +415,7 @@ func setupTrigger(trigger map[string]interface{}) {
 	trigMap := scriptVars["triggers"].(map[string]interface{})
 	trigMap[trigName] = newTrig
 	appendState("triggers", trigName)
-	fmt.Printf("Set up trigger %+v\n", newTrig)
+	myPrintf("Set up trigger %+v\n", newTrig)
 }
 
 func setupTimers(timers []interface{}) {
@@ -439,15 +439,15 @@ func setupTimer(timer map[string]interface{}) {
 	timerMap := scriptVars["timers"].(map[string]interface{})
 	timerMap[timerName] = newTimer
 	appendState("timers", timerName)
-	fmt.Printf("Set up timer %+v\n", newTimer)
+	myPrintf("Set up timer %+v\n", newTimer)
 }
 
 func warn(msg string) {
-	fmt.Printf("Warning: %s\n", msg)
+	myPrintf("Warning: %s\n", msg)
 }
 
 func fatal(msg string) {
-	fmt.Printf("Fatal Error: %s\n", msg)
+	myPrintf("Fatal Error: %s\n", msg)
 	os.Exit(1)
 }
 

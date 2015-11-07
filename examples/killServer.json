@@ -7,10 +7,9 @@
         "name": "Makin' the Bacon",
         "steps": [
             ["setUser", "foo@bar.com"],
-            ["subscribeTriggers"],
             ["incrGlobal", "RemainingPigs"],
             ["sync", "We're Ready", 21],
-            ["repeat", 10, [
+            ["repeat", 10000, [
                 ["createItem", "DuhCollection", {"name":"Fred","address":"Homeless"}],
                 ["call", "example", {}] ]
             ],

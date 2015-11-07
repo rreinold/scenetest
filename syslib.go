@@ -37,23 +37,19 @@ func doSync(ctx map[string]interface{}, args []interface{}) error {
 	syncKey := args[0].(string)
 	syncCount := int(args[1].(float64))
 	syncLock.Lock()
-	fmt.Printf("IN: %v, %v\n", syncKey, syncCount)
 	mySyncStuff, ok := syncMap[syncKey]
 	if !ok {
-		fmt.Printf("Making new one\n")
 		mySyncStuff = &SyncStuff{0, make(chan bool, syncCount)}
 		syncMap[syncKey] = mySyncStuff
 	}
 	mySyncStuff.count++
 	if mySyncStuff.count >= syncCount {
-		fmt.Printf("Unsyncing\n")
 		for i := 0; i < syncCount; i++ {
 			mySyncStuff.c <- true
 		}
 		mySyncStuff.count = 0
 	}
 	syncLock.Unlock()
-	fmt.Printf("Waiting nicely\n")
 	<-mySyncStuff.c
 	return nil
 }
@@ -75,9 +71,9 @@ func sleepHelp() string {
 func doPrint(ctx map[string]interface{}, args []interface{}) error {
 	for idx, arg := range args {
 		if idx > 0 {
-			fmt.Printf(" ")
+			myPrintf(" ")
 		}
-		fmt.Printf("%+v", valueOf(ctx, arg))
+		myPrintf("%+v", valueOf(ctx, arg))
 	}
 	fmt.Println("")
 	return nil
@@ -118,7 +114,7 @@ func doWhile(ctx map[string]interface{}, args []interface{}) error {
 			break
 		}
 		iterCount++
-		fmt.Printf("While: iteration %d\n", iterCount)
+		myPrintf("While: iteration %d\n", iterCount)
 		for _, stmt := range theStmts {
 			runOneStep(ctx, stmt.([]interface{}))
 		}
@@ -127,7 +123,6 @@ func doWhile(ctx map[string]interface{}, args []interface{}) error {
 }
 
 func evaluateExpression(op string, val1, val2 interface{}) bool {
-	fmt.Printf("EVALUATE: %s, %+v, %+v\n", op, val1, val2)
 	rval := false
 	switch op {
 	case "==":
@@ -143,7 +138,6 @@ func evaluateExpression(op string, val1, val2 interface{}) bool {
 	case "<=":
 		rval = makeNum(val1) <= makeNum(val2)
 	}
-	fmt.Printf("EVAL: %+v\n", rval)
 	return rval
 }
 
@@ -199,7 +193,7 @@ func repeat(ctx map[string]interface{}, args []interface{}) error {
 	iterCount := int(0)
 	for count := int(valueOf(ctx, args[0]).(float64)); count > 0; count-- {
 		iterCount++
-		fmt.Printf("Repeat: iteration %d\n", iterCount)
+		myPrintf("Repeat: iteration %d\n", iterCount)
 		for _, stmt := range stmts {
 			runOneStep(ctx, stmt.([]interface{}))
 		}

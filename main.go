@@ -27,11 +27,14 @@ var (
 	GetSomeHelp  bool
 )
 
-var funcMap = map[string]*Statement{}
-var scriptVars = map[string]interface{}{}
-var nestingLevel = 0
-var globals = map[string]interface{}{}
-var globalLock = sync.RWMutex{}
+var (
+	funcMap      = map[string]*Statement{}
+	scriptVars   = map[string]interface{}{}
+	nestingLevel = 0
+	globals      = map[string]interface{}{}
+	globalLock   = sync.RWMutex{}
+	printLock    = sync.Mutex{}
+)
 
 func init() {
 	flag.StringVar(&MsgAddr, "messaging-url", "undefined", "Msg service location")
@@ -100,25 +103,25 @@ func getJSON(filename string) map[string]interface{} {
 }
 
 func goodbye(err error) {
-	fmt.Printf("%s\n", err.Error())
+	myPrintf("%s\n", err.Error())
 	os.Exit(1)
 }
 
 func parseProvidedFiles() {
 	if SetupFile != "Do Not Setup" {
-		fmt.Printf("Parsing %s... ", SetupFile)
+		myPrintf("Parsing %s... ", SetupFile)
 		getJSON(SetupFile)
-		fmt.Printf("ok\n")
+		myPrintf("ok\n")
 	}
 	if TeardownFile != "Do Not Teardown" {
-		fmt.Printf("Parsing %s... ", TeardownFile)
+		myPrintf("Parsing %s... ", TeardownFile)
 		getJSON(TeardownFile)
-		fmt.Printf("ok\n")
+		myPrintf("ok\n")
 	}
 	if ScriptFile != "Do Not Run Script" {
-		fmt.Printf("Parsing %s... ", ScriptFile)
+		myPrintf("Parsing %s... ", ScriptFile)
 		getJSON(ScriptFile)
-		fmt.Printf("ok\n")
+		myPrintf("ok\n")
 	}
 }
 
@@ -139,4 +142,10 @@ func getGlobal(name string) interface{} {
 
 func setGlobal(name string, val interface{}) {
 	globals[name] = val
+}
+
+func myPrintf(theFmt string, args ...interface{}) {
+	printLock.Lock()
+	defer printLock.Unlock()
+	fmt.Printf(theFmt, args...)
 }

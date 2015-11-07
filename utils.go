@@ -85,7 +85,7 @@ func valueOf(context map[string]interface{}, thing interface{}) interface{} {
 			if val, ok := context[varName]; ok {
 				return val
 			}
-			fmt.Printf("DEAD __ CONTEXT: %+v\n", context)
+			myPrintf("DEAD __ CONTEXT: %+v\n", context)
 			fatal(fmt.Sprintf("Undefined variable: %s", varName))
 		}
 	}
@@ -102,6 +102,6 @@ func showHelp() {
 	sort.Strings(keys)
 	for _, funcName := range keys {
 		stmt := funcMap[funcName]
-		fmt.Printf("%s\n", stmt.HelpFunc())
+		myPrintf("%s\n", stmt.HelpFunc())
 	}
 }
