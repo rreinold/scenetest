@@ -30,7 +30,7 @@ var (
 var (
 	funcMap      = map[string]*Statement{}
 	scriptVars   = map[string]interface{}{}
-	nestingLevel = 0
+	nestingLevel = int32(0)
 	globals      = map[string]interface{}{}
 	globalLock   = sync.RWMutex{}
 	printLock    = sync.Mutex{}
