@@ -1,6 +1,7 @@
 package main
 
 import (
+	"clearblade/token"
 	"fmt"
 	cb "github.com/clearblade/Go-SDK"
 )
@@ -19,6 +20,9 @@ func setUser(ctx map[string]interface{}, args []interface{}) error {
 	if err := userClient.Authenticate(); err != nil {
 		return err
 	}
+
+	sess, _ := token.Token(userClient.UserToken).Uuid()
+	fmt.Printf("AUTHENTICATED SESSION: %s\n", sess)
 
 	// Now, might as well set up mqtt
 	if err := userClient.InitializeMQTT("", "", 60); err != nil {

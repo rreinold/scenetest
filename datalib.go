@@ -1,6 +1,7 @@
 package main
 
 import (
+	"clearblade/token"
 	"fmt"
 	cb "github.com/clearblade/Go-SDK"
 )
@@ -24,6 +25,8 @@ func createItem(context map[string]interface{}, args []interface{}) error {
 	if err != nil {
 		return err
 	}
+	sess, _ := token.Token(userClient.UserToken).Uuid()
+	fmt.Printf("CREATE DATA: %s\n", sess)
 	resp, err := userClient.CreateData(colId, rowInfo)
 	if err != nil {
 		return err

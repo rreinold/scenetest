@@ -1,21 +1,17 @@
-function publishTrigger(resp, sysKey, sysSec, userToken, msgClass, msgType) {
+function publishTrigger(req, resp, msgClass, msgType) {
     var msgInfo = {
         msgClass:msgClass,
         msgType:msgType
     };
-
-    var publishMessage = function() {
-        var messaging = ClearBlade.Messaging({}, function(){});
-        messaging.publish("/clearblade/internal/trigger", JSON.stringify(msgInfo));
-        log("PUBLISHED")
-    };
-
-    var fiddlestix = {
-        systemKey: sysKey,
-        systemSecret: sysSec,
-        userToken: userToken,
-        callback: publishMessage
-    };
-
-    ClearBlade.init(fiddlestix);
+    var yowza = {
+        steve: "This is steven",
+        email: req.userEmail,
+        systemKey: req.systemKey,
+        systemSecret: req.systemSecret,
+        userToken: req.userToken
+    }
+    //ClearBlade.init({request:req});
+    ClearBlade.init(yowza);
+    var messaging = ClearBlade.Messaging({}, function(){});
+    messaging.publish("/clearblade/internal/trigger", JSON.stringify(msgInfo));
 }
