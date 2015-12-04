@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"strconv"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -83,12 +84,16 @@ func doPrintHelp() string {
 	return "[\"print\", <arg>, ...]"
 }
 
+func incrNestingLevel() {
+	atomic.AddInt32(&nestingLevel, 1)
+}
+
 func decrNestingLevel() {
-	nestingLevel--
+	atomic.AddInt32(&nestingLevel, -1)
 }
 
 func doWhile(ctx map[string]interface{}, args []interface{}) error {
-	nestingLevel++
+	incrNestingLevel()
 	defer decrNestingLevel()
 	if len(args) != 4 {
 		return fmt.Errorf("Usage: [while, <var>, <op>, <val>, [<stmt>...]]")
@@ -178,7 +183,7 @@ func makeNum(val interface{}) int {
 }
 
 func repeat(ctx map[string]interface{}, args []interface{}) error {
-	nestingLevel++
+	incrNestingLevel()
 	defer decrNestingLevel()
 	if len(args) != 2 {
 		return fmt.Errorf("Usage: [repeat, <num>, [<stmt>...]]")

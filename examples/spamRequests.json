@@ -1,0 +1,16 @@
+{
+    "name": "Try to get the conveyor belt to drop requests",
+    "scenarios": [[ "scenario1", 2000]],
+    "sequencing": "Parallel",
+    "scenario1": {
+        "name": "Make api requests",
+        "steps": [
+            ["setUser", "foo@bar.com"],
+            ["repeat", 10,
+                [
+                    ["query", "DaCollection", [], [[["hair_color", "==", "red-neck"]]]]
+                ]
+            ]
+        ]
+    }
+}
