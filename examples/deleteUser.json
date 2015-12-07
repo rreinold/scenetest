@@ -1,0 +1,17 @@
+{
+    "name": "Just create a user",
+    "scenarios": [ ["Creator", 1] ],
+    "sequencing": "Parallel",
+    "Creator": {
+        "name": "I created everything",
+        "steps": [
+            ["setUser", "foo@bar.com"],
+            ["subscribeTriggers"],
+            ["createUser", "dead@man.com", "pow"],
+            ["set", "deadUserId", "@returnValue"],
+            ["waitTrigger", "User", "UserCreated", 300],
+            ["deleteUser", "@deadUserId"],
+            ["waitTrigger", "User", "UserDeleted", 300]
+        ]
+    }
+}

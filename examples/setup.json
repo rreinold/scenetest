@@ -130,6 +130,17 @@
                 "Authenticated": 1,
                 "Anonymous": 0
             }
+        },
+        {
+            "name": "userDeletedTrigger",
+            "code": "@js/userDeletedTrigger.js",
+            "dependencies": "TriggerLib,log",
+            "parameters": [],
+            "roles":{
+                "a": 1,
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
         }
     ],
     "codeLibraries": [
@@ -170,6 +181,13 @@
             "service_name": "userCreatedTrigger",
             "def_module": "User",
             "def_name": "UserCreated",
+            "key_value_pairs": {}
+        },
+        {
+            "name": "Deleted a user",
+            "service_name": "userDeletedTrigger",
+            "def_module": "User",
+            "def_name": "UserDeleted",
             "key_value_pairs": {}
         }
     ],

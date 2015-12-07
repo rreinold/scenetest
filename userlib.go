@@ -69,6 +69,7 @@ func createUser(ctx map[string]interface{}, args []interface{}) error {
 		return fmt.Errorf("Could not create user: %s", err.Error())
 	}
 	fmt.Printf("GOT NEW USER: %+v\n", newUser)
+	ctx["returnValue"] = newUser["user_id"]
 	return nil
 }
 
@@ -85,6 +86,18 @@ func updateUserHelp() string {
 }
 
 func deleteUser(ctx map[string]interface{}, args []interface{}) error {
+	devCli := ctx["adminClient"].(*cb.DevClient)
+	if len(args) != 1 {
+		return fmt.Errorf(createUserHelp())
+	}
+	if _, ok := args[0].(string); !ok {
+		return fmt.Errorf("First arg to deleteUser must be a string")
+	}
+	userId := args[0].(string)
+	sysKey := scriptVars["systemKey"].(string)
+	if err := devCli.DeleteUser(sysKey, userId); err != nil {
+		return fmt.Errorf("Could not delete user: %s", err.Error())
+	}
 	return nil
 }
 
