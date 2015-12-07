@@ -2,13 +2,16 @@ package main
 
 import (
 	"fmt"
+	cb "github.com/clearblade/Go-SDK"
 	"time"
 )
 
 var script map[string]interface{}
+var adminClient *cb.DevClient
 
 func executeTestScript(theScript map[string]interface{}) {
 	script = theScript
+	authDevForScriptRun()
 	sequencing := getVar("sequencing", script, "Parallel").(string)
 	scenarios := getVar("scenarios", script, []string{}).([]interface{})
 	if glbs, ok := script["globals"].(map[string]interface{}); ok {
@@ -20,6 +23,15 @@ func executeTestScript(theScript map[string]interface{}) {
 		runParallel(scenarios)
 	} else {
 		panic(fmt.Errorf("Bad sequencing: %s\n", sequencing))
+	}
+}
+
+func authDevForScriptRun() {
+	theDev := scriptVars["developer"].(map[string]interface{})
+	email, password := theDev["email"].(string), theDev["password"].(string)
+	adminClient = cb.NewDevClient(email, password)
+	if err := adminClient.Authenticate(); err != nil {
+		fatal("Could not authenticate developer: " + err.Error())
 	}
 }
 
@@ -70,6 +82,7 @@ func runOneScenario(name string, scenario map[string]interface{}, doneChan chan<
 
 	context := map[string]interface{}{}
 	context["scenario_name"] = name
+	context["adminClient"] = adminClient
 
 	steps := getVar("steps", scenario, [][]interface{}{}).([]interface{})
 

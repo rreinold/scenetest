@@ -8,6 +8,9 @@ import (
 
 func init() {
 	funcMap["setUser"] = &Statement{setUser, setUserHelp}
+	funcMap["createUser"] = &Statement{createUser, createUserHelp}
+	funcMap["updateUser"] = &Statement{updateUser, updateUserHelp}
+	funcMap["deleteUser"] = &Statement{deleteUser, deleteUserHelp}
 }
 
 func setUser(ctx map[string]interface{}, args []interface{}) error {
@@ -32,12 +35,6 @@ func setUser(ctx map[string]interface{}, args []interface{}) error {
 		return err
 	}
 
-	/*
-		triggerChan, err := userClient.Subscribe("/clearblade/internal/trigger", 0)
-		if err != nil {
-			return fmt.Errorf("Subscribe failed: %s", err.Error())
-		}
-	*/
 	ctx["userClient"] = userClient
 	if err := userClient.Publish("/who/am/i", []byte(fmt.Sprintf("%p", userClient.MQTTClient)), 2); err != nil {
 		return err
@@ -50,6 +47,49 @@ func setUser(ctx map[string]interface{}, args []interface{}) error {
 
 func setUserHelp() string {
 	return "setUser help not yet implemented"
+}
+
+func createUser(ctx map[string]interface{}, args []interface{}) error {
+	devCli := ctx["adminClient"].(*cb.DevClient)
+	if len(args) != 2 {
+		return fmt.Errorf(createUserHelp())
+	}
+	if _, ok := args[0].(string); !ok {
+		return fmt.Errorf("First arg to createUser must be a string")
+	}
+	if _, ok := args[1].(string); !ok {
+		return fmt.Errorf("Second arg to createUser must be a string")
+	}
+	email := args[0].(string)
+	password := args[1].(string)
+	sysKey := scriptVars["systemKey"].(string)
+	sysSec := scriptVars["systemSecret"].(string)
+	newUser, err := devCli.RegisterNewUser(email, password, sysKey, sysSec)
+	if err != nil {
+		return fmt.Errorf("Could not create user: %s", err.Error())
+	}
+	fmt.Printf("GOT NEW USER: %+v\n", newUser)
+	return nil
+}
+
+func createUserHelp() string {
+	return "createUser help not yet implemented"
+}
+
+func updateUser(ctx map[string]interface{}, args []interface{}) error {
+	return nil
+}
+
+func updateUserHelp() string {
+	return "updateUser help not yet implemented"
+}
+
+func deleteUser(ctx map[string]interface{}, args []interface{}) error {
+	return nil
+}
+
+func deleteUserHelp() string {
+	return "deleteUser help not yet implemented"
 }
 
 func getArg(args []interface{}, index int) interface{} {

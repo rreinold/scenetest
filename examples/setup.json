@@ -119,6 +119,17 @@
                 "Authenticated": 1,
                 "Anonymous": 0
             }
+        },
+        {
+            "name": "userCreatedTrigger",
+            "code": "@js/userCreatedTrigger.js",
+            "dependencies": "TriggerLib,log",
+            "parameters": [],
+            "roles":{
+                "a": 1,
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
         }
     ],
     "codeLibraries": [
@@ -153,6 +164,13 @@
             "key_value_pairs": {
                 "collectionName":"DuhCollection"
             }
+        },
+        {
+            "name": "Created a user",
+            "service_name": "userCreatedTrigger",
+            "def_module": "User",
+            "def_name": "UserCreated",
+            "key_value_pairs": {}
         }
     ],
     "timers": [

@@ -12,7 +12,6 @@ import (
 var (
 	devEmail    string
 	devPassword string
-	adminClient *cb.DevClient
 	sysKey      string
 	sysSec      string
 	setupState  map[string]interface{}
@@ -125,11 +124,17 @@ func setupDeveloper(dev map[string]interface{}) {
 			fatal(err.Error())
 		}
 	}
+	fmt.Printf("THE DEV IS: %+v\n", theDev)
 	if authErr := adminClient.Authenticate(); authErr != nil {
 		fatal(authErr.Error())
 	}
 	setupState["developer"] = theDev["user_id"]
 	setupState["adminClient"] = adminClient
+	scriptVars["developer"] = map[string]interface{}{
+		"userId":   theDev["user_id"],
+		"email":    devEmail,
+		"password": devPassword,
+	}
 }
 
 func createSystem(system map[string]interface{}) {
