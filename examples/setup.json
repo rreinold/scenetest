@@ -110,6 +110,17 @@
             }
         },
         {
+            "name": "HorribleService",
+            "code": "@js/HorribleService1.js",
+            "dependencies": "",
+            "parameters": [],
+            "roles":{
+                "a": 1,
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        },
+        {
             "name": "itemCreatedTrigger",
             "code": "@js/itemCreatedTrigger.js",
             "dependencies": "TriggerLib,log",

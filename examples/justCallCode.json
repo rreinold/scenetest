@@ -1,28 +1,15 @@
 {
     "name": "Muck with code",
-    "scenarios": [ ["Creator", 1], ["Caller", 1] ],
+    "scenarios": [ ["Caller", 10] ],
     "sequencing": "Parallel",
-    "Creator": {
-        "name": "Just creatin' and deletin'",
-        "steps": [
-            ["setUser", "foo@bar.com"],
-            ["createService", "HorribleService", "@HorribleService1.js", ["param1"]],
-            ["sync", "Created The Service", 2],
-            ["sync", "Finished", 2],
-            ["deleteService", "HorribleService"]
-        ]
-    },
     "Caller": {
         "name": "Just callin' some code",
         "steps": [
             ["setUser", "foo@bar.com"],
-            ["sync", "Created The Service", 2],
-            ["repeat", 50, [
+            ["repeat", 5000, [
                 ["call", "HorribleService", {}],
-                ["print", "@returnValue"],
-                ["sleep", 100] ]
-            ],
-            ["sync", "Finished", 2]
+                ["print", "@returnValue"] ]
+            ]
         ]
     }
 }

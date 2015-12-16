@@ -83,8 +83,12 @@ func main() {
 	}
 	if InfoFile != "Do Not Get Info" {
 		scriptVars = getJSON(InfoFile)
-		cb.CB_ADDR = scriptVars["platformUrl"].(string)
-		cb.CB_MSG_ADDR = scriptVars["messagingUrl"].(string)
+		if PlatformAddr == "undefined" {
+			cb.CB_ADDR = scriptVars["platformUrl"].(string)
+		}
+		if MsgAddr == "undefined" {
+			cb.CB_MSG_ADDR = scriptVars["messagingUrl"].(string)
+		}
 	}
 	if ScriptFile != "Do Not Run Script" {
 		executeTestScript(getJSON(ScriptFile))

@@ -1,44 +1,34 @@
 {
     "name": "Muck with code",
-    "scenarios": [ ["Creator", 1], ["Updater", 1], ["Caller", 1] ],
+    "scenarios": [ ["Updater", 1], ["Caller", 1] ],
     "sequencing": "Parallel",
-    "Creator": {
-        "name": "Just creatin' and deletin'",
-        "steps": [
-            ["setUser", "foo@bar.com"],
-            ["createService", "HorribleService", "@HorribleService1.js", ["param1"]],
-            ["sync", "Created The Service", 3],
-            ["sync", "Finished", 3],
-            ["deleteService", "HorribleService"]
-        ]
-    },
     "Updater": {
         "name": "Just update some code",
         "steps": [
             ["setUser", "foo@bar.com"],
-            ["sync", "Created The Service", 3],
+            ["sync", "Ready, Set, Go!", 2],
             ["repeat", 100, [
                 ["updateService", "HorribleService", "@HorribleService1.js", ["paramXXX"]],
                 ["sync", "IChangedIt", 2],
-                ["updateService", "HorribleService", "@HorribleService2.js", ["paramXXX"]],
+                ["updateService", "HorribleService", "@HorribleService2.js", ["paramYYY"]],
                 ["sync", "IChangedIt", 2],
-                ["updateService", "HorribleService", "@HorribleService3.js", ["paramXXX"]],
+                ["updateService", "HorribleService", "@HorribleService3.js", ["paramZZZ"]],
                 ["sync", "IChangedIt", 2] ]
             ],
-            ["sync", "Finished", 3]
+            ["sync", "Finished", 2]
         ]
     },
     "Caller": {
         "name": "Just callin' some code",
         "steps": [
             ["setUser", "foo@bar.com"],
-            ["sync", "Created The Service", 3],
+            ["sync", "Ready, Set, Go!", 2],
             ["repeat", 300, [
                 ["sync", "IChangedIt", 2],
                 ["call", "HorribleService", {}],
                 ["print", "@returnValue"] ]
             ],
-            ["sync", "Finished", 3]
+            ["sync", "Finished", 2]
         ]
     }
 }

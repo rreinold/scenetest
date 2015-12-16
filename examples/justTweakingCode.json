@@ -1,0 +1,16 @@
+{
+    "name": "Muck with code",
+    "scenarios": [ ["Updater", 1] ],
+    "sequencing": "Parallel",
+    "Updater": {
+        "name": "Just update some code",
+        "steps": [
+            ["setUser", "foo@bar.com"],
+            ["repeat", 1000, [
+                ["updateService", "HorribleService", "@HorribleService1.js", ["paramXXX"]],
+                ["updateService", "HorribleService", "@HorribleService2.js", ["paramYYY"]],
+                ["updateService", "HorribleService", "@HorribleService3.js", ["paramZZZ"]]]
+            ]
+        ]
+    }
+}
