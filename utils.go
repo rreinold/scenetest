@@ -26,6 +26,20 @@ func getVarOrFile(from map[string]interface{}, key string) string {
 	return val
 }
 
+func readFileFromEnvironment(filename string) (string, error) {
+	filename = strings.TrimPrefix(filename, "@")
+	thisSearchPath := []string{""}
+	if !strings.HasPrefix(filename, "/") {
+		thisSearchPath = FileSearchPath
+	}
+	for _, prefix := range thisSearchPath {
+		if bytes, err := ioutil.ReadFile(prefix + filename); err == nil {
+			return string(bytes), nil
+		}
+	}
+	return "", fmt.Errorf("File '%s' not found in environment", filename)
+}
+
 func saveSetupState(originalJson map[string]interface{}) {
 	marshalled, err := json.MarshalIndent(setupState, "", "    ")
 	if err != nil {
@@ -85,6 +99,10 @@ func valueOf(context map[string]interface{}, thing interface{}) interface{} {
 			if val, ok := context[varName]; ok {
 				return val
 			}
+			//  Var doesn't exist -- see if there's a file to read from...
+			if contents, err := readFileFromEnvironment(varName); err == nil {
+				return contents
+			}
 			myPrintf("DEAD __ CONTEXT: %+v\n", context)
 			fatal(fmt.Sprintf("Undefined variable: %s", varName))
 		}
@@ -104,4 +122,20 @@ func showHelp() {
 		stmt := funcMap[funcName]
 		myPrintf("%s\n", stmt.HelpFunc())
 	}
+}
+
+func setupSceneRoot() {
+	SceneRoot = os.Getenv(SceneTestEnvVar)
+	if SceneRoot == "" {
+		SceneRoot = "./"
+	}
+}
+
+func setupFileSearchPath() {
+	FileSearchPath = []string{}
+	if SceneRoot != "./" {
+		FileSearchPath = append(FileSearchPath, SceneRoot)
+	}
+	FileSearchPath = append(FileSearchPath, "./js/")
+	FileSearchPath = append(FileSearchPath, "./")
 }

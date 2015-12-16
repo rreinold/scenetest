@@ -16,15 +16,21 @@ type Statement struct {
 	HelpFunc func() string
 }
 
+const (
+	SceneTestEnvVar = "SCENETEST_PATH"
+)
+
 var (
-	MsgAddr      string
-	PlatformAddr string
-	ScriptFile   string
-	SetupFile    string
-	TeardownFile string
-	InfoFile     string
-	JustParse    bool
-	GetSomeHelp  bool
+	MsgAddr        string
+	PlatformAddr   string
+	ScriptFile     string
+	SetupFile      string
+	TeardownFile   string
+	InfoFile       string
+	JustParse      bool
+	GetSomeHelp    bool
+	SceneRoot      string
+	FileSearchPath []string
 )
 
 var (
@@ -59,6 +65,8 @@ func main() {
 	flag.Parse()
 	cb.CB_ADDR = PlatformAddr
 	cb.CB_MSG_ADDR = MsgAddr
+	setupSceneRoot()
+	setupFileSearchPath()
 	if GetSomeHelp {
 		showHelp()
 		return
