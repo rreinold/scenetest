@@ -1,12 +1,13 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
+	//"bytes"
+	"cbjson"
+	//"encoding/json"
 	"flag"
 	"fmt"
 	cb "github.com/clearblade/Go-SDK"
-	"io/ioutil"
+	//"io/ioutil"
 	"os"
 	"sync"
 )
@@ -99,19 +100,26 @@ func main() {
 }
 
 func getJSON(filename string) map[string]interface{} {
-	jsonStr, err := ioutil.ReadFile(filename)
+	theStuff, _, err := cbjson.GetJSONFile(filename)
 	if err != nil {
 		goodbye(err)
 	}
+	return theStuff
+	/*
+		jsonStr, err := ioutil.ReadFile(filename)
+		if err != nil {
+			goodbye(err)
+		}
 
-	parsed := map[string]interface{}{}
-	err = json.Unmarshal(jsonStr, &parsed)
-	if err != nil {
-		jsonErr := err.(*json.SyntaxError)
-		goodbye(fmt.Errorf("%s: (%s, line %d)\n", err.Error(), filename,
-			bytes.Count(jsonStr[:jsonErr.Offset], []byte("\n"))+1))
-	}
-	return parsed
+		parsed := map[string]interface{}{}
+		err = json.Unmarshal(jsonStr, &parsed)
+		if err != nil {
+			jsonErr := err.(*json.SyntaxError)
+			goodbye(fmt.Errorf("%s: (%s, line %d)\n", err.Error(), filename,
+				bytes.Count(jsonStr[:jsonErr.Offset], []byte("\n"))+1))
+		}
+		return parsed
+	*/
 }
 
 func goodbye(err error) {

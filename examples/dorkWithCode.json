@@ -2,6 +2,9 @@
     "name": "Muck with code",
     "scenarios": [ ["Updater", 1], ["Caller", 1] ],
     "sequencing": "Parallel",
+
+    //  This whole thing is database bound. Both subprocesses wait until the db
+    //  is updated. It's kind of slow. This process sets three different code services
     "Updater": {
         "name": "Just update some code",
         "steps": [
@@ -18,6 +21,9 @@
             ["sync", "Finished", 2]
         ]
     },
+
+
+    //  Again. slow. Wait for an update, run the service, and print the output.
     "Caller": {
         "name": "Just callin' some code",
         "steps": [
