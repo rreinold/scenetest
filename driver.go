@@ -107,9 +107,9 @@ func runOneStep(context map[string]interface{}, step []interface{}) {
 		err := theStmt.RunFunc(context, args)
 		timeStr := time.Now().Format(time.UnixDate)
 		if err == nil {
-			myPrintf("%s(%s):%s succeeded!\n", myName, timeStr, method)
+			myPrintf("%s:\t%s:\t%s succeeded\n", timeStr, myName, method)
 		} else {
-			myPrintf("%s(%s):%s failed!: %s\n", myName, timeStr, method, err.Error())
+			myPrintf("%s(%s):%s failed: %s\n", myName, timeStr, method, err.Error())
 			fatal("Exiting because of error")
 		}
 	} else {

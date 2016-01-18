@@ -29,10 +29,12 @@ func subscribeTriggers(ctx map[string]interface{}, args []interface{}) error {
 		return fmt.Errorf("subscribeTriggers takes no arguments")
 	}
 	userClient := ctx["userClient"].(*cb.UserClient)
+	myPrintf("Doing the subscribe\n")
 	triggerChan, err := userClient.Subscribe("/clearblade/internal/trigger", 0)
 	if err != nil {
 		return err
 	}
+	myPrintf("Done subscribing\n")
 	ctx["triggerChannel"] = triggerChan
 	return nil
 }
