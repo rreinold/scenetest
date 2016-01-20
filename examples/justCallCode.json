@@ -1,4 +1,7 @@
 {
+    // All we're doing here is calling a service and printing
+    // the result. Very simple but powerful when testing in 
+    // a cluster configured in several ways
     "name": "Muck with code",
     "scenarios": [ ["Caller", 10] ],
     "sequencing": "Parallel",

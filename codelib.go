@@ -22,8 +22,8 @@ func call(context map[string]interface{}, args []interface{}) error {
 	if _, ok := args[1].(map[string]interface{}); !ok {
 		return fmt.Errorf("Service params must be a map")
 	}
-	svcName := valueOf(context, args[0]).(string)
-	params := valueOf(context, args[1]).(map[string]interface{})
+	svcName := args[0].(string)
+	params := args[1].(map[string]interface{})
 	sysKey := scriptVars["systemKey"].(string)
 	userClient := context["userClient"].(*cb.UserClient)
 	resp, err := userClient.CallService(sysKey, svcName, params)
