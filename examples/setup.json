@@ -95,6 +95,24 @@
                     "count": 10
                 }
             ]
+        },
+        {
+            "name": "YaddaYadda",
+            "columns": {
+                "yickety": "string",
+                "yak": "string"
+            },
+            "roles": {
+                "Authenticated": 15,
+                "Anonymous": 1,
+                "a": 15
+            },
+            "items": [
+                {
+                    "yickety": "talk",
+                    "yak": "more talk"
+                }
+            ]
         }
     ],
     "codeServices": [

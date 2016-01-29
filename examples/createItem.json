@@ -1,18 +1,18 @@
 {
-    "name": "Name of this test run",
-    "scenarios": [ "scenario1", "scenario1", "scenario1", "scenario1", "scenario1" ],
+    "name": "Create and Delete Items",
+    "scenarios": [ ["scenario1", 10] ],
     "sequencing": "Parallel",
     "scenario1": {
         "name": "Just do stuff",
         "steps": [
             ["setUser", "foo@bar.com"],
-            ["repeat", 1000,
+            ["repeat", 300,
                 [
-                    ["createItem", "DaCollection", {"name": "bubba", "age": 6, "hair_color":"red-neck"}],
+                    ["createItem", "YaddaYadda", {"yickety": "blabber", "yak": "blubber"}],
                     ["set", "newItemId", "@returnValue"],
-                    ["query", "DaCollection", [], [[["hair_color", "==", "red-neck"]]]],
-                    ["deleteItem", "DaCollection", "@newItemId"],
-                    ["query", "DaCollection", [], [[["hair_color", "==", "red-neck"]]]]
+                    ["query", "YaddaYadda", [], [[["yickety", "==", "blabber"]]]],
+                    ["deleteItem", "YaddaYadda", "@newItemId"],
+                    ["query", "YaddaYadda", [], [[["yak", "==", "blubber"]]]]
                 ]
             ]
         ]
