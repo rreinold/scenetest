@@ -12,6 +12,7 @@
                     ["set", "newItemId", "@returnValue"],
                     ["query", "YaddaYadda", [], [[["yickety", "==", "blabber"]]]],
                     ["deleteItem", "YaddaYadda", "@newItemId"],
+                    ["call", "HorribleService", {}],
                     ["query", "YaddaYadda", [], [[["yak", "==", "blubber"]]]]
                 ]
             ]
