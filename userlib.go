@@ -11,6 +11,8 @@ func init() {
 	funcMap["createUser"] = &Statement{createUser, createUserHelp}
 	funcMap["updateUser"] = &Statement{updateUser, updateUserHelp}
 	funcMap["deleteUser"] = &Statement{deleteUser, deleteUserHelp}
+	funcMap["createUserColumn"] = &Statement{createUserColumn, createUserColumnHelp}
+	funcMap["getUserColumns"] = &Statement{getUserColumns, getUserColumnsHelp}
 }
 
 func setUser(ctx map[string]interface{}, args []interface{}) error {
@@ -103,6 +105,49 @@ func deleteUser(ctx map[string]interface{}, args []interface{}) error {
 
 func deleteUserHelp() string {
 	return "deleteUser help not yet implemented"
+}
+
+func createUserColumn(ctx map[string]interface{}, args []interface{}) error {
+	devCli := ctx["adminClient"].(*cb.DevClient)
+	if len(args) != 2 {
+		return fmt.Errorf(createUserHelp())
+	}
+	if _, ok := args[0].(string); !ok {
+		return fmt.Errorf("First arg to createUserColumn must be a string column name")
+	}
+	if _, ok := args[1].(string); !ok {
+		return fmt.Errorf("Second arg to createUserColumn must be a string column type")
+	}
+	colName := args[0].(string)
+	colType := args[1].(string)
+	sysKey := scriptVars["systemKey"].(string)
+	if err := devCli.CreateUserColumn(sysKey, colName, colType); err != nil {
+		return fmt.Errorf("Could not create users table column: %s", err.Error())
+	}
+	return nil
+}
+
+func createUserColumnHelp() string {
+	return "[\"createUserColumn\", <colName>, <colType>]"
+}
+
+func getUserColumns(ctx map[string]interface{}, args []interface{}) error {
+	devCli := ctx["adminClient"].(*cb.DevClient)
+	if len(args) != 0 {
+		return fmt.Errorf(createUserHelp())
+	}
+	sysKey := scriptVars["systemKey"].(string)
+	cols, err := devCli.GetUserColumns(sysKey)
+	if err != nil {
+		return fmt.Errorf("Could not get users table columns: %s", err.Error())
+	}
+	fmt.Printf("COLUMNS: %+v\n", cols)
+	ctx["returnValue"] = cols
+	return nil
+}
+
+func getUserColumnsHelp() string {
+	return "[\"getUserColumns\"]"
 }
 
 func getArg(args []interface{}, index int) interface{} {
