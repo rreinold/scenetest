@@ -6,14 +6,14 @@
         "name": "Just do stuff",
         "steps": [
             ["setUser", "foo@bar.com"],
-            ["repeat", 300,
+            ["repeat", 500,
                 [
                     ["createItem", "YaddaYadda", {"yickety": "blabber", "yak": "blubber"}],
                     ["set", "newItemId", "@returnValue"],
-                    ["query", "YaddaYadda", [], [[["yickety", "==", "blabber"]]]],
+                    ["query", "YaddaYadda", [], [[["yickety", "=", "blabber"]]]],
                     ["deleteItem", "YaddaYadda", "@newItemId"],
                     ["call", "HorribleService", {}],
-                    ["query", "YaddaYadda", [], [[["yak", "==", "blubber"]]]]
+                    ["query", "YaddaYadda", [], [[["yak", "=", "blubber"]]]]
                 ]
             ]
         ]
