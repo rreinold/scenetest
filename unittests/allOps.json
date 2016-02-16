@@ -1,0 +1,75 @@
+//
+// Simple test to try all the non-arithmetic operators inside if-else stmts and for stmts
+//
+{
+    "name": "test if statement",
+    "scenarios": [ ["just try", 1] ],
+    "sequencing": "Parallel",
+    "just try": {
+        "name": "Make sure if statement works",
+        "steps": [
+            ["set", "foo", 3],
+            ["set", "bar", 4],
+            ["set", "jimmy", "sub sandwich"],
+            ["set", "johns", "roast beef"],
+            ["print", "|| of 2 !="],
+            ["if else", ["||", ["!=", "@foo", 3], ["!=", "@bar", 4]], [
+                ["print", "FAILURE"]
+            ],[
+                ["print", "SUCCESS"]
+            ]],
+            ["if else", ["||", ["!=", "@foo", 22], ["!=", "@bar", 4]], [
+                ["print", "SUCCESS"]
+            ],[
+                ["print", "FAILURE"]
+            ]],
+            ["if else", ["&&", ["==", "@foo", 3], ["==", "@bar", 5]], [
+                ["print", "FAILURE"]
+            ],[
+                ["print", "SUCCESS"]
+            ]],
+            ["if else", ["||", [">=", "@foo", 22], ["<=", "@bar", 22]], [
+                ["print", "SUCCESS"]
+            ],[
+                ["print", "FAILURE"]
+            ]],
+            ["if else", ["<", "@bar", "@foo"], [
+                ["print", "FAILURE"]
+            ],[
+                ["print", "SUCCESS"]
+            ]],
+            ["if else", ["()", true], [
+                ["print", "SUCCESS"]
+            ],[
+                ["print", "FAILURE"]
+            ]],
+            ["if else", ["!", true], [
+                ["print", "FAILURE"]
+            ],[
+                ["print", "SUCCESS"]
+            ]],
+            ["if else", ["&&", "foo", "bar"], [
+                ["print", "SUCCESS"]
+            ],[
+                ["print", "FAILURE"]
+            ]],
+            ["if-else", ["&&", "foo", ""], [
+                ["print", "FAILURE"]
+            ],[
+                ["print", "SUCCESS"]
+            ]],
+            ["print", "|| true"],
+            ["if-else", ["||", "foo", ""], [
+                ["print", "SUCCESS"]
+            ],[
+                ["print", "FAILURE"]
+            ]],
+            ["print", "|| false"],
+            ["if-else", ["||", "", ""], [
+                ["print", "FAILURE"]
+            ],[
+                ["print", "SUCCESS"]
+            ]]
+        ]
+    }
+}

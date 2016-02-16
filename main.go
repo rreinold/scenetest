@@ -33,6 +33,7 @@ var (
 	SceneRoot      string
 	FileSearchPath []string
 	Login          bool
+	ShutUp         bool
 )
 
 var (
@@ -53,6 +54,7 @@ func init() {
 	flag.BoolVar(&GetSomeHelp, "help", false, "Print out a help string for all statements")
 	flag.BoolVar(&JustParse, "parse", false, "Just parse everything and don't execute")
 	flag.BoolVar(&Login, "login", true, "login to the clearblade system as specified by cmd line args to TestSystemInfo.json")
+	flag.BoolVar(&ShutUp, "silent", false, "Shut Up!j")
 	scriptVars["roles"] = map[string]interface{}{}
 	scriptVars["users"] = map[string]interface{}{}
 	scriptVars["collections"] = map[string]interface{}{}

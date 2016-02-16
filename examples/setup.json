@@ -150,6 +150,17 @@
             }
         },
         {
+            "name": "handlePublish",
+            "code": "@js/handlePublish.js",
+            "dependencies": "JustPublish,TriggerLib,log",
+            "parameters": [],
+            "roles":{
+                "a": 1,
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        },
+        {
             "name": "userCreatedTrigger",
             "code": "@js/userCreatedTrigger.js",
             "dependencies": "TriggerLib,log",
@@ -183,6 +194,12 @@
             "name": "TriggerLib",
             "code": "@js/triggerLib.js",
             "description": "publishes trigger event over mqtt",
+            "dependencies":"clearblade,log"
+        },
+        {
+            "name": "JustPublish",
+            "code": "@js/justPublish.js",
+            "description": "publishes normal message over mqtt",
             "dependencies":"clearblade,log"
         }
     ],

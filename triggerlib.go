@@ -30,11 +30,31 @@ func (ct *createTrigger) help() string {
 }
 
 func (ct *createTimer) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
-	return nil, nil
+	if len(args) != 1 {
+		return nil, fmt.Errorf("Wrong number of args to create timer: %d", len(args))
+	}
+	timerInput, ok := args[0].(map[string]interface{})
+	timerName := timerInput["name"].(string)
+	delete(timerInput, timerName)
+	if !ok {
+		return nil, fmt.Errorf("Argument to createTimer must be a map of attributes")
+	}
+	sysKey := scriptVars["systemKey"].(string)
+	devClient := ctx["adminClient"].(*cb.DevClient)
+	startTime := timerInput["start_time"].(string)
+	if startTime == "Now" {
+		startTime = time.Now().Format(time.RFC3339)
+	}
+	timerInput["start_time"] = startTime
+	newTimer, err := devClient.CreateTimer(sysKey, timerName, timerInput)
+	if err != nil {
+		return nil, err
+	}
+	return newTimer, nil
 }
 
 func (ct *createTimer) help() string {
-	return "createTimer help not yet implemented"
+	return "[\"createTimer\", {<timer meta>}]"
 }
 
 func (st *subscribeTriggers) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {

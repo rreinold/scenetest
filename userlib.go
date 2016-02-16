@@ -34,7 +34,6 @@ func (s *setUserStmt) run(ctx map[string]interface{}, args []interface{}) (inter
 	}
 
 	sess, _ := token.Token(userClient.UserToken).Uuid()
-	fmt.Printf("AUTHENTICATED SESSION: %s\n", sess)
 
 	// Now, might as well set up mqtt
 	if err := userClient.InitializeMQTT("", "", 60); err != nil {

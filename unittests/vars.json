@@ -1,0 +1,14 @@
+{
+    "name": "test if statement",
+    "scenarios": [ ["v is for var", 1] ],
+    "sequencing": "Parallel",
+    "vars": {
+        "foo": "Hello World!"
+    },
+    "v is for var": {
+        "name": "Make sure vars works",
+        "steps": [
+            ["print", "@foo"]
+        ]
+    }
+}

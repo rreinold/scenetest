@@ -80,12 +80,24 @@ func runParallel(scenarios []interface{}) {
 	}
 }
 
+func putVarsInContext(context map[string]interface{}) map[string]interface{} {
+	vars, ok := script["vars"]
+	if !ok {
+		return context
+	}
+	for key, val := range vars.(map[string]interface{}) {
+		context[key] = val
+	}
+	return context
+}
+
 func runOneScenario(name string, scenario map[string]interface{}, doneChan chan<- bool) {
 
 	context := map[string]interface{}{}
 	context["scenario_name"] = name
 	context["adminClient"] = adminClient
 	context["__nestingLevel"] = int(0)
+	context = putVarsInContext(context)
 
 	steps := getVar("steps", scenario, [][]interface{}{}).([]interface{})
 
@@ -119,7 +131,9 @@ func runOneStep(context map[string]interface{}, step []interface{}) (interface{}
 		timeStr := time.Now().Format(time.UnixDate)
 		if err == nil {
 			context["returnValue"] = rval
-			myNestingPrintf(context, "%s:\t%s:\t%s succeeded\n", timeStr, myName, method)
+			if !ShutUp {
+				myNestingPrintf(context, "%s:\t%s:\t%s succeeded\n", timeStr, myName, method)
+			}
 			return rval, nil
 		} else {
 			myNestingPrintf(context, "%s(%s):%s failed: %s\n", myName, timeStr, method, err.Error())

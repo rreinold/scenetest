@@ -11,7 +11,7 @@
     //
 
     "name": "Name of this test run",
-    "scenarios": [ ["Creator", 1], ["Create The Timer", 1] ],
+    "scenarios": [ ["Trigger Watcher", 1], ["Create The Timer", 1], ["Subscriber", 1] ],
     "sequencing": "Parallel",
 
     //  These vars are available to all scenarios by using the "@varname" syntax.
@@ -21,8 +21,14 @@
         //
         // this is the thing that kicks off our Rube Goldberg machine.
         //
+        "iterations": 101,
         "uberTimer": {
-            "name": "Heartbeat Timer"
+            "name": "Heartbeat Timer",
+            "description": "Publishes to /foo/bar",
+            "start_time": "Now",
+            "repeats": 100,
+            "frequency": 1,
+            "service_name": "handlePublish"
         }
 
     },
@@ -32,22 +38,39 @@
     "Create The Timer": {
         "name": "Get things going",
         "steps": [
-            ["createTimer", "@uberTimer"],
-            ["sync", "Heartbeat Timer Created", 2]
+            ["setUser", "foo@bar.com"],
+            ["sync", "Ready For Timer", 3],
+            ["createTimer", "@uberTimer"]
         ]
     },
 
 
-    "Creator": {
-        "name": "Just do stuff",
+    //
+    //  Watch for the publish message send by the code service for the timer (huh?
+    //
+    "Trigger Watcher": {
+        "name": "wait for triggers",
         "steps": [
-            ["setUser", "foo@bar.com"],
+            ["setUser", "bar@bar.com"],
             ["subscribeTriggers"],
-            ["sync", "all subscribed", 1],
-            ["repeat", 1, [
-                ["createItem", "DuhCollection", {"name":"Fred","address":"Homeless"}],
-                ["repeat", 1, [ ["waitTrigger", "Data", "ItemCreated", 300] ] ],
-                ["call", "example", {}] ]
+            ["sync", "Ready For Timer", 3],
+            ["repeat", "@iterations", [
+                ["waitTrigger", "Messaging", "Publish", 300]]
+            ]
+        ]
+    },
+
+    //
+    //  That timer service also publishes a message. Subscribe to it here
+    //
+    "Subscriber": {
+        "name": "listen for messages",
+        "steps": [
+            ["setUser", "bar@bar.com"],
+            ["subscribe", "/timer/popped", 1],
+            ["sync", "Ready For Timer", 3],
+            ["repeat", "@iterations", [
+                ["waitMessage", "/timer/popped", 300]]
             ]
         ]
     }
