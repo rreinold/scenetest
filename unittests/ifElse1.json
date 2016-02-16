@@ -1,0 +1,16 @@
+{
+    "name": "test if statement",
+    "scenarios": [ ["just try", 1] ],
+    "sequencing": "Parallel",
+    "just try": {
+        "name": "Make sure if statement works",
+        "steps": [
+            ["set", "foo", 3],
+            ["if else", ["&&", true, false], [
+                ["print", "let the truth be known"]
+            ], [
+                ["print", "evil imposter"]]
+            ]
+        ]
+    }
+}

@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"reflect"
-	"sort"
+	//"sort"
 	"strings"
 )
 
@@ -111,17 +111,19 @@ func valueOf(context map[string]interface{}, thing interface{}) interface{} {
 }
 
 func showHelp() {
-	keys := make([]string, len(funcMap))
-	i := 0
-	for k := range funcMap {
-		keys[i] = k
-		i += 1
-	}
-	sort.Strings(keys)
-	for _, funcName := range keys {
-		stmt := funcMap[funcName]
-		myPrintf("%s\n", stmt.HelpFunc())
-	}
+	/*
+		keys := make([]string, len(funcMap))
+		i := 0
+		for k := range funcMap {
+			keys[i] = k
+			i += 1
+		}
+		sort.Strings(keys)
+		for _, funcName := range keys {
+			stmt := funcMap[funcName]
+			myPrintf("%s\n", stmt.HelpFunc())
+		}
+	*/
 }
 
 func setupSceneRoot() {
@@ -138,4 +140,12 @@ func setupFileSearchPath() {
 	}
 	FileSearchPath = append(FileSearchPath, "./js/")
 	FileSearchPath = append(FileSearchPath, "./")
+}
+
+func incrNestingLevel(ctx map[string]interface{}) {
+	ctx["__nestingLevel"] = ctx["__nestingLevel"].(int) + 1
+}
+
+func decrNestingLevel(ctx map[string]interface{}) {
+	ctx["__nestingLevel"] = ctx["__nestingLevel"].(int) - 1
 }

@@ -5,7 +5,6 @@ import (
 	"reflect"
 	"strconv"
 	"sync"
-	"sync/atomic"
 	"time"
 )
 
@@ -17,23 +16,42 @@ type SyncStuff struct {
 var syncMap = map[string]*SyncStuff{}
 var syncLock *sync.Mutex
 
+type sleepStmt struct{}
+type repeatStmt struct{}
+type whileStmt struct{}
+type ifStmt struct{}
+type ifElseStmt struct{}
+type printStmt struct{}
+type setStmt struct{}
+type setGlobalStmt struct{}
+type incrGlobalStmt struct{}
+type decrGlobalStmt struct{}
+type assertStmt struct{}
+type syncStmt struct{}
+type failStmt struct{}
+
 func init() {
-	funcMap["sleep"] = &Statement{sleep, sleepHelp}
-	funcMap["repeat"] = &Statement{repeat, doRepeatHelp}
-	funcMap["while"] = &Statement{doWhile, doWhileHelp}
-	funcMap["print"] = &Statement{doPrint, doPrintHelp}
-	funcMap["set"] = &Statement{doSet, doSetHelp}
-	funcMap["setGlobal"] = &Statement{doSetGlobal, doSetGlobalHelp}
-	funcMap["incrGlobal"] = &Statement{incrGlobal, incrGlobalHelp}
-	funcMap["decrGlobal"] = &Statement{decrGlobal, decrGlobalHelp}
-	funcMap["assert"] = &Statement{doAssert, doAssertHelp}
-	funcMap["sync"] = &Statement{doSync, doSyncHelp}
+	funcMap["sleep"] = &sleepStmt{}
+	funcMap["repeat"] = &repeatStmt{}
+	funcMap["while"] = &whileStmt{}
+	funcMap["if"] = &ifStmt{}
+	funcMap["if-else"] = &ifElseStmt{}
+	funcMap["ifelse"] = &ifElseStmt{}
+	funcMap["if else"] = &ifElseStmt{}
+	funcMap["print"] = &printStmt{}
+	funcMap["set"] = &setStmt{}
+	funcMap["setGlobal"] = &setGlobalStmt{}
+	funcMap["incrGlobal"] = &incrGlobalStmt{}
+	funcMap["decrGlobal"] = &decrGlobalStmt{}
+	funcMap["assert"] = &assertStmt{}
+	funcMap["sync"] = &syncStmt{}
+	funcMap["fail"] = &failStmt{}
 	syncLock = new(sync.Mutex)
 }
 
-func doSync(ctx map[string]interface{}, args []interface{}) error {
+func (s *syncStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
 	if len(args) != 2 {
-		return fmt.Errorf("Usage: %s", doSyncHelp())
+		return nil, fmt.Errorf("Usage: %s", s.help())
 	}
 	syncKey := args[0].(string)
 	syncCount := int(args[1].(float64))
@@ -52,24 +70,24 @@ func doSync(ctx map[string]interface{}, args []interface{}) error {
 	}
 	syncLock.Unlock()
 	<-mySyncStuff.c
-	return nil
+	return nil, nil
 }
 
-func doSyncHelp() string {
+func (s *syncStmt) help() string {
 	return "[\"sync\", <lockName>, count]"
 }
 
-func sleep(ctx map[string]interface{}, args []interface{}) error {
+func (s *sleepStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
 	secs := time.Duration(getArg(args, 0).(float64))
 	time.Sleep(secs * time.Millisecond)
-	return nil
+	return nil, nil
 }
 
-func sleepHelp() string {
+func (s *sleepStmt) help() string {
 	return "[\"sleep\", <milliseconds>]"
 }
 
-func doPrint(ctx map[string]interface{}, args []interface{}) error {
+func (p *printStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
 	for idx, arg := range args {
 		if idx > 0 {
 			myPrintf(" ")
@@ -77,35 +95,27 @@ func doPrint(ctx map[string]interface{}, args []interface{}) error {
 		myPrintf("%+v", valueOf(ctx, arg))
 	}
 	fmt.Println("")
-	return nil
+	return nil, nil
 }
 
-func doPrintHelp() string {
+func (p *printStmt) help() string {
 	return "[\"print\", <arg>, ...]"
 }
 
-func incrNestingLevel() {
-	atomic.AddInt32(&nestingLevel, 1)
-}
-
-func decrNestingLevel() {
-	atomic.AddInt32(&nestingLevel, -1)
-}
-
-func doWhile(ctx map[string]interface{}, args []interface{}) error {
-	incrNestingLevel()
-	defer decrNestingLevel()
+func (w *whileStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	incrNestingLevel(ctx)
+	defer decrNestingLevel(ctx)
 	if len(args) != 4 {
-		return fmt.Errorf("Usage: [while, <var>, <op>, <val>, [<stmt>...]]")
+		return nil, fmt.Errorf("Usage: [while, <var>, <op>, <val>, [<stmt>...]]")
 	}
 	if _, ok := args[0].(string); !ok {
-		return fmt.Errorf("First arg must be a variable name")
+		return nil, fmt.Errorf("First arg must be a variable name")
 	}
 	if _, ok := args[1].(string); !ok {
-		return fmt.Errorf("Second arg must be a string value")
+		return nil, fmt.Errorf("Second arg must be a string value")
 	}
 	if _, ok := args[3].([]interface{}); !ok {
-		return fmt.Errorf("While statements must be an array")
+		return nil, fmt.Errorf("While statements must be an array")
 	}
 	theVar := args[0].(string)
 	theOp := args[1].(string)
@@ -121,10 +131,12 @@ func doWhile(ctx map[string]interface{}, args []interface{}) error {
 		iterCount++
 		myPrintf("While: iteration %d\n", iterCount)
 		for _, stmt := range theStmts {
-			runOneStep(ctx, stmt.([]interface{}))
+			if _, err := runOneStep(ctx, stmt.([]interface{})); err != nil {
+				return nil, err
+			}
 		}
 	}
-	return nil
+	return nil, nil
 }
 
 func evaluateExpression(op string, val1, val2 interface{}) bool {
@@ -182,17 +194,17 @@ func makeNum(val interface{}) int {
 	return -1 // Not reached
 }
 
-func repeat(ctx map[string]interface{}, args []interface{}) error {
-	incrNestingLevel()
-	defer decrNestingLevel()
+func (r *repeatStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	incrNestingLevel(ctx)
+	defer decrNestingLevel(ctx)
 	if len(args) != 2 {
-		return fmt.Errorf("Usage: [repeat, <num>, [<stmt>...]]")
+		return nil, fmt.Errorf("Usage: [repeat, <num>, [<stmt>...]]")
 	}
 	if _, ok := valueOf(ctx, args[0]).(float64); !ok {
-		return fmt.Errorf("Repeat count must be a number")
+		return nil, fmt.Errorf("Repeat count must be a number")
 	}
 	if _, ok := valueOf(ctx, args[1]).([]interface{}); !ok {
-		return fmt.Errorf("Repeat statements must be an array")
+		return nil, fmt.Errorf("Repeat statements must be an array")
 	}
 	stmts := valueOf(ctx, args[1]).([]interface{})
 	iterCount := int(0)
@@ -200,31 +212,96 @@ func repeat(ctx map[string]interface{}, args []interface{}) error {
 		iterCount++
 		myPrintf("Repeat: iteration %d\n", iterCount)
 		for _, stmt := range stmts {
-			runOneStep(ctx, stmt.([]interface{}))
+			if _, err := runOneStep(ctx, stmt.([]interface{})); err != nil {
+				return nil, err
+			}
 		}
 	}
-	return nil
+	return nil, nil
 }
 
-func doRepeatHelp() string {
+func (r *repeatStmt) help() string {
 	return "[\"repeat\", <count>, [<statement>, ...]]"
 }
+func (i *ifStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	if len(args) != 2 {
+		return nil, fmt.Errorf("if statement: wrong number of args: %s", i.help())
+	}
+	condition := args[0].([]interface{})
+	stmtList := args[1].([]interface{})
 
-func doWhileHelp() string {
+	// eval the condition expression and return if error or false
+	res, err := evalExprStmt(ctx, condition)
+	if err != nil {
+		return nil, err
+	}
+	if res == false {
+		return nil, nil
+	}
+
+	// The condition returned true. Execute the list of statements.
+	for _, stmt := range stmtList {
+		_, err := runOneStep(ctx, stmt.([]interface{}))
+		if err != nil {
+			return nil, err
+		}
+	}
+	return nil, nil
+}
+
+func (i *ifStmt) help() string {
+	return "[\"if\" [<exprStnt>], [<stmt>, <stmt>...]]"
+}
+
+func (i *ifElseStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	if len(args) != 3 {
+		return nil, fmt.Errorf("if statement: wrong number of args: %s", i.help())
+	}
+	condition := args[0].([]interface{})
+	ifList := args[1].([]interface{})
+	elseList := args[2].([]interface{})
+
+	// eval the condition expression and return if error or false
+	res, err := evalExprStmt(ctx, condition)
+	if err != nil {
+		return nil, err
+	}
+	var stmtList []interface{}
+	if res {
+		stmtList = ifList
+	} else {
+		stmtList = elseList
+	}
+
+	// The condition returned true. Execute the list of statements.
+	for _, stmt := range stmtList {
+		_, err := runOneStep(ctx, stmt.([]interface{}))
+		if err != nil {
+			return nil, err
+		}
+	}
+	return nil, nil
+}
+
+func (i *ifElseStmt) help() string {
+	return "[\"if else\" [<exprStnt>], [<if-stmt>, <if stmt>...], [<else-stmt>, <else-stmt>...]"
+}
+
+func (w *whileStmt) help() string {
 	return "[\"while\", <varName>, <varVal>, [<statement>, ...]]"
 }
 
-func doSet(ctx map[string]interface{}, args []interface{}) error {
+func (s *setStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
 	return doTheSet(ctx, args, false)
 }
 
-func doSetGlobal(ctx map[string]interface{}, args []interface{}) error {
+func (s *setGlobalStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
 	return doTheSet(ctx, args, true)
 }
 
-func doTheSet(ctx map[string]interface{}, args []interface{}, isGlobal bool) error {
+func doTheSet(ctx map[string]interface{}, args []interface{}, isGlobal bool) (interface{}, error) {
 	if err := argCheck(args, 2, "", nil); err != nil {
-		return fmt.Errorf("Call to set failed: %s", err.Error())
+		return nil, fmt.Errorf("Call to set failed: %s", err.Error())
 	}
 	varName := valueOf(ctx, args[0]).(string)
 	value := valueOf(ctx, args[1])
@@ -233,62 +310,79 @@ func doTheSet(ctx map[string]interface{}, args []interface{}, isGlobal bool) err
 	} else {
 		ctx[varName] = value
 	}
-	ctx["returnValue"] = value
-	return nil
+	return value, nil
 }
 
-func incrGlobal(ctx map[string]interface{}, args []interface{}) error {
+func (i *incrGlobalStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
 	weInTheHouse()
 	defer weOuttaTheHouse()
 	if err := argCheck(args, 1, ""); err != nil {
-		return fmt.Errorf("Call to incrGlobal failed: %s", err.Error())
+		return nil, fmt.Errorf("Call to incrGlobal failed: %s", err.Error())
 	}
 	varName := args[0].(string)
 	setGlobal(varName, makeNum(getGlobal(varName))+1)
-	return nil
+	return nil, nil
 }
 
-func incrGlobalHelp() string {
+func (i *incrGlobalStmt) help() string {
 	return "[\"incrGlobal\", <varName>]"
 }
 
-func decrGlobal(ctx map[string]interface{}, args []interface{}) error {
+func (d *decrGlobalStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
 	weInTheHouse()
 	defer weOuttaTheHouse()
 	if err := argCheck(args, 1, ""); err != nil {
-		return fmt.Errorf("Call to decrGlobal failed: %s", err.Error())
+		return nil, fmt.Errorf("Call to decrGlobal failed: %s", err.Error())
 	}
 	varName := args[0].(string)
 	setGlobal(varName, makeNum(getGlobal(varName))-1)
-	return nil
+	return nil, nil
 }
 
-func decrGlobalHelp() string {
+func (d *decrGlobalStmt) help() string {
 	return "[\"decrGlobal\", <varName>]"
 }
 
-func doSetHelp() string {
+func (s *setStmt) help() string {
 	return "[\"set\", \"<varName>\", <value> ]"
 }
 
-func doSetGlobalHelp() string {
+func (s *setGlobalStmt) help() string {
 	return "[\"setGlobal\", \"<varName>\", <value> ]"
 }
 
-func doAssert(ctx map[string]interface{}, args []interface{}) error {
+func (a *assertStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
 	if len(args) != 2 {
-		return fmt.Errorf("Usage: [assert, <val1>, <val2> ]")
+		return nil, fmt.Errorf("Usage: [assert, <val1>, <val2> ]")
 	}
 	result := reflect.DeepEqual(args[0], args[1])
 	ctx["returnValue"] = result
 	if !result {
-		return fmt.Errorf("Assertion failed: %+v and %+v are not equal", args[0], args[1])
+		return nil, fmt.Errorf("Assertion failed: %+v and %+v are not equal", args[0], args[1])
 	}
-	return nil
+	return nil, nil
 }
 
 var assertHelpStr = `["assert", <val1>, <val2>] or ["assert", <val1>, "<operator>", <val2>]`
 
-func doAssertHelp() string {
+func (a *assertStmt) help() string {
 	return assertHelpStr
+}
+
+func (f *failStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	if len(args) != 1 {
+		return nil, fmt.Errorf("fail statement takes one statement arg: %s", f.help())
+	}
+	if _, ok := args[0].([]interface{}); !ok {
+		return nil, fmt.Errorf("fail statement expects one statement (slice) arg")
+	}
+	rval, err := runOneStep(ctx, args[0].([]interface{}))
+	if err == nil {
+		return nil, fmt.Errorf("fail statement succeeded -- very bad: %v", rval)
+	}
+	return err, nil
+}
+
+func (f *failStmt) help() string {
+	return "[\"fail\", <stmt>]"
 }

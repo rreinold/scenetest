@@ -5,45 +5,49 @@ import (
 	cb "github.com/clearblade/Go-SDK"
 )
 
+type queryStmt struct{}
+type createItemStmt struct{}
+type deleteItemStmt struct{}
+type deleteAllItemsStmt struct{}
+
 func init() {
-	funcMap["query"] = &Statement{query, queryHelp}
-	funcMap["select"] = &Statement{query, queryHelp} // just a synonym
-	funcMap["createItem"] = &Statement{createItem, createItemHelp}
-	funcMap["deleteItem"] = &Statement{deleteItem, deleteItemHelp}
-	funcMap["deleteAllItems"] = &Statement{deleteAllItems, deleteAllItemsHelp}
+	funcMap["query"] = &queryStmt{}
+	funcMap["select"] = &queryStmt{}
+	funcMap["createItem"] = &createItemStmt{}
+	funcMap["deleteItem"] = &deleteItemStmt{}
+	funcMap["deleteAllItems"] = &deleteAllItemsStmt{}
 }
 
-func createItem(context map[string]interface{}, args []interface{}) error {
+func (c *createItemStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
 	userClient := context["userClient"].(*cb.UserClient)
 	if len(args) != 2 {
-		return fmt.Errorf("Usage: [createItem, <colName>, <argMap>]")
+		return nil, fmt.Errorf("Usage: [createItem, <colName>, <argMap>]")
 	}
 	colName := valueOf(context, args[0]).(string)
 	rowInfo := valueOf(context, args[1]).(map[string]interface{})
 	colId, err := collectionNameToId(colName)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	resp, err := userClient.CreateData(colId, rowInfo)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(resp) != 1 {
-		return fmt.Errorf("Wrong number if items returned by createItem: %d", len(resp))
+		return nil, fmt.Errorf("Wrong number if items returned by createItem: %d", len(resp))
 	}
 	val := resp[0].(map[string]interface{})
-	context["returnValue"] = val["item_id"]
-	return nil
+	return val["item_id"], nil
 }
 
-func deleteItem(context map[string]interface{}, args []interface{}) error {
+func (d *deleteItemStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
 	if err := argCheck(args, 2, "", ""); err != nil {
-		return fmt.Errorf("query: Bad argument(s): %s", err.Error())
+		return nil, fmt.Errorf("query: Bad argument(s): %s", err.Error())
 	}
 	colName := args[0].(string)
 	colId, err := collectionNameToId(colName)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	itemId := args[1].(string)
 	userClient := context["userClient"].(*cb.UserClient)
@@ -62,28 +66,26 @@ func deleteItem(context map[string]interface{}, args []interface{}) error {
 
 	if err := userClient.DeleteData(colId, query); err != nil {
 		context["returnValue"] = err.Error()
-		return err
+		return nil, err
 	}
-	context["returnValue"] = nil
-	return nil
+	return nil, nil
 }
 
-func deleteAllItems(context map[string]interface{}, args []interface{}) error {
+func (d *deleteAllItemsStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
 	userClient := context["userClient"].(*cb.UserClient)
 	if err := argCheck(args, 1, ""); err != nil {
-		return fmt.Errorf("deleteAll: Bad Arguments(s): %s\n", err.Error())
+		return nil, fmt.Errorf("deleteAll: Bad Arguments(s): %s\n", err.Error())
 	}
 	colName := args[0].(string)
 	colId, err := collectionNameToId(colName)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if err := userClient.DeleteData(colId, &cb.Query{}); err != nil {
 		context["returnValue"] = err.Error()
-		return err
+		return nil, err
 	}
-	context["returnValue"] = nil
-	return nil
+	return nil, nil
 }
 
 //
@@ -107,16 +109,16 @@ func deleteAllItems(context map[string]interface{}, args []interface{}) error {
 //      ["query", "theCol", [], [[["id","==","xyz"]]]
 //			-- gets all rows where id eq xyz
 
-func query(context map[string]interface{}, args []interface{}) error {
+func (q *queryStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
 	if err := argCheck(args, 1, "", []interface{}{}, []interface{}{}, []interface{}{}, 1, 1); err != nil {
-		return fmt.Errorf("query: Bad argument(s): %s", err.Error())
+		return nil, fmt.Errorf("query: Bad argument(s): %s", err.Error())
 	}
 	myQuery := cb.Query{}
 	var err error
 	collectionName := args[0].(string)
 	collection, err := collectionNameToId(collectionName)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(args) >= 2 {
 		myQuery.Columns, err = buildColumns(valueOf(context, args[1]).([]interface{}))
@@ -124,12 +126,12 @@ func query(context map[string]interface{}, args []interface{}) error {
 	if len(args) >= 3 {
 		myQuery.Filters, err = buildFilter(valueOf(context, args[2]).([]interface{}))
 		if err != nil {
-			return fmt.Errorf("query: Bad filter: %s", err.Error())
+			return nil, fmt.Errorf("query: Bad filter: %s", err.Error())
 		}
 	}
 	if len(args) >= 4 {
 		if myQuery.Order, err = buildOrdering(args[3].([]interface{})); err != nil {
-			return fmt.Errorf("Bad query ordering: %s", err.Error())
+			return nil, fmt.Errorf("Bad query ordering: %s", err.Error())
 		}
 	}
 	if len(args) >= 5 {
@@ -141,12 +143,11 @@ func query(context map[string]interface{}, args []interface{}) error {
 	userClient := context["userClient"].(*cb.UserClient)
 	stuff, err := userClient.GetData(collection, &myQuery)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	context["returnValue"] = stuff["DATA"]
 	context["returnCount"] = stuff["TOTAL"]
 
-	return nil
+	return stuff["DATA"], nil
 }
 
 func collectionNameToId(colName string) (string, error) {
@@ -225,18 +226,18 @@ func buildOrdering(ordering []interface{}) ([]cb.Ordering, error) {
 	return rval, nil
 }
 
-func deleteAllItemsHelp() string {
+func (d *deleteAllItemsStmt) help() string {
 	return "query help not yet implemented"
 }
 
-func queryHelp() string {
+func (q *queryStmt) help() string {
 	return "query help not yet implemented"
 }
 
-func createItemHelp() string {
+func (c *createItemStmt) help() string {
 	return "createItem help not yet implemented"
 }
 
-func deleteItemHelp() string {
+func (d *deleteItemStmt) help() string {
 	return "deleteItem help not yet implemented"
 }

@@ -5,22 +5,27 @@ import (
 	cb "github.com/clearblade/Go-SDK"
 )
 
+type callStmt struct{}
+type createServiceStmt struct{}
+type updateServiceStmt struct{}
+type deleteServiceStmt struct{}
+
 func init() {
-	funcMap["call"] = &Statement{call, callHelp}
-	funcMap["createService"] = &Statement{createService, createServiceHelp}
-	funcMap["updateService"] = &Statement{updateService, updateServiceHelp}
-	funcMap["deleteService"] = &Statement{deleteService, deleteServiceHelp}
+	funcMap["call"] = &callStmt{}
+	funcMap["createService"] = &createServiceStmt{}
+	funcMap["updateService"] = &updateServiceStmt{}
+	funcMap["deleteService"] = &deleteServiceStmt{}
 }
 
-func call(context map[string]interface{}, args []interface{}) error {
+func (c *callStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
 	if len(args) != 2 {
-		return fmt.Errorf("Usage: [call, <serviceName>, {param, ...}]")
+		return nil, fmt.Errorf("Usage: [call, <serviceName>, {param, ...}]")
 	}
 	if _, ok := args[0].(string); !ok {
-		return fmt.Errorf("Service name must be a string")
+		return nil, fmt.Errorf("Service name must be a string")
 	}
 	if _, ok := args[1].(map[string]interface{}); !ok {
-		return fmt.Errorf("Service params must be a map")
+		return nil, fmt.Errorf("Service params must be a map")
 	}
 	svcName := args[0].(string)
 	params := args[1].(map[string]interface{})
@@ -28,13 +33,13 @@ func call(context map[string]interface{}, args []interface{}) error {
 	userClient := context["userClient"].(*cb.UserClient)
 	resp, err := userClient.CallService(sysKey, svcName, params)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	context["returnValue"] = resp["results"]
-	return nil
+	//context["returnValue"] = resp["results"]
+	return resp["results"], nil
 }
 
-func callHelp() string {
+func (c *callStmt) help() string {
 	return "[\"call\", \"<serviceName>\", {<arg key/value pairs}]"
 }
 
@@ -46,22 +51,22 @@ func fixParams(params []interface{}) []string {
 	return rval
 }
 
-func createService(context map[string]interface{}, args []interface{}) error {
+func (c *createServiceStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
 	//  Arg parsing nonsense
 	if len(args) < 2 {
-		return fmt.Errorf(createServiceHelp())
+		return nil, fmt.Errorf(c.help())
 	}
 	if _, ok := args[0].(string); !ok {
-		return fmt.Errorf("Service name must be a string")
+		return nil, fmt.Errorf("Service name must be a string")
 	}
 	if _, ok := args[1].(string); !ok {
-		return fmt.Errorf("Service code must be a string")
+		return nil, fmt.Errorf("Service code must be a string")
 	}
 	if len(args) == 2 {
 		args = append(args, []interface{}{})
 	}
 	if _, ok := args[2].([]interface{}); !ok {
-		return fmt.Errorf("Parameters arg must be a string\n")
+		return nil, fmt.Errorf("Parameters arg must be a string\n")
 	}
 
 	//  Create the service
@@ -69,37 +74,37 @@ func createService(context map[string]interface{}, args []interface{}) error {
 	adminClient := context["adminClient"].(*cb.DevClient)
 	sysKey := scriptVars["systemKey"].(string)
 	if err := adminClient.NewService(sysKey, svcName, code, params); err != nil {
-		return err
+		return nil, err
 	}
 
 	//  As a convenience, add the Authenticated role
 	if err := adminClient.AddServiceToRole(sysKey, svcName, "Authenticated", int(15)); err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return nil, nil
 }
 
-func createServiceHelp() string {
+func (c *createServiceStmt) help() string {
 	return "[\"createService\", \"<serviceName>\", \"<code>\", [<paramName>...]]"
 }
 
-func updateService(context map[string]interface{}, args []interface{}) error {
+func (u *updateServiceStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
 	//  Arg parsing nonsense
 	if len(args) < 2 {
-		return fmt.Errorf(updateServiceHelp())
+		return nil, fmt.Errorf(u.help())
 	}
 	if _, ok := args[0].(string); !ok {
-		return fmt.Errorf("Service name must be a string")
+		return nil, fmt.Errorf("Service name must be a string")
 	}
 	if _, ok := args[1].(string); !ok {
-		return fmt.Errorf("Service code must be a string")
+		return nil, fmt.Errorf("Service code must be a string")
 	}
 	if len(args) == 2 {
 		args = append(args, []interface{}{})
 	}
 	if _, ok := args[2].([]interface{}); !ok {
-		return fmt.Errorf("Parameters arg must be a string\n")
+		return nil, fmt.Errorf("Parameters arg must be a string\n")
 	}
 
 	//  Create the service
@@ -107,22 +112,22 @@ func updateService(context map[string]interface{}, args []interface{}) error {
 	adminClient := context["adminClient"].(*cb.DevClient)
 	sysKey := scriptVars["systemKey"].(string)
 	if err := adminClient.UpdateService(sysKey, svcName, code, params); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return nil, nil
 }
 
-func updateServiceHelp() string {
+func (u *updateServiceStmt) help() string {
 	return "[\"updateService\", \"<serviceName>\", \"<code\", [<paramName>,...]]"
 }
 
-func deleteService(context map[string]interface{}, args []interface{}) error {
+func (d *deleteServiceStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
 	//  Arg parsing nonsense
 	if len(args) < 1 {
-		return fmt.Errorf(deleteServiceHelp())
+		return nil, fmt.Errorf(d.help())
 	}
 	if _, ok := args[0].(string); !ok {
-		return fmt.Errorf("Service name must be a string")
+		return nil, fmt.Errorf("Service name must be a string")
 	}
 
 	//  Create the service
@@ -130,11 +135,11 @@ func deleteService(context map[string]interface{}, args []interface{}) error {
 	adminClient := context["adminClient"].(*cb.DevClient)
 	sysKey := scriptVars["systemKey"].(string)
 	if err := adminClient.DeleteService(sysKey, svcName); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return nil, nil
 }
 
-func deleteServiceHelp() string {
+func (d *deleteServiceStmt) help() string {
 	return "[\"deleteService\", \"<serviceName>\"]"
 }

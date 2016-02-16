@@ -1,0 +1,54 @@
+{
+    //
+    //  This is a scenetest that attempts to touch all parts of the platform.
+    //  This includes:
+    //      code,
+    //      data,
+    //      messaging,
+    //      timers,
+    //      triggers,
+    //      user stuff ?? not sure here yet.
+    //
+
+    "name": "Name of this test run",
+    "scenarios": [ ["Creator", 1], ["Create The Timer", 1] ],
+    "sequencing": "Parallel",
+
+    //  These vars are available to all scenarios by using the "@varname" syntax.
+    //  Declare big maps/arrays here so they don't clutter up the scenarios below.
+    "vars": {
+
+        //
+        // this is the thing that kicks off our Rube Goldberg machine.
+        //
+        "uberTimer": {
+            "name": "Heartbeat Timer"
+        }
+
+    },
+
+
+    // This guy just starts the process by creating the uber timer.
+    "Create The Timer": {
+        "name": "Get things going",
+        "steps": [
+            ["createTimer", "@uberTimer"],
+            ["sync", "Heartbeat Timer Created", 2]
+        ]
+    },
+
+
+    "Creator": {
+        "name": "Just do stuff",
+        "steps": [
+            ["setUser", "foo@bar.com"],
+            ["subscribeTriggers"],
+            ["sync", "all subscribed", 1],
+            ["repeat", 1, [
+                ["createItem", "DuhCollection", {"name":"Fred","address":"Homeless"}],
+                ["repeat", 1, [ ["waitTrigger", "Data", "ItemCreated", 300] ] ],
+                ["call", "example", {}] ]
+            ]
+        ]
+    }
+}

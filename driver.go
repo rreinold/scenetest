@@ -11,7 +11,9 @@ var adminClient *cb.DevClient
 
 func executeTestScript(theScript map[string]interface{}) {
 	script = theScript
-	authDevForScriptRun()
+	if Login {
+		authDevForScriptRun()
+	}
 	sequencing := getVar("sequencing", script, "Parallel").(string)
 	scenarios := getVar("scenarios", script, []string{}).([]interface{})
 	if glbs, ok := script["globals"].(map[string]interface{}); ok {
@@ -83,11 +85,20 @@ func runOneScenario(name string, scenario map[string]interface{}, doneChan chan<
 	context := map[string]interface{}{}
 	context["scenario_name"] = name
 	context["adminClient"] = adminClient
+	context["__nestingLevel"] = int(0)
 
 	steps := getVar("steps", scenario, [][]interface{}{}).([]interface{})
 
 	for _, step := range steps {
-		runOneStep(context, step.([]interface{}))
+		sliceStep := step.([]interface{})
+		if len(sliceStep) == 0 {
+			fmt.Printf("Skipping empty step\n")
+			continue
+		}
+		_, err := runOneStep(context, sliceStep)
+		if err != nil {
+			fatal("Exiting because of error")
+		}
 	}
 
 	//  If we're in parallel, need to tell parent we're done.
@@ -96,25 +107,26 @@ func runOneScenario(name string, scenario map[string]interface{}, doneChan chan<
 	}
 }
 
-func runOneStep(context map[string]interface{}, step []interface{}) {
+func runOneStep(context map[string]interface{}, step []interface{}) (interface{}, error) {
 	myName := context["scenario_name"].(string)
 	if len(step) == 0 {
-		return
+		return nil, nil
 	}
 	method := step[0].(string)
 	args := dereferenceVariables(context, step[1:])
 	if theStmt, ok := funcMap[method]; ok {
-		err := theStmt.RunFunc(context, args)
+		rval, err := theStmt.run(context, args)
 		timeStr := time.Now().Format(time.UnixDate)
 		if err == nil {
-			myPrintf("%s:\t%s:\t%s succeeded\n", timeStr, myName, method)
+			context["returnValue"] = rval
+			myNestingPrintf(context, "%s:\t%s:\t%s succeeded\n", timeStr, myName, method)
+			return rval, nil
 		} else {
-			myPrintf("%s(%s):%s failed: %s\n", myName, timeStr, method, err.Error())
-			fatal("Exiting because of error")
+			myNestingPrintf(context, "%s(%s):%s failed: %s\n", myName, timeStr, method, err.Error())
+			return nil, err
 		}
-	} else {
-		myPrintf("Unknown function %s\n", method)
 	}
+	return nil, fmt.Errorf("Unknown statement: %s\n", method)
 }
 
 func getVar(name string, script map[string]interface{}, defaultVal interface{}) interface{} {

@@ -7,34 +7,38 @@ import (
 	"time"
 )
 
+type subscribeStmt struct{}
+type publishStmt struct{}
+type waitMessageStmt struct{}
+
 func init() {
-	funcMap["subscribe"] = &Statement{subscribe, subscribeHelp}
-	funcMap["publish"] = &Statement{publish, publishHelp}
-	funcMap["waitMessage"] = &Statement{waitMessage, waitMessageHelp}
+	funcMap["subscribe"] = &subscribeStmt{}
+	funcMap["publish"] = &publishStmt{}
+	funcMap["waitMessage"] = &waitMessageStmt{}
 }
 
-func subscribe(context map[string]interface{}, args []interface{}) error {
+func (s *subscribeStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
 	if len(args) != 2 {
-		return fmt.Errorf("Usage: [subscribe, topic, qos(int)]")
+		return nil, fmt.Errorf("Usage: [subscribe, topic, qos(int)]")
 	}
 	topic := valueOf(context, args[0]).(string)
 	qos := int(valueOf(context, args[1]).(float64))
 	userClient := context["userClient"].(*cb.UserClient)
 	trigChan, err := userClient.Subscribe(topic, qos)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	context[topic] = trigChan
-	return nil
+	return trigChan, nil
 }
 
-func subscribeHelp() string {
+func (s *subscribeStmt) help() string {
 	return "subscribe help not yet implemented"
 }
 
-func waitMessage(context map[string]interface{}, args []interface{}) error {
+func (w *waitMessageStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
 	if len(args) != 2 {
-		fmt.Errorf("Usage: [waitMessage, topic, timeout]")
+		return nil, fmt.Errorf("Usage: [waitMessage, topic, timeout]")
 	}
 	topic := valueOf(context, args[0]).(string)
 	timeout := time.Duration(args[1].(float64))
@@ -43,31 +47,30 @@ func waitMessage(context map[string]interface{}, args []interface{}) error {
 	select {
 	case stuff = <-trigChan:
 	case <-time.After(time.Second * timeout):
-		return fmt.Errorf("Timed out waiting for message to arrive on %s", topic)
+		return nil, fmt.Errorf("Timed out waiting for message to arrive on %s", topic)
 	}
 	realStuff := string(stuff.Payload)
-	context["returnValue"] = realStuff
-	return nil
+	return realStuff, nil
 }
 
-func waitMessageHelp() string {
+func (w *waitMessageStmt) help() string {
 	return "[\"waitMessage\", \"topic\", timeout]"
 }
 
-func publish(context map[string]interface{}, args []interface{}) error {
+func (p *publishStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
 	if len(args) != 3 {
-		fmt.Errorf("Usage: [publish, topic, message_body, qos]")
+		return nil, fmt.Errorf("Usage: [publish, topic, message_body, qos]")
 	}
 	userClient := context["userClient"].(*cb.UserClient)
 	topic := valueOf(context, args[0]).(string)
 	body := []byte(valueOf(context, args[1]).(string))
 	qos := int(valueOf(context, args[2]).(float64))
 	if err := userClient.Publish(topic, body, qos); err != nil {
-		return fmt.Errorf("Publish failed: %s", err.Error())
+		return nil, fmt.Errorf("Publish failed: %s", err.Error())
 	}
-	return nil
+	return nil, nil
 }
 
-func publishHelp() string {
+func (p *publishStmt) help() string {
 	return "publish help not yet implemented"
 }
