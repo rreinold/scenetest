@@ -9,12 +9,17 @@ type callStmt struct{}
 type createServiceStmt struct{}
 type updateServiceStmt struct{}
 type deleteServiceStmt struct{}
+type allLibrariesStmt struct{}
+type getLibraryStmt struct{}
 
 func init() {
 	funcMap["call"] = &callStmt{}
 	funcMap["createService"] = &createServiceStmt{}
 	funcMap["updateService"] = &updateServiceStmt{}
 	funcMap["deleteService"] = &deleteServiceStmt{}
+
+	funcMap["allLibraries"] = &allLibrariesStmt{}
+	funcMap["getLibrary"] = &getLibraryStmt{}
 }
 
 func (c *callStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
@@ -142,4 +147,43 @@ func (d *deleteServiceStmt) run(context map[string]interface{}, args []interface
 
 func (d *deleteServiceStmt) help() string {
 	return "[\"deleteService\", \"<serviceName>\"]"
+}
+
+func (a *allLibrariesStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
+	fmt.Printf("ALL LIBS\n")
+	if len(args) != 0 {
+		return nil, fmt.Errorf("Usage: %s\n", a.help())
+	}
+	sysKey := scriptVars["systemKey"].(string)
+	adminClient := context["adminClient"].(*cb.DevClient)
+	allLibs, err := adminClient.GetLibraries(sysKey)
+	if err != nil {
+		return nil, fmt.Errorf("GetLibraries call failed: %s", err.Error())
+	}
+	return allLibs, nil
+}
+
+func (a *allLibrariesStmt) help() string {
+	return "[\"allLibraries\"]"
+}
+
+func (g *getLibraryStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
+	if len(args) != 1 {
+		return nil, fmt.Errorf("Usage: %s\n", g.help())
+	}
+	libName, ok := args[0].(string)
+	if !ok {
+		return nil, fmt.Errorf("Library name argument to getLibrary must be a string")
+	}
+	sysKey := scriptVars["systemKey"].(string)
+	adminClient := context["adminClient"].(*cb.DevClient)
+	theLib, err := adminClient.GetLibrary(sysKey, libName)
+	if err != nil {
+		return nil, fmt.Errorf("GetLibrary call failed: %s", err.Error())
+	}
+	return theLib, nil
+}
+
+func (g *getLibraryStmt) help() string {
+	return "[\"getLibrary\", \"<libname>\"]"
 }

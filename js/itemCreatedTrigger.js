@@ -4,5 +4,5 @@ function itemCreatedTrigger(req, resp) {
     var sysSec = req.systemSecret;
     var userToken = req.userToken;
     publishTrigger(req, resp, "Data", "ItemCreated");
-    resp.success("Should have published by now");
+    resp.success("We win! Request object: " + JSON.stringify(req));
 }

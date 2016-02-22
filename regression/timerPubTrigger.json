@@ -14,17 +14,23 @@
     "scenarios": [ ["Trigger Watcher", 1], ["Create The Timer", 1], ["Subscriber", 1] ],
     "sequencing": "Parallel",
 
+    //
     //  These vars are available to all scenarios by using the "@varname" syntax.
     //  Declare big maps/arrays here so they don't clutter up the scenarios below.
+    //  NOTE STEVE: These should be called consts or something. They are copied into
+    //  each scenario's context and are NOT shared. ie, they're not global to all
+    //  scenarios.
+    //
     "vars": {
+        "iterations": 101,
 
         //
-        // this is the thing that kicks off our Rube Goldberg machine.
+        // this is the thing that kicks off our Rube Goldberg machine. It is
+        // created in "Create The Timer" below.
         //
-        "iterations": 101,
         "uberTimer": {
             "name": "Heartbeat Timer",
-            "description": "Publishes to /foo/bar",
+            "description": "Publishes to /timer/popped",
             "start_time": "Now",
             "repeats": 100,
             "frequency": 1,
@@ -34,7 +40,9 @@
     },
 
 
+    //
     // This guy just starts the process by creating the uber timer.
+    //
     "Create The Timer": {
         "name": "Get things going",
         "steps": [

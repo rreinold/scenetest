@@ -49,7 +49,7 @@ func runSerial(scenarios []interface{}) {
 		}
 		scenario := duh.(map[string]interface{})
 		for i := 0; i < count; i++ {
-			nm := fmt.Sprintf("%s(%d)", scenario["name"].(string), i)
+			nm := fmt.Sprintf("%s(%d)", scenario["name"].(string), i+1)
 			runOneScenario(nm, scenario, nil)
 		}
 	}
@@ -70,7 +70,7 @@ func runParallel(scenarios []interface{}) {
 		scenario := duh.(map[string]interface{})
 		totalCount += count
 		for i := 0; i < count; i++ {
-			nm := fmt.Sprintf("%s(%d)", scenario["name"].(string), i)
+			nm := fmt.Sprintf("%s(%d)", scenario["name"].(string), i+1)
 			go runOneScenario(nm, scenario, doneChan)
 		}
 

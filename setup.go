@@ -6,7 +6,7 @@ import (
 	cb "github.com/clearblade/Go-SDK"
 	"os"
 	"strings"
-	"time"
+	//"time"
 )
 
 var (
@@ -433,9 +433,11 @@ func setupTimer(timer map[string]interface{}) {
 	timerName := timer["name"].(string)
 	delete(timer, "name")
 	startTime := timer["start_time"].(string)
+	/* swm -- not needed anymore
 	if startTime == "Now" {
 		startTime = time.Now().Format(time.RFC3339)
 	}
+	*/
 	timer["start_time"] = startTime
 	newTimer, err := adminClient.CreateTimer(sysKey, timerName, timer)
 	if err != nil {
