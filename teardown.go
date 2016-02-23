@@ -31,8 +31,14 @@ func authTheDevGod(system map[string]interface{}) {
 	}
 }
 
+func setUrlValues(system map[string]interface{}) {
+}
+
 func teardownSystem(system map[string]interface{}) {
+	setUrlValues(system)
 	sysKey = system["systemKey"].(string)
+	cb.CB_ADDR = system["platformUrl"].(string)
+	cb.CB_MSG_ADDR = system["messagingUrl"].(string)
 	authTheDevGod(system)
 
 	deleteTimers(system)

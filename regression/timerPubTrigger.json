@@ -14,14 +14,20 @@
     "scenarios": [ ["Trigger Watcher", 1], ["Create The Timer", 1], ["Subscriber", 1] ],
     "sequencing": "Parallel",
 
+    /*
+     *  globals are available and shared by all scenario instances
+     */
+    "globals": {
+    },
+
     //
-    //  These vars are available to all scenarios by using the "@varname" syntax.
+    //  These locals are available to all scenarios by using the "@varname" syntax.
     //  Declare big maps/arrays here so they don't clutter up the scenarios below.
-    //  NOTE STEVE: These should be called consts or something. They are copied into
+    //  NOTE They are copied into
     //  each scenario's context and are NOT shared. ie, they're not global to all
-    //  scenarios.
+    //  scenarios. Use "globals" for that.
     //
-    "vars": {
+    "locals": {
         "iterations": 101,
 
         //
@@ -54,7 +60,7 @@
 
 
     //
-    //  Watch for the publish message send by the code service for the timer (huh?
+    //  Watch for the publish message send by the code service for the timer
     //
     "Trigger Watcher": {
         "name": "wait for triggers",

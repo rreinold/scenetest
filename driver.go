@@ -81,11 +81,11 @@ func runParallel(scenarios []interface{}) {
 }
 
 func putVarsInContext(context map[string]interface{}) map[string]interface{} {
-	vars, ok := script["vars"]
+	locals, ok := script["locals"]
 	if !ok {
 		return context
 	}
-	for key, val := range vars.(map[string]interface{}) {
+	for key, val := range locals.(map[string]interface{}) {
 		context[key] = val
 	}
 	return context

@@ -1,12 +1,12 @@
 {
     "name": "test if statement",
-    "scenarios": [ ["v is for var", 1] ],
+    "scenarios": [ ["l is for local", 1] ],
     "sequencing": "Parallel",
-    "vars": {
+    "locals": {
         "foo": "Hello World!"
     },
-    "v is for var": {
-        "name": "Make sure vars works",
+    "l is for local": {
+        "name": "Make sure locals works",
         "steps": [
             ["print", "@foo"]
         ]

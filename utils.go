@@ -41,6 +41,8 @@ func readFileFromEnvironment(filename string) (string, error) {
 }
 
 func saveSetupState(originalJson map[string]interface{}) {
+	setupState["platformUrl"] = PlatformAddr
+	setupState["messagingUrl"] = MsgAddr
 	marshalled, err := json.MarshalIndent(setupState, "", "    ")
 	if err != nil {
 		fatal(fmt.Sprintf("MarshalIndent failed: %s\n", err.Error()))
@@ -96,9 +98,17 @@ func valueOf(context map[string]interface{}, thing interface{}) interface{} {
 		thingStr := thing.(string)
 		if strings.HasPrefix(thingStr, "@") {
 			varName := strings.TrimPrefix(thingStr, "@")
+
+			//  first check locals (context)
 			if val, ok := context[varName]; ok {
 				return val
 			}
+
+			//  now check globals
+			if val, ok := globals[varName]; ok {
+				return val
+			}
+
 			//  Var doesn't exist -- see if there's a file to read from...
 			if contents, err := readFileFromEnvironment(varName); err == nil {
 				return contents

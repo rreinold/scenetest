@@ -1,14 +1,19 @@
 {
-    "name": "Paul's test system",
+    //
+    //  Here's our setup file that we have to run prior
+    //  to running any tests. This is just an example. Copy
+    //  this file and change it to meet your testing needs.
+    //
+    "name": "Example Test System",
     "description": "Just a stupid description",
     "userAuth": true,
-    "teardownFile": "TestSystemTeardown.json",
-    "infoFile": "TestSystemInfo.json",
+    "teardownFile": "ExampleTeardown.json",
+    "infoFile": "ExampleInfo.json",
     "developer": {
-        "email": "pauldev@developer.com",
-        "password": "IAmPaul",
-        "firstname": "Paul",
-        "lastname": "Moreau",
+        "email": "theDev@developer.com",
+        "password": "IAmTheDev",
+        "firstname": "Dev",
+        "lastname": "Eloper",
         "org": "Clearblade"
     },
     "roles": [

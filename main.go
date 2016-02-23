@@ -47,6 +47,7 @@ var (
 func init() {
 	flag.StringVar(&MsgAddr, "messaging-url", "undefined", "Msg service location")
 	flag.StringVar(&PlatformAddr, "platform-url", "undefined", "Platform location")
+	flag.StringVar(&PlatformAddr, "url", "undefined", "Platform location")
 	flag.StringVar(&ScriptFile, "run", "Do Not Run Script", "Script file to execute")
 	flag.StringVar(&SetupFile, "setup", "Do Not Setup", "File to setup system(s)")
 	flag.StringVar(&TeardownFile, "teardown", "Do Not Teardown", "File that tears you up")
@@ -54,7 +55,8 @@ func init() {
 	flag.BoolVar(&GetSomeHelp, "help", false, "Print out a help string for all statements")
 	flag.BoolVar(&JustParse, "parse", false, "Just parse everything and don't execute")
 	flag.BoolVar(&Login, "login", true, "login to the clearblade system as specified by cmd line args to TestSystemInfo.json")
-	flag.BoolVar(&ShutUp, "silent", false, "Shut Up!j")
+	flag.BoolVar(&ShutUp, "silent", false, "Shut Up!")
+
 	scriptVars["roles"] = map[string]interface{}{}
 	scriptVars["users"] = map[string]interface{}{}
 	scriptVars["collections"] = map[string]interface{}{}

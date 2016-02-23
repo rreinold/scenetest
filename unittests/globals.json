@@ -1,0 +1,17 @@
+{
+    "name": "test if statement",
+    "scenarios": [ ["g is for global", 1] ],
+    "sequencing": "Parallel",
+    "globals": {
+        "foo": "Hello Globe!"
+    },
+    "locals": {
+        "foobar": "Hello World!"
+    },
+    "g is for global": {
+        "name": "Make sure locals works",
+        "steps": [
+            ["print", "@foo"]
+        ]
+    }
+}
