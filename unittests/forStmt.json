@@ -1,0 +1,14 @@
+{
+    "name": "For statement",
+    "scenarios": [ ["Try the For", 1] ],
+    "sequencing": "Parallel",
+    "Try the For": {
+        "name": "Make sure if statement works",
+        "steps": [
+            ["set", "maxFoo", 3],
+            ["for", [ ["set", "foo", 0], ["<", "@foo", "@maxFoo" ], ["set", "foo", ["+", "@foo", 1] ] ], [
+                ["print", "I'm in the foo!"]]
+            ]
+        ]
+    }
+}

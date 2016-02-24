@@ -18,6 +18,7 @@ var syncLock *sync.Mutex
 
 type sleepStmt struct{}
 type repeatStmt struct{}
+type forStmt struct{}
 type whileStmt struct{}
 type ifStmt struct{}
 type ifElseStmt struct{}
@@ -33,6 +34,7 @@ type failStmt struct{}
 func init() {
 	funcMap["sleep"] = &sleepStmt{}
 	funcMap["repeat"] = &repeatStmt{}
+	funcMap["for"] = &forStmt{}
 	funcMap["while"] = &whileStmt{}
 	funcMap["if"] = &ifStmt{}
 	funcMap["if-else"] = &ifElseStmt{}
@@ -223,6 +225,57 @@ func (r *repeatStmt) run(ctx map[string]interface{}, args []interface{}) (interf
 func (r *repeatStmt) help() string {
 	return "[\"repeat\", <count>, [<statement>, ...]]"
 }
+
+///////////////////////////////// "for" statement
+
+func (f *forStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	if err := argCheck(args, 2, []interface{}{}, []interface{}{}); err != nil {
+		return nil, fmt.Errorf("Bad arguments to for statement: %s", err.Error())
+	}
+	condList := args[0].([]interface{})
+	stmtList := args[1].([]interface{})
+	if len(condList) != 3 {
+		return nil, fmt.Errorf("Must be three conditions in for stmt condition list")
+	}
+	preCond, testCond, postCond := condList[0], condList[1], condList[2]
+
+	//  Do the pre condition just once. We don't care about the returned
+	//  value; just that it succeeded
+	valueOf(ctx, preCond)
+	/*
+		if err := valueOf(ctx, preCond); err != nil {
+			return nil, err
+		}
+	*/
+
+	var val interface{}
+	var err error
+	for {
+		// Eval test condition, break out of loop if false
+		val = valueOf(ctx, testCond)
+		if !findTheTruth(val) {
+			break
+		}
+
+		//  true test condition -- now execute each sub statement
+		for _, stmt := range stmtList {
+			if val, err = runOneStep(ctx, stmt.([]interface{})); err != nil {
+				return nil, err
+			}
+		}
+
+		//  Finally, do the post condition
+		val = valueOf(ctx, postCond)
+	}
+	return val, nil
+}
+
+func (f *forStmt) help() string {
+	return "[\"for\", [<initStmt>, <condStmt>, <endLoopStmt>] , [<statement>, ...]]"
+}
+
+///////////////////////////////// "if" statement
+
 func (i *ifStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
 	if len(args) != 2 {
 		return nil, fmt.Errorf("if statement: wrong number of args: %s", i.help())

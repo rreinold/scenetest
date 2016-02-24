@@ -98,6 +98,14 @@ func argCheck(args []interface{}, mandatory int, argTypes ...interface{}) error 
 }
 
 func valueOf(context map[string]interface{}, thing interface{}) interface{} {
+	if isAStatement(thing) {
+		stmt := thing.([]interface{})
+		res, err := runOneStep(context, stmt)
+		if err != nil {
+			fatal(fmt.Sprintf("Substatement execution failed: %s", err.Error()))
+		}
+		thing = res
+	}
 	switch thing.(type) {
 	case string:
 		thingStr := thing.(string)
@@ -163,4 +171,21 @@ func incrNestingLevel(ctx map[string]interface{}) {
 
 func decrNestingLevel(ctx map[string]interface{}) {
 	ctx["__nestingLevel"] = ctx["__nestingLevel"].(int) - 1
+}
+
+func isAStatement(arg interface{}) bool {
+	slice, ok := arg.([]interface{})
+	if !ok || len(slice) <= 0 {
+		return false
+	}
+
+	name, ok := slice[0].(string)
+	if !ok {
+		return false
+	}
+
+	if _, ok := funcMap[name]; !ok {
+		return false
+	}
+	return true
 }

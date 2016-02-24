@@ -7,11 +7,19 @@ import (
 	"reflect"
 )
 
+// +, -, *, /, %
+type BinaryMathStmt interface {
+	evaluate(left, right interface{}) interface{}
+	Stmt
+}
+
+// ==, !=, >, <, >=, <=, &&, ||
 type BinaryExprStmt interface {
 	compare(left, right interface{}) bool
 	Stmt
 }
 
+// !, and () -- identity
 type UnaryExprStmt interface {
 	compare(operand interface{}) bool
 	Stmt
@@ -27,6 +35,11 @@ type andOp struct{}
 type orOp struct{}
 type notOp struct{}
 type truthOp struct{}
+type addOp struct{}
+type subOp struct{}
+type multOp struct{}
+type divOp struct{}
+type modOp struct{}
 
 func init() {
 	funcMap["=="] = &equalsOp{}
@@ -39,6 +52,11 @@ func init() {
 	funcMap["||"] = &orOp{}
 	funcMap["!"] = &notOp{}
 	funcMap["()"] = &truthOp{}
+	funcMap["+"] = &addOp{}
+	funcMap["-"] = &subOp{}
+	funcMap["*"] = &multOp{}
+	funcMap["/"] = &divOp{}
+	funcMap["%"] = &modOp{}
 }
 
 func (e *equalsOp) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
@@ -124,7 +142,7 @@ func (l *lessEqualOp) help() string {
 func (l *lessEqualOp) compare(left, right interface{}) bool {
 	leftNum, rightNum, err := numberTypesOrFail(left, right)
 	if err != nil {
-		fatalf("< bad operand(s): %s\n", err.Error())
+		fatalf("<= bad operand(s): %s\n", err.Error())
 	}
 	return leftNum <= rightNum
 }
@@ -177,6 +195,91 @@ func (t *truthOp) compare(operand interface{}) bool {
 	return operand.(bool)
 }
 
+//   math operators here
+
+func (t *addOp) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	return binaryMathOp(t, ctx, args)
+}
+
+func (t *addOp) help() string {
+	return "[\"+\", <left>, <right>]"
+}
+
+func (t *addOp) evaluate(left, right interface{}) interface{} {
+	leftNum, rightNum, err := numberTypesOrFail(left, right)
+	if err != nil {
+		fatalf("+ bad operand(s): %s\n", err.Error())
+	}
+	return leftNum + rightNum
+}
+
+func (t *subOp) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	return binaryMathOp(t, ctx, args)
+}
+
+func (t *subOp) help() string {
+	return "[\"-\", <left>, <right>]"
+}
+
+func (t *subOp) evaluate(left, right interface{}) interface{} {
+	leftNum, rightNum, err := numberTypesOrFail(left, right)
+	if err != nil {
+		fatalf("- bad operand(s): %s\n", err.Error())
+	}
+	return leftNum - rightNum
+}
+
+func (t *multOp) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	return binaryMathOp(t, ctx, args)
+}
+
+func (t *multOp) help() string {
+	return "[\"*\", <left>, <right>]"
+}
+
+func (t *multOp) evaluate(left, right interface{}) interface{} {
+	leftNum, rightNum, err := numberTypesOrFail(left, right)
+	if err != nil {
+		fatalf("* bad operand(s): %s\n", err.Error())
+	}
+	return leftNum * rightNum
+}
+
+func (t *divOp) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	return binaryMathOp(t, ctx, args)
+}
+
+func (t *divOp) help() string {
+	return "[\"/\", <left>, <right>]"
+}
+
+func (t *divOp) evaluate(left, right interface{}) interface{} {
+	leftNum, rightNum, err := numberTypesOrFail(left, right)
+	if err != nil {
+		fatalf("/ bad operand(s): %s\n", err.Error())
+	}
+	if rightNum == 0 {
+		fatalf("Division by zero attempted\n")
+	}
+	return leftNum / rightNum
+}
+
+func (t *modOp) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	return binaryMathOp(t, ctx, args)
+}
+
+func (t *modOp) help() string {
+	return "[\"%\", <left>, <right>]"
+}
+
+func (t *modOp) evaluate(left, right interface{}) interface{} {
+	leftNum, rightNum, err := numberTypesOrFail(left, right)
+	if err != nil {
+		fatalf("% bad operand(s): %s\n", err.Error())
+	}
+	return int64(leftNum) % int64(rightNum)
+}
+
 //
 //  Non-statements functions -- support for the above.
 //
@@ -207,6 +310,22 @@ func binaryCompareOp(e BinaryExprStmt, ctx map[string]interface{}, args []interf
 		return false, err
 	}
 	return e.compare(leftRes, rightRes), nil
+}
+
+func binaryMathOp(e BinaryMathStmt, ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	if len(args) != 2 {
+		return false, fmt.Errorf("Wrong number of args (%d) to binary mathematical operator\n", len(args))
+	}
+	leftRes, err := evalSubStmt(ctx, args[0])
+	if err != nil {
+		return false, err
+	}
+	rightRes, err := evalSubStmt(ctx, args[1])
+	if err != nil {
+		return false, err
+	}
+
+	return e.evaluate(leftRes, rightRes), nil
 }
 
 func binaryLogicalOp(e BinaryExprStmt, ctx map[string]interface{}, args []interface{}) (bool, error) {

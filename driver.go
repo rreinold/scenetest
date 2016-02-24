@@ -11,7 +11,7 @@ var adminClient *cb.DevClient
 
 func executeTestScript(theScript map[string]interface{}) {
 	script = theScript
-	if Login {
+	if !NoLogin { // nice double negative
 		authDevForScriptRun()
 	}
 	sequencing := getVar("sequencing", script, "Parallel").(string)
