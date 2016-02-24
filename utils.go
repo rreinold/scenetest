@@ -47,29 +47,34 @@ func saveSetupState(originalJson map[string]interface{}) {
 	if err != nil {
 		fatal(fmt.Sprintf("MarshalIndent failed: %s\n", err.Error()))
 	}
-	fileToWrite := "setupState.json"
-	if _, ok := originalJson["teardownFile"]; ok {
-		fileToWrite = originalJson["teardownFile"].(string)
-	}
-	err = ioutil.WriteFile(fileToWrite, marshalled, os.ModePerm)
-	if err != nil {
-		fatal(fmt.Sprintf("Could not save setup state: %s\n", err.Error()))
-	}
+	/*
+		fileToWrite := "setupState.json"
+		if _, ok := originalJson["teardownFile"]; ok {
+			fileToWrite = originalJson["teardownFile"].(string)
+		}
+		err = ioutil.WriteFile(fileToWrite, marshalled, os.ModePerm)
+		if err != nil {
+			fatal(fmt.Sprintf("Could not save setup state: %s\n", err.Error()))
+		}
+	*/
 
 	scriptVars["platformUrl"] = PlatformAddr
 	scriptVars["messagingUrl"] = MsgAddr
+	scriptVars["teardown"] = setupState
 
 	marshalled, err = json.MarshalIndent(scriptVars, "", "    ")
 	if err != nil {
 		fatal(fmt.Sprintf("MarshalIndent failed: %s\n", err.Error()))
 	}
-	fileToWrite = "info.json"
-	if _, ok := originalJson["infoFile"]; ok {
-		fileToWrite = originalJson["infoFile"].(string)
-	}
-	err = ioutil.WriteFile(fileToWrite, marshalled, os.ModePerm)
+	/*
+		fileToWrite = "info.json"
+		if _, ok := originalJson["infoFile"]; ok {
+			fileToWrite = originalJson["infoFile"].(string)
+		}
+	*/
+	err = ioutil.WriteFile(InfoFile, marshalled, os.ModePerm)
 	if err != nil {
-		fatal(fmt.Sprintf("Could not save setup state: %s\n", err.Error()))
+		fatal(fmt.Sprintf("Could not save setup information to '%s': %s\n", InfoFile, err.Error()))
 	}
 }
 

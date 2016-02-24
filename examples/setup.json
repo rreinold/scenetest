@@ -7,8 +7,6 @@
     "name": "Example Test System",
     "description": "Just a stupid description",
     "userAuth": true,
-    "teardownFile": "ExampleTeardown.json",
-    "infoFile": "ExampleInfo.json",
     "developer": {
         "email": "theDev@developer.com",
         "password": "IAmTheDev",
