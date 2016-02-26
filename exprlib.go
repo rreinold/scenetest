@@ -68,6 +68,16 @@ func (e *equalsOp) help() string {
 }
 
 func (e *equalsOp) compare(left, right interface{}) bool {
+	fmt.Printf("EQUALS: %v, %v\n", left, right)
+	leftNum, rightNum, err := numberTypesOrFail(left, right)
+	if err == nil {
+		left, right = leftNum, rightNum
+	}
+	if left == right {
+		myPrintf("YESSSSSSSSSS\n")
+	} else {
+		myPrintf("NOOOOOOOOOOOO\n")
+	}
 	return left == right
 }
 

@@ -91,7 +91,7 @@ func argCheck(args []interface{}, mandatory int, argTypes ...interface{}) error 
 			continue // nil means interface{}
 		}
 		if reflect.TypeOf(actualArg) != reflect.TypeOf(argType) {
-			return fmt.Errorf("Argument #%d has type mismatch: %v != %v", reflect.TypeOf(actualArg), reflect.TypeOf(argType))
+			return fmt.Errorf("Argument #%d has type mismatch: %v != %v", i, reflect.TypeOf(actualArg), reflect.TypeOf(argType))
 		}
 	}
 	return nil
