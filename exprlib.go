@@ -68,7 +68,6 @@ func (e *equalsOp) help() string {
 }
 
 func (e *equalsOp) compare(left, right interface{}) bool {
-	myPrintf("Comparing '%v' and '%v'\n", left, right)
 	return left == right
 }
 

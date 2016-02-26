@@ -41,7 +41,6 @@ func (c *callStmt) run(context map[string]interface{}, args []interface{}) (inte
 		return nil, err
 	}
 	//context["returnValue"] = resp["results"]
-	myPrintf("Call returning '%v'\n", resp["results"])
 	return resp["results"], nil
 }
 
