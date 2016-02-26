@@ -2,7 +2,7 @@ package main
 
 import (
 	//"bytes"
-	"cbjson"
+	"github.com/clearblade/cbjson"
 	//"encoding/json"
 	"flag"
 	"fmt"

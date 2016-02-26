@@ -358,7 +358,6 @@ func mkSvcParams(params []interface{}) []string {
 func setupCodeService(svc map[string]interface{}) {
 	svcName := getString(svc, "name")
 	svcCode := getVarOrFile(svc, "code")
-	svcCode = strings.Replace(svcCode, "\n", "", -1)
 	svcParams := mkSvcParams(svc["parameters"].([]interface{}))
 	svcDeps := ""
 	if _, ok := svc["dependencies"]; ok {
