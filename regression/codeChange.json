@@ -48,14 +48,17 @@
 
             ["repeat", "@callIterations", [
                 ["updateService", "HorribleService", "@HorribleService1.js", ["paramXXX"]],
+                ["sleep", 100],
                 ["sync", "Wait for changed service", ["+", "@numCodeCallers", 1]],
                 ["sync", "Wait for calls to complete", ["+", "@numCodeCallers", 1]],
 
                 ["updateService", "HorribleService", "@HorribleService2.js", ["paramXXX"]],
+                ["sleep", 100],
                 ["sync", "Wait for changed service", ["+", "@numCodeCallers", 1]],
                 ["sync", "Wait for calls to complete", ["+", "@numCodeCallers", 1]],
 
                 ["updateService", "HorribleService", "@HorribleService3.js", ["paramXXX"]],
+                ["sleep", 100],
                 ["sync", "Wait for changed service", ["+", "@numCodeCallers", 1]],
                 ["sync", "Wait for calls to complete", ["+", "@numCodeCallers", 1]]]
             ]
