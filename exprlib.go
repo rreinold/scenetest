@@ -68,6 +68,7 @@ func (e *equalsOp) help() string {
 }
 
 func (e *equalsOp) compare(left, right interface{}) bool {
+	myPrintf("Comparing '%v' and '%v'\n", left, right)
 	return left == right
 }
 
@@ -419,14 +420,8 @@ func findTheTruth(arg interface{}) bool {
 		return arg != 0
 	case string:
 		return arg != ""
-	case map[string]interface{}:
-		mapArg := arg.(map[string]interface{})
-		return mapArg != nil && len(mapArg) > 0
-	case []interface{}:
-		sliceArg := arg.([]interface{})
-		return sliceArg != nil && len(sliceArg) > 0
 	default:
-		return false
+		return arg != nil
 	}
 }
 

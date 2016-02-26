@@ -2,3 +2,5 @@ scenetest
 *.out
 Test*.json
 *.etcd
+Local.json
+Cluster.json

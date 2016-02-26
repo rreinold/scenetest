@@ -1,0 +1,265 @@
+{
+    "codeLibraries": {
+        "JustPublish": {
+            "api": "",
+            "code": "function justPublishOneMessage(req, resp, topic, payload) {\n    var theTruth = {\n        email: req.userEmail,\n        systemKey: req.systemKey,\n        systemSecret: req.systemSecret,\n        userToken: req.userToken\n    }\n    ClearBlade.init({request:req});\n    //ClearBlade.init(theTruth);\n    var messaging = ClearBlade.Messaging({}, function(){});\n    result = messaging.publish(topic, payload);\n}\n",
+            "dependencies": "clearblade,log",
+            "description": "publishes normal message over mqtt",
+            "library_key": "80eaedec0ae4d0a2de99d8a4a8e301::JustPublish",
+            "name": "JustPublish",
+            "system_key": "80eaedec0ae4d0a2de99d8a4a8e301",
+            "version": 1,
+            "visibility": "system"
+        },
+        "TestLibrary": {
+            "api": "",
+            "code": "function freddy() {\n    return 1;\n}\n",
+            "dependencies": "log",
+            "description": "Kinda useless",
+            "library_key": "80eaedec0ae4d0a2de99d8a4a8e301::TestLibrary",
+            "name": "TestLibrary",
+            "system_key": "80eaedec0ae4d0a2de99d8a4a8e301",
+            "version": 1,
+            "visibility": "system"
+        },
+        "TriggerLib": {
+            "api": "",
+            "code": "function publishTrigger(req, resp, msgClass, msgType) {\n    var msgInfo = {\n        msgClass:msgClass,\n        msgType:msgType\n    };\n    var yowza = {\n        steve: \"This is steven\",\n        email: req.userEmail,\n        systemKey: req.systemKey,\n        systemSecret: req.systemSecret,\n        userToken: req.userToken\n    }\n    ClearBlade.init({request:req});\n    //ClearBlade.init(yowza);\n    var messaging = ClearBlade.Messaging({}, function(){});\n    messaging.publish(\"/clearblade/internal/trigger\", JSON.stringify(msgInfo));\n}\n",
+            "dependencies": "clearblade,log",
+            "description": "publishes trigger event over mqtt",
+            "library_key": "80eaedec0ae4d0a2de99d8a4a8e301::TriggerLib",
+            "name": "TriggerLib",
+            "system_key": "80eaedec0ae4d0a2de99d8a4a8e301",
+            "version": 1,
+            "visibility": "system"
+        }
+    },
+    "codeServices": {
+        "HorribleService": {
+            "code": "function HorribleService(req, resp) {    resp.success(\"This is horrible 1\")}",
+            "dependencies": "",
+            "name": "HorribleService",
+            "params": []
+        },
+        "example": {
+            "code": "function example(req, resp) {    resp.success(\"Hello world: \" + JSON.stringify(req))}",
+            "dependencies": "TestLibrary,log",
+            "name": "example",
+            "params": [
+                "badabada"
+            ]
+        },
+        "handlePublish": {
+            "code": "function handlePublish(req, resp) {    sysKey = req.systemKey;    var sysSec = req.systemSecret;    var userToken = req.userToken;    justPublishOneMessage(req, resp, \"/timer/popped\", \"Not much to say\");    publishTrigger(req, resp, \"Messaging\", \"Publish\");    resp.success(\"Should have published by now\");}",
+            "dependencies": "JustPublish,TriggerLib,log",
+            "name": "handlePublish",
+            "params": []
+        },
+        "itemCreatedTrigger": {
+            "code": "function itemCreatedTrigger(req, resp) {    sysKey = req.systemKey;    var sysSec = req.systemSecret;    var userToken = req.userToken;    publishTrigger(req, resp, \"Data\", \"ItemCreated\");    resp.success(\"We win! Request object: \" + JSON.stringify(req));}",
+            "dependencies": "TriggerLib,log",
+            "name": "itemCreatedTrigger",
+            "params": []
+        },
+        "userCreatedTrigger": {
+            "code": "function userCreatedTrigger(req, resp) {    sysKey = req.systemKey;    var sysSec = req.systemSecret;    var userToken = req.userToken;    publishTrigger(req, resp, \"User\", \"UserCreated\");    resp.success(\"Should have published by now\");}",
+            "dependencies": "TriggerLib,log",
+            "name": "userCreatedTrigger",
+            "params": []
+        },
+        "userDeletedTrigger": {
+            "code": "function userDeletedTrigger(req, resp) {    publishTrigger(req, resp, \"User\", \"UserDeleted\");    resp.success(\"Should have published by now\");}",
+            "dependencies": "TriggerLib,log",
+            "name": "userDeletedTrigger",
+            "params": []
+        }
+    },
+    "collections": {
+        "DaCollection": "80eaedec0a82c2dd8882feeed1db01",
+        "DuhCollection": "80eaedec0ab8bbe08dddf4d9cd13",
+        "YaddaYadda": "80eaedec0aeeb4dfd7add8e1a92b"
+    },
+    "developer": {
+        "email": "theDev@developer.com",
+        "password": "IAmTheDev",
+        "userId": null
+    },
+    "items": {},
+    "messagingUrl": "127.0.0.1:1883",
+    "platformUrl": "http://127.0.0.1:9000",
+    "roles": {
+        "Admin": "Admin",
+        "Anonymous": "Anonymous",
+        "Authenticated": "Authenticated",
+        "a": "80eaedec0ae885b793c59aac8720",
+        "b": "80eaedec0ac8e4c9a5b2e9c9bce901",
+        "c": "80eaedec0acab7f1a5cfcf91c72c",
+        "d": "80eaedec0abcf4c19382f3e6be0c",
+        "e": "80eaedec0af4c38084e7f8c5b764"
+    },
+    "systemKey": "80eaedec0ae4d0a2de99d8a4a8e301",
+    "systemSecret": "80EAEDEC0AA0BDA1E5A1B6EE9D07",
+    "teardown": {
+        "adminClient": {
+            "DevToken": "xI94cufFunvEiS0HZLczGtQePqfhSanZJv1e2Vrea8F85ctSEaLhjuBTq6Bpj_p3u7hF0mh-xNwxmnqA",
+            "MQTTClient": null,
+            "Email": "theDev@developer.com",
+            "Password": "IAmTheDev"
+        },
+        "collections": [
+            "80eaedec0a82c2dd8882feeed1db01",
+            "80eaedec0ab8bbe08dddf4d9cd13",
+            "80eaedec0aeeb4dfd7add8e1a92b"
+        ],
+        "dev_email": "theDev@developer.com",
+        "dev_password": "IAmTheDev",
+        "developer": null,
+        "libraries": [
+            "TestLibrary",
+            "TriggerLib",
+            "JustPublish"
+        ],
+        "messagingUrl": "127.0.0.1:1883",
+        "platformUrl": "http://127.0.0.1:9000",
+        "roles": [
+            "80eaedec0ae885b793c59aac8720",
+            "80eaedec0ac8e4c9a5b2e9c9bce901",
+            "80eaedec0acab7f1a5cfcf91c72c",
+            "80eaedec0abcf4c19382f3e6be0c",
+            "80eaedec0af4c38084e7f8c5b764"
+        ],
+        "services": [
+            "example",
+            "HorribleService",
+            "itemCreatedTrigger",
+            "handlePublish",
+            "userCreatedTrigger",
+            "userDeletedTrigger"
+        ],
+        "systemKey": "80eaedec0ae4d0a2de99d8a4a8e301",
+        "systemSecret": "80EAEDEC0AA0BDA1E5A1B6EE9D07",
+        "timers": [
+            "DoSomething"
+        ],
+        "triggers": [
+            "PublishHandler",
+            "Added A Row",
+            "Created a user",
+            "Deleted a user"
+        ],
+        "users": [
+            "80eaedec0adcb1cbf3c88d92c3a401",
+            "80eaedec0ab88988c5b4f5c6d32e",
+            "80eaedec0ae8bca5e8e799a58ad701"
+        ]
+    },
+    "timers": {
+        "DoSomething": {
+            "description": "Does something",
+            "frequency": 1,
+            "name": "DoSomething",
+            "repeats": 1,
+            "service_name": "example",
+            "start_time": "2016-02-24T08:13:21.065998765-06:00",
+            "system_key": "80eaedec0ae4d0a2de99d8a4a8e301",
+            "system_secret": "80EAEDEC0AA0BDA1E5A1B6EE9D07",
+            "timer_key": "80eaedec0ae4d0a2de99d8a4a8e301::DoSomething",
+            "user_id": "a693e5ec0adad8a3a1fbbcb0e31b",
+            "user_token": "xI94cufFunvEiS0HZLczGtQePqfhSanZJv1e2Vrea8F85ctSEaLhjuBTq6Bpj_p3u7hF0mh-xNwxmnqA"
+        }
+    },
+    "triggers": {
+        "Added A Row": {
+            "event_definition": {
+                "def_keys": [
+                    "collectionId",
+                    "collectionName"
+                ],
+                "def_module": "Data",
+                "def_name": "ItemCreated",
+                "visibility": true
+            },
+            "key_value_pairs": {
+                "collectionName": "DuhCollection"
+            },
+            "name": "Added A Row",
+            "service_name": "itemCreatedTrigger",
+            "system_key": "80eaedec0ae4d0a2de99d8a4a8e301",
+            "system_secret": "80EAEDEC0AA0BDA1E5A1B6EE9D07"
+        },
+        "Created a user": {
+            "event_definition": {
+                "def_keys": [],
+                "def_module": "User",
+                "def_name": "UserCreated",
+                "visibility": true
+            },
+            "key_value_pairs": {},
+            "name": "Created a user",
+            "service_name": "userCreatedTrigger",
+            "system_key": "80eaedec0ae4d0a2de99d8a4a8e301",
+            "system_secret": "80EAEDEC0AA0BDA1E5A1B6EE9D07"
+        },
+        "Deleted a user": {
+            "event_definition": {
+                "def_keys": [
+                    "userId"
+                ],
+                "def_module": "User",
+                "def_name": "UserDeleted",
+                "visibility": true
+            },
+            "key_value_pairs": {},
+            "name": "Deleted a user",
+            "service_name": "userDeletedTrigger",
+            "system_key": "80eaedec0ae4d0a2de99d8a4a8e301",
+            "system_secret": "80EAEDEC0AA0BDA1E5A1B6EE9D07"
+        },
+        "PublishHandler": {
+            "event_definition": {
+                "def_keys": [
+                    "topic"
+                ],
+                "def_module": "Messaging",
+                "def_name": "Publish",
+                "visibility": true
+            },
+            "key_value_pairs": {
+                "topic": "/foo/#"
+            },
+            "name": "PublishHandler",
+            "service_name": "example",
+            "system_key": "80eaedec0ae4d0a2de99d8a4a8e301",
+            "system_secret": "80EAEDEC0AA0BDA1E5A1B6EE9D07"
+        }
+    },
+    "users": {
+        "bar@bar.com": {
+            "creation_date": "2016-02-24T08:13:20-06:00",
+            "dafizzle": null,
+            "dasizzley": null,
+            "email": "bar@bar.com",
+            "password": "IAmBar",
+            "user_id": "80eaedec0ab88988c5b4f5c6d32e",
+            "user_token": "S5JOHCo98MWJmMFrGEUJ0JsyuxVRjhFhCc-avGWGQwReXcDecbdMzzbqWB_08uH2-isSVjJnyXNYpiKL"
+        },
+        "foo@bar.com": {
+            "creation_date": "2016-02-24T08:13:20-06:00",
+            "dafizzle": null,
+            "dasizzley": null,
+            "email": "foo@bar.com",
+            "password": "IAmFoo",
+            "user_id": "80eaedec0adcb1cbf3c88d92c3a401",
+            "user_token": "RqusctCr5xOKrRjOC50hf8A4kYiBuwo7OvrKSkm4wlQUcyP5zVIbQPu7vXVcTM4aZpxg3AN9G7yXJ2NK"
+        },
+        "swm@clearblade.com": {
+            "creation_date": "2016-02-24T08:13:20-06:00",
+            "dafizzle": null,
+            "dasizzley": null,
+            "email": "swm@clearblade.com",
+            "password": "IAmSWM",
+            "user_id": "80eaedec0ae8bca5e8e799a58ad701",
+            "user_token": "tB6de6JFqLPAYwZnED7sy9LbMItdpWHbow84NETS8e1O2u8Zv52kU29V8pDidjkwboTE8nZopbDaEhC9"
+        }
+    }
+}

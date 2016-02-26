@@ -6,7 +6,6 @@
         "name": "Spewing out MQTT",
         "steps": [
             ["setUser", "foo@bar.com"],
-            ["print", "producer initialized"],
             ["sync", "all subscribed", 5],
             ["repeat", 10000, 
                 [
@@ -19,7 +18,6 @@
         "name": "Cleaning up the spew",
         "steps": [
             ["setUser", "bar@bar.com"],
-            ["print", "consumer initialized"],
             ["subscribe", "/clearblade/test/spewer", 1],
             ["sync", "all subscribed", 5],
             ["repeat", 30000, 

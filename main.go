@@ -149,29 +149,6 @@ func main() {
 		fmt.Printf("Unknown Command '%s'\n", theCommand)
 		os.Exit(1)
 	}
-	/*
-		if SetupFile != "Do Not Setup" && InfoFile != "Do Not Get Info" {
-			fatal("Can't have both a setup file and an info file. I know. Confusing.")
-		}
-		if SetupFile != "Do Not Setup" {
-			performSetup(getJSON(SetupFile))
-		}
-		if InfoFile != "Do Not Get Info" {
-			scriptVars = getJSON(InfoFile)
-			if PlatformAddr == "undefined" {
-				cb.CB_ADDR = scriptVars["platformUrl"].(string)
-			}
-			if MsgAddr == "undefined" {
-				cb.CB_MSG_ADDR = scriptVars["messagingUrl"].(string)
-			}
-		}
-		if ScriptFile != "Do Not Run Script" {
-			executeTestScript(getJSON(ScriptFile))
-		}
-		if TeardownFile != "Do Not Teardown" {
-			performTeardown(getJSON(TeardownFile))
-		}
-	*/
 }
 
 func getJSON(filename string) map[string]interface{} {

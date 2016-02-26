@@ -2,13 +2,29 @@
     "name": "For statement",
     "scenarios": [ ["Try the For", 1] ],
     "sequencing": "Parallel",
+    "globals": {
+        "i": 0
+    },
     "Try the For": {
-        "name": "Make sure if statement works",
+        "name": "Make sure for statement works",
         "steps": [
-            ["set", "maxFoo", 3],
-            ["for", [ ["set", "foo", 0], ["<", "@foo", "@maxFoo" ], ["set", "foo", ["+", "@foo", 1] ] ], [
+
+            ["for", [ ["set", "foo", 0], ["<", "@foo", 3 ], ["set", "foo", ["+", "@foo", 1] ] ], [
                 ["print", "I'm in the foo!"]]
-            ]
+            ],
+
+            ["for", [ [], [], [] ], [
+
+                ["set", "i", ["+", "@i", 1]],
+
+                ["print", "I'm in the Infinite loop:", "@i"],
+
+                ["if", [">=", "@i", 100], [
+                    ["break"]]
+                ] ]
+            ],
+
+            ["break"]
         ]
     }
 }

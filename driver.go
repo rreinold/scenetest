@@ -14,6 +14,10 @@ func executeTestScript(theScript map[string]interface{}) {
 	if !NoLogin { // nice double negative
 		authDevForScriptRun()
 	}
+
+	//  Get the scenarios and dereference any variables appearing
+	//  in the scenarios. These are typically scenario counts where
+	//  the number of scenarios to run is set in globals
 	sequencing := getVar("sequencing", script, "Parallel").(string)
 	scenarios := getVar("scenarios", script, []string{}).([]interface{})
 	if glbs, ok := script["globals"].(map[string]interface{}); ok {
@@ -109,7 +113,10 @@ func runOneScenario(name string, scenario map[string]interface{}, doneChan chan<
 		}
 		_, err := runOneStep(context, sliceStep)
 		if err != nil {
-			fatal("Exiting because of error")
+			if err.Error() == "break" {
+				err = fmt.Errorf("Encountered break statement outside of loop")
+			}
+			fatal(fmt.Sprintf("Exiting because of error: %s", err.Error()))
 		}
 	}
 
@@ -135,6 +142,11 @@ func runOneStep(context map[string]interface{}, step []interface{}) (interface{}
 				myNestingPrintf(context, "%s:\t%s:\t%s succeeded\n", timeStr, myName, method)
 			}
 			return rval, nil
+		} else if err.Error() == "break" {
+			if !ShutUp {
+				myNestingPrintf(context, "%s:\t%s:\t%s succeeded\n", timeStr, myName, method)
+			}
+			return nil, err
 		} else {
 			myNestingPrintf(context, "%s(%s):%s failed: %s\n", myName, timeStr, method, err.Error())
 			return nil, err
@@ -160,14 +172,13 @@ func dereferenceVariables(context map[string]interface{}, args []interface{}) []
 
 func parseScenario(scenario interface{}) (string, int, error) {
 	switch scenario.(type) {
-	case string:
-		return scenario.(string), 1, nil
 	case []interface{}:
 		theScenario := scenario.([]interface{})
 		if len(theScenario) != 2 {
-			return "", 0, fmt.Errorf("An array scenario must be of the form [\"name\", <count>]")
+			return "", 0, fmt.Errorf("A scenario must be of the form [\"name\", <count>]")
 		}
-		return theScenario[0].(string), int(theScenario[1].(float64)), nil
+		parsedScenario := dereferenceVariables(map[string]interface{}{}, theScenario)
+		return parsedScenario[0].(string), int(parsedScenario[1].(float64)), nil
 	default:
 		return "", 0, fmt.Errorf("Bad scenario type")
 	}

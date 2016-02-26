@@ -30,6 +30,7 @@ type decrGlobalStmt struct{}
 type assertStmt struct{}
 type syncStmt struct{}
 type failStmt struct{}
+type breakStmt struct{}
 
 func init() {
 	funcMap["sleep"] = &sleepStmt{}
@@ -48,6 +49,7 @@ func init() {
 	funcMap["assert"] = &assertStmt{}
 	funcMap["sync"] = &syncStmt{}
 	funcMap["fail"] = &failStmt{}
+	funcMap["break"] = &breakStmt{}
 	syncLock = new(sync.Mutex)
 }
 
@@ -212,7 +214,9 @@ func (r *repeatStmt) run(ctx map[string]interface{}, args []interface{}) (interf
 	iterCount := int(0)
 	for count := int(valueOf(ctx, args[0]).(float64)); count > 0; count-- {
 		iterCount++
-		myPrintf("Repeat: iteration %d\n", iterCount)
+		if !ShutUp {
+			myPrintf("Repeat: iteration %d\n", iterCount)
+		}
 		for _, stmt := range stmts {
 			if _, err := runOneStep(ctx, stmt.([]interface{})); err != nil {
 				return nil, err
@@ -242,11 +246,6 @@ func (f *forStmt) run(ctx map[string]interface{}, args []interface{}) (interface
 	//  Do the pre condition just once. We don't care about the returned
 	//  value; just that it succeeded
 	valueOf(ctx, preCond)
-	/*
-		if err := valueOf(ctx, preCond); err != nil {
-			return nil, err
-		}
-	*/
 
 	var val interface{}
 	var err error
@@ -260,6 +259,11 @@ func (f *forStmt) run(ctx map[string]interface{}, args []interface{}) (interface
 		//  true test condition -- now execute each sub statement
 		for _, stmt := range stmtList {
 			if val, err = runOneStep(ctx, stmt.([]interface{})); err != nil {
+				// If there's a break here, catch it here and return success
+				// note that we're not executing the post statement/condition
+				if err.Error() == "break" {
+					return nil, nil
+				}
 				return nil, err
 			}
 		}
@@ -280,15 +284,20 @@ func (i *ifStmt) run(ctx map[string]interface{}, args []interface{}) (interface{
 	if len(args) != 2 {
 		return nil, fmt.Errorf("if statement: wrong number of args: %s", i.help())
 	}
-	condition := args[0].([]interface{})
+	condition := findTheTruth(args[0])
 	stmtList := args[1].([]interface{})
 
 	// eval the condition expression and return if error or false
-	res, err := evalExprStmt(ctx, condition)
-	if err != nil {
-		return nil, err
-	}
-	if res == false {
+	/*
+		res, err := evalExprStmt(ctx, condition)
+		if err != nil {
+			return nil, err
+		}
+		if res == false {
+			return nil, nil
+		}
+	*/
+	if condition == false {
 		return nil, nil
 	}
 
@@ -405,21 +414,34 @@ func (s *setGlobalStmt) help() string {
 }
 
 func (a *assertStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
-	if len(args) != 2 {
-		return nil, fmt.Errorf("Usage: [assert, <val1>, <val2> ]")
+	if len(args) != 1 {
+		return nil, fmt.Errorf("Usage: [assert, <expr> ]")
 	}
-	result := reflect.DeepEqual(args[0], args[1])
-	ctx["returnValue"] = result
-	if !result {
-		return nil, fmt.Errorf("Assertion failed: %+v and %+v are not equal", args[0], args[1])
+	theTruth := findTheTruth(args[0])
+	if !theTruth {
+		return nil, fmt.Errorf("Assertion failed: %v", args[0])
 	}
-	return nil, nil
+	return args[0], nil
 }
 
-var assertHelpStr = `["assert", <val1>, <val2>] or ["assert", <val1>, "<operator>", <val2>]`
+var assertHelpStr = `["assert", <expr>]`
 
 func (a *assertStmt) help() string {
 	return assertHelpStr
+}
+
+func (b *breakStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	if len(args) != 0 {
+		return nil, fmt.Errorf("break statement takes no args")
+	}
+	//  This is a bit of a hack, but return the break error up the stack -- it gets "caught"
+	//  by all the looping statements. If it gets all the way out to the outer scope/nesting level
+	//  then the error is reported.
+	return nil, fmt.Errorf("break")
+}
+
+func (b *breakStmt) help() string {
+	return "[\"break\"]"
 }
 
 func (f *failStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {

@@ -18,6 +18,7 @@
      *  globals are available and shared by all scenario instances
      */
     "globals": {
+        "justAnExample": 0
     },
 
     //

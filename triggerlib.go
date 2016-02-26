@@ -42,11 +42,6 @@ func (ct *createTimer) run(ctx map[string]interface{}, args []interface{}) (inte
 	sysKey := scriptVars["systemKey"].(string)
 	devClient := ctx["adminClient"].(*cb.DevClient)
 	startTime := timerInput["start_time"].(string)
-	/* swm -- not needed anymore
-	if startTime == "Now" {
-		startTime = time.Now().Format(time.RFC3339)
-	}
-	*/
 	timerInput["start_time"] = startTime
 	newTimer, err := devClient.CreateTimer(sysKey, timerName, timerInput)
 	if err != nil {
