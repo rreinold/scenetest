@@ -78,9 +78,9 @@ func (wt *waitTrigger) run(ctx map[string]interface{}, args []interface{}) (inte
 	if len(args) != 3 {
 		return nil, fmt.Errorf("Wrong number of arguments to waitTrigger: %d", len(args))
 	}
-	eClass := valueOf(ctx, args[0]).(string)
-	eType := valueOf(ctx, args[1]).(string)
-	timeout := time.Duration(valueOf(ctx, args[2]).(float64))
+	eClass := args[0].(string)
+	eType := args[1].(string)
+	timeout := time.Duration(args[2].(float64))
 
 	if _, ok := ctx["triggerChannel"]; !ok {
 		return nil, fmt.Errorf("No trigger channel to wait on...")

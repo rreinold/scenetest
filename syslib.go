@@ -70,10 +70,10 @@ func (s *syncStmt) run(ctx map[string]interface{}, args []interface{}) (interfac
 		for i := 0; i < syncCount; i++ {
 			mySyncStuff.c <- true
 		}
-		mySyncStuff.count = 0
+		mySyncStuff.count = 0 // so we can use this sync point again in the test
 	}
 	syncLock.Unlock()
-	<-mySyncStuff.c
+	<-mySyncStuff.c // wait for everybody to sync up
 	return nil, nil
 }
 
@@ -96,7 +96,7 @@ func (p *printStmt) run(ctx map[string]interface{}, args []interface{}) (interfa
 		if idx > 0 {
 			myPrintf(" ")
 		}
-		myPrintf("%+v", valueOf(ctx, arg))
+		myPrintf("%+v", arg)
 	}
 	fmt.Println("")
 	return nil, nil
@@ -204,15 +204,15 @@ func (r *repeatStmt) run(ctx map[string]interface{}, args []interface{}) (interf
 	if len(args) != 2 {
 		return nil, fmt.Errorf("Usage: [repeat, <num>, [<stmt>...]]")
 	}
-	if _, ok := valueOf(ctx, args[0]).(float64); !ok {
+	if _, ok := args[0].(float64); !ok {
 		return nil, fmt.Errorf("Repeat count must be a number")
 	}
-	if _, ok := valueOf(ctx, args[1]).([]interface{}); !ok {
+	if _, ok := args[1].([]interface{}); !ok {
 		return nil, fmt.Errorf("Repeat statements must be an array")
 	}
-	stmts := valueOf(ctx, args[1]).([]interface{})
+	stmts := args[1].([]interface{})
 	iterCount := int(0)
-	for count := int(valueOf(ctx, args[0]).(float64)); count > 0; count-- {
+	for count := int(args[0].(float64)); count > 0; count-- {
 		iterCount++
 		if !ShutUp {
 			myPrintf("Repeat: iteration %d\n", iterCount)
@@ -365,8 +365,8 @@ func doTheSet(ctx map[string]interface{}, args []interface{}, isGlobal bool) (in
 	if err := argCheck(args, 2, "", nil); err != nil {
 		return nil, fmt.Errorf("Call to set failed: %s", err.Error())
 	}
-	varName := valueOf(ctx, args[0]).(string)
-	value := valueOf(ctx, args[1])
+	varName := args[0].(string)
+	value := args[1]
 	if isGlobal {
 		setGlobal(varName, value)
 	} else {
