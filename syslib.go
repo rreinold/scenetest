@@ -417,7 +417,6 @@ func (a *assertStmt) run(ctx map[string]interface{}, args []interface{}) (interf
 	if len(args) != 1 {
 		return nil, fmt.Errorf("Usage: [assert, <expr> ]")
 	}
-	myPrintf("ARGS0 == %v\n", args[0])
 	theTruth := findTheTruth(args[0])
 	if !theTruth {
 		return nil, fmt.Errorf("Assertion failed: %v", args[0])

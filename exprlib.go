@@ -59,6 +59,14 @@ func init() {
 	funcMap["%"] = &modOp{}
 }
 
+func getUsefullyTypedArgs(left, right interface{}) (interface{}, interface{}) {
+	leftNum, rightNum, err := numberTypesOrFail(left, right)
+	if err == nil {
+		left, right = leftNum, rightNum
+	}
+	return left, right
+}
+
 func (e *equalsOp) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
 	return binaryCompareOp(e, ctx, args)
 }
@@ -68,16 +76,7 @@ func (e *equalsOp) help() string {
 }
 
 func (e *equalsOp) compare(left, right interface{}) bool {
-	fmt.Printf("EQUALS: %v, %v\n", left, right)
-	leftNum, rightNum, err := numberTypesOrFail(left, right)
-	if err == nil {
-		left, right = leftNum, rightNum
-	}
-	if left == right {
-		myPrintf("YESSSSSSSSSS\n")
-	} else {
-		myPrintf("NOOOOOOOOOOOO\n")
-	}
+	left, right = getUsefullyTypedArgs(left, right)
 	return left == right
 }
 
@@ -90,6 +89,7 @@ func (n *notEqualsOp) help() string {
 }
 
 func (n *notEqualsOp) compare(left, right interface{}) bool {
+	left, right = getUsefullyTypedArgs(left, right)
 	return left != right
 }
 
