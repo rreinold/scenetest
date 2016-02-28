@@ -9,6 +9,7 @@ type callStmt struct{}
 type createServiceStmt struct{}
 type updateServiceStmt struct{}
 type deleteServiceStmt struct{}
+type getCurrentServiceVersionStmt struct{}
 type allLibrariesStmt struct{}
 type getLibraryStmt struct{}
 
@@ -17,6 +18,7 @@ func init() {
 	funcMap["createService"] = &createServiceStmt{}
 	funcMap["updateService"] = &updateServiceStmt{}
 	funcMap["deleteService"] = &deleteServiceStmt{}
+	funcMap["getCurrentServiceVersion"] = &getCurrentServiceVersionStmt{}
 
 	funcMap["allLibraries"] = &allLibrariesStmt{}
 	funcMap["getLibrary"] = &getLibraryStmt{}
@@ -107,9 +109,8 @@ func (u *updateServiceStmt) run(context map[string]interface{}, args []interface
 	}
 	if len(args) == 2 {
 		args = append(args, []interface{}{})
-	}
-	if _, ok := args[2].([]interface{}); !ok {
-		return nil, fmt.Errorf("Parameters arg must be a string\n")
+	} else if _, ok := args[2].([]interface{}); !ok {
+		return nil, fmt.Errorf("Parameters arg must be a slice of strings\n")
 	}
 
 	//  Create the service
@@ -147,6 +148,24 @@ func (d *deleteServiceStmt) run(context map[string]interface{}, args []interface
 
 func (d *deleteServiceStmt) help() string {
 	return "[\"deleteService\", \"<serviceName>\"]"
+}
+
+func (g *getCurrentServiceVersionStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
+	if err := argCheck(args, 1, ""); err != nil {
+		return nil, err
+	}
+	svcName := args[0].(string)
+	sysKey := scriptVars["systemKey"].(string)
+	adminClient := context["adminClient"].(*cb.DevClient)
+	theSvc, err := adminClient.GetService(sysKey, svcName)
+	if err != nil {
+		return nil, fmt.Errorf("GetVersion call failed: %s", err.Error())
+	}
+	return theSvc.Version, nil
+}
+
+func (g *getCurrentServiceVersionStmt) help() string {
+	return "[\"getCurrentServiceVersion\", \"<svcname>\"]"
 }
 
 func (a *allLibrariesStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {

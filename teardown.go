@@ -7,21 +7,8 @@ import (
 
 var adm *cb.DevClient
 
-func performTeardown(stuff interface{}) {
-	switch stuff.(type) {
-	case map[string]interface{}:
-		teardownSystem(stuff.(map[string]interface{}))
-	case []interface{}:
-		teardownSystems(stuff.([]interface{}))
-	default:
-		fatal("Really bad json type for teardown file\n")
-	}
-}
-
-func teardownSystems(systems []interface{}) {
-	for _, system := range systems {
-		teardownSystem(system.(map[string]interface{}))
-	}
+func performTeardown() {
+	teardownSystem(scriptVars["teardown"].(map[string]interface{}))
 }
 
 func authTheDevGod(system map[string]interface{}) {
@@ -37,8 +24,6 @@ func setUrlValues(system map[string]interface{}) {
 func teardownSystem(system map[string]interface{}) {
 	setUrlValues(system)
 	sysKey = system["systemKey"].(string)
-	cb.CB_ADDR = system["platformUrl"].(string)
-	cb.CB_MSG_ADDR = system["messagingUrl"].(string)
 	authTheDevGod(system)
 
 	deleteTimers(system)

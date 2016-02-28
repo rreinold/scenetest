@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"reflect"
-	//"sort"
+	"sort"
 	"strings"
 )
 
@@ -47,29 +47,19 @@ func saveSetupState(originalJson map[string]interface{}) {
 	if err != nil {
 		fatal(fmt.Sprintf("MarshalIndent failed: %s\n", err.Error()))
 	}
-	fileToWrite := "setupState.json"
-	if _, ok := originalJson["teardownFile"]; ok {
-		fileToWrite = originalJson["teardownFile"].(string)
-	}
-	err = ioutil.WriteFile(fileToWrite, marshalled, os.ModePerm)
-	if err != nil {
-		fatal(fmt.Sprintf("Could not save setup state: %s\n", err.Error()))
-	}
 
 	scriptVars["platformUrl"] = PlatformAddr
 	scriptVars["messagingUrl"] = MsgAddr
+	scriptVars["teardown"] = setupState
 
 	marshalled, err = json.MarshalIndent(scriptVars, "", "    ")
 	if err != nil {
 		fatal(fmt.Sprintf("MarshalIndent failed: %s\n", err.Error()))
 	}
-	fileToWrite = "info.json"
-	if _, ok := originalJson["infoFile"]; ok {
-		fileToWrite = originalJson["infoFile"].(string)
-	}
-	err = ioutil.WriteFile(fileToWrite, marshalled, os.ModePerm)
+
+	err = ioutil.WriteFile(InfoFile, marshalled, os.ModePerm)
 	if err != nil {
-		fatal(fmt.Sprintf("Could not save setup state: %s\n", err.Error()))
+		fatal(fmt.Sprintf("Could not save setup information to '%s': %s\n", InfoFile, err.Error()))
 	}
 }
 
@@ -86,13 +76,21 @@ func argCheck(args []interface{}, mandatory int, argTypes ...interface{}) error 
 			continue // nil means interface{}
 		}
 		if reflect.TypeOf(actualArg) != reflect.TypeOf(argType) {
-			return fmt.Errorf("Argument #%d has type mismatch: %v != %v", reflect.TypeOf(actualArg), reflect.TypeOf(argType))
+			return fmt.Errorf("Argument #%d has type mismatch: %v != %v", i, reflect.TypeOf(actualArg), reflect.TypeOf(argType))
 		}
 	}
 	return nil
 }
 
 func valueOf(context map[string]interface{}, thing interface{}) interface{} {
+	if isAStatement(thing) {
+		stmt := thing.([]interface{})
+		res, err := runOneStep(context, stmt)
+		if err != nil {
+			fatal(fmt.Sprintf("Substatement execution failed: %s", err.Error()))
+		}
+		thing = res
+	}
 	switch thing.(type) {
 	case string:
 		thingStr := thing.(string)
@@ -121,19 +119,18 @@ func valueOf(context map[string]interface{}, thing interface{}) interface{} {
 }
 
 func showHelp() {
-	/*
-		keys := make([]string, len(funcMap))
-		i := 0
-		for k := range funcMap {
-			keys[i] = k
-			i += 1
-		}
-		sort.Strings(keys)
-		for _, funcName := range keys {
-			stmt := funcMap[funcName]
-			myPrintf("%s\n", stmt.HelpFunc())
-		}
-	*/
+	keys := make([]string, len(funcMap))
+	i := 0
+	for k := range funcMap {
+		keys[i] = k
+		i += 1
+	}
+	sort.Strings(keys)
+	myPrintf("\n******************** Statements ********************\n")
+	for _, funcName := range keys {
+		stmt := funcMap[funcName]
+		myPrintf("\n%s\n", stmt.help())
+	}
 }
 
 func setupSceneRoot() {
@@ -158,4 +155,21 @@ func incrNestingLevel(ctx map[string]interface{}) {
 
 func decrNestingLevel(ctx map[string]interface{}) {
 	ctx["__nestingLevel"] = ctx["__nestingLevel"].(int) - 1
+}
+
+func isAStatement(arg interface{}) bool {
+	slice, ok := arg.([]interface{})
+	if !ok || len(slice) <= 0 {
+		return false
+	}
+
+	name, ok := slice[0].(string)
+	if !ok {
+		return false
+	}
+
+	if _, ok := funcMap[name]; !ok {
+		return false
+	}
+	return true
 }

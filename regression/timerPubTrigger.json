@@ -7,17 +7,18 @@
     //      messaging,
     //      timers,
     //      triggers,
-    //      user stuff ?? not sure here yet.
+    //      etc
     //
 
     "name": "Name of this test run",
-    "scenarios": [ ["Trigger Watcher", 1], ["Create The Timer", 1], ["Subscriber", 1] ],
+    "scenarios": [ ["Trigger Watcher", 20], ["Create The Timer", 1], ["Subscriber", 20] ],
     "sequencing": "Parallel",
 
     /*
      *  globals are available and shared by all scenario instances
      */
     "globals": {
+        "justAnExample": 0
     },
 
     //
@@ -53,7 +54,7 @@
         "name": "Get things going",
         "steps": [
             ["setUser", "foo@bar.com"],
-            ["sync", "Ready For Timer", 3],
+            ["sync", "Ready For Timer", 41],
             ["createTimer", "@uberTimer"]
         ]
     },
@@ -67,7 +68,7 @@
         "steps": [
             ["setUser", "bar@bar.com"],
             ["subscribeTriggers"],
-            ["sync", "Ready For Timer", 3],
+            ["sync", "Ready For Timer", 41],
             ["repeat", "@iterations", [
                 ["waitTrigger", "Messaging", "Publish", 300]]
             ]
@@ -82,7 +83,7 @@
         "steps": [
             ["setUser", "bar@bar.com"],
             ["subscribe", "/timer/popped", 1],
-            ["sync", "Ready For Timer", 3],
+            ["sync", "Ready For Timer", 41],
             ["repeat", "@iterations", [
                 ["waitMessage", "/timer/popped", 300]]
             ]

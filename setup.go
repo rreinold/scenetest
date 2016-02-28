@@ -29,9 +29,6 @@ func init() {
 }
 
 func performSetup(setupInfo interface{}) {
-	//  We're passed either an array of systems, or just one system.
-	//  Thus, the type checking stuff.
-	//myPrintf("THE WHOLE SHABANG IS: %+v\n", setupInfo)
 	switch setupInfo.(type) {
 	case map[string]interface{}:
 		setupSystem(setupInfo.(map[string]interface{}))

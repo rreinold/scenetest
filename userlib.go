@@ -24,7 +24,7 @@ func init() {
 func (s *setUserStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
 	sysKey := scriptVars["systemKey"].(string)
 	sysSec := scriptVars["systemSecret"].(string)
-	email := valueOf(ctx, getArg(args, 0)).(string)
+	email := getArg(args, 0).(string)
 	userInfo := scriptVars["users"].(map[string]interface{})[email].(map[string]interface{})
 	password := userInfo["password"].(string)
 	userClient := cb.NewUserClient(sysKey, sysSec, email, password)

@@ -1,0 +1,99 @@
+{
+    "name": "Name of this test run",
+    "scenarios": [ ["Code Caller", "@numCodeCallers"], ["Code Changer", 1], ["Version Checker", 1] ],
+    "sequencing": "Parallel",
+
+    "globals": {
+        "numCodeCallers": 20, // now many code caller scenarios?
+        "others": 2, // The code changer and version checker
+        "callIterations": 100, // jack this up or down as you see fit.
+        "Horrible1Output": "This is horrible 1",
+        "Horrible2Output": "This is really horrible 2",
+        "Horrible3Output": "This is really, really horrible 3"
+    },
+
+    "locals": {
+    },
+
+
+    //
+    //  These guys wait for code to change and then call the service, making
+    //  sure the return value of the service matches what's expected.
+    //
+    "Code Caller": {
+        "name": "Call and Assert",
+        "steps": [
+            ["setUser", "foo@bar.com"],
+            ["sync", "Wait for version check", ["+", "@numCodeCallers", "@others"]],
+
+            ["repeat", "@callIterations", [
+
+                ["sync", "Wait for changed service", ["+", "@numCodeCallers", "@others"]],
+                ["call", "HorribleService", {} ],
+                ["assert", ["==", "@returnValue", "@Horrible1Output"]],
+                ["sync", "Wait for calls to complete", ["+", "@numCodeCallers", 1]],
+
+                ["sync", "Wait for changed service", ["+", "@numCodeCallers", "@others"]],
+                ["call", "HorribleService", {} ],
+                ["assert", ["==", "@returnValue", "@Horrible2Output"]],
+                ["sync", "Wait for calls to complete", ["+", "@numCodeCallers", 1]],
+
+                ["sync", "Wait for changed service", ["+", "@numCodeCallers", "@others"]],
+                ["call", "HorribleService", {} ],
+                ["assert", ["==", "@returnValue", "@Horrible3Output"]],
+                ["sync", "Wait for calls to complete", ["+", "@numCodeCallers", 1]] ]
+            ]
+        ]
+    },
+
+
+    //
+    //  Change the code -- iterate through three different .js files that return
+    //  different strings. The 100ms sleeps are to give etcd a chance to propagate
+    //  the changes before we start calling the service. NOTE: This has a decent
+    //  chance of failing if the servers get bogged down.
+    //
+    "Code Changer": {
+        "name": "Modify Code Service",
+        "steps": [
+            ["setUser", "bar@bar.com"],
+            ["sync", "Wait for version check", ["+", "@numCodeCallers", "@others"]],
+
+            ["repeat", "@callIterations", [
+                ["updateService", "HorribleService", "@HorribleService1.js"],
+                ["sleep", 100],
+                ["sync", "Wait for changed service", ["+", "@numCodeCallers", "@others"]],
+                ["sync", "Wait for calls to complete", ["+", "@numCodeCallers", 1]],
+
+                ["updateService", "HorribleService", "@HorribleService2.js"],
+                ["sleep", 100],
+                ["sync", "Wait for changed service", ["+", "@numCodeCallers", "@others"]],
+                ["sync", "Wait for calls to complete", ["+", "@numCodeCallers", 1]],
+
+                ["updateService", "HorribleService", "@HorribleService3.js"],
+                ["sleep", 100],
+                ["sync", "Wait for changed service", ["+", "@numCodeCallers", "@others"]],
+                ["sync", "Wait for calls to complete", ["+", "@numCodeCallers", 1]]]
+            ]
+        ]
+    },
+
+    //
+    //  This guy just makes sure the version number for HorribleServices gets incremented
+    //  by one every time. Not very interesting, but gens another call to the platform.
+    //
+    "Version Checker": {
+        "name": "Version Checker",
+        "steps": [
+            ["setUser", "swm@clearblade.com"],
+            ["set", "currentVersion", ["getCurrentServiceVersion", "HorribleService"]],
+            ["sync", "Wait for version check", ["+", "@numCodeCallers", "@others"]],
+            ["repeat", ["*", "@callIterations", 3], [
+                ["sync", "Wait for changed service", ["+", "@numCodeCallers", "@others"]],
+                ["getCurrentServiceVersion", "HorribleService"],
+                ["assert", ["==", "@returnValue", ["+", "@currentVersion", 1]]],
+                ["set", "currentVersion", ["+", "@currentVersion", 1]] ]
+            ]
+        ]
+    }
+}
