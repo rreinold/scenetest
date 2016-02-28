@@ -21,8 +21,8 @@ func (s *subscribeStmt) run(context map[string]interface{}, args []interface{}) 
 	if len(args) != 2 {
 		return nil, fmt.Errorf("Usage: [subscribe, topic, qos(int)]")
 	}
-	topic := valueOf(context, args[0]).(string)
-	qos := int(valueOf(context, args[1]).(float64))
+	topic := args[0].(string)
+	qos := int(args[1].(float64))
 	userClient := context["userClient"].(*cb.UserClient)
 	trigChan, err := userClient.Subscribe(topic, qos)
 	if err != nil {
@@ -33,14 +33,14 @@ func (s *subscribeStmt) run(context map[string]interface{}, args []interface{}) 
 }
 
 func (s *subscribeStmt) help() string {
-	return "subscribe help not yet implemented"
+	return "[\"subscribe\", <topicString>, <QoSLevel>]"
 }
 
 func (w *waitMessageStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
 	if len(args) != 2 {
 		return nil, fmt.Errorf("Usage: [waitMessage, topic, timeout]")
 	}
-	topic := valueOf(context, args[0]).(string)
+	topic := args[0].(string)
 	timeout := time.Duration(args[1].(float64))
 	trigChan := context[topic].(<-chan *mqtt.Publish)
 	var stuff *mqtt.Publish
@@ -62,9 +62,9 @@ func (p *publishStmt) run(context map[string]interface{}, args []interface{}) (i
 		return nil, fmt.Errorf("Usage: [publish, topic, message_body, qos]")
 	}
 	userClient := context["userClient"].(*cb.UserClient)
-	topic := valueOf(context, args[0]).(string)
-	body := []byte(valueOf(context, args[1]).(string))
-	qos := int(valueOf(context, args[2]).(float64))
+	topic := args[0].(string)
+	body := []byte(args[1].(string))
+	qos := int(args[2].(float64))
 	if err := userClient.Publish(topic, body, qos); err != nil {
 		return nil, fmt.Errorf("Publish failed: %s", err.Error())
 	}

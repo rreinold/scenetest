@@ -23,8 +23,8 @@ func (c *createItemStmt) run(context map[string]interface{}, args []interface{})
 	if len(args) != 2 {
 		return nil, fmt.Errorf("Usage: [createItem, <colName>, <argMap>]")
 	}
-	colName := valueOf(context, args[0]).(string)
-	rowInfo := valueOf(context, args[1]).(map[string]interface{})
+	colName := args[0].(string)
+	rowInfo := args[1].(map[string]interface{})
 	colId, err := collectionNameToId(colName)
 	if err != nil {
 		return nil, err
@@ -121,10 +121,10 @@ func (q *queryStmt) run(context map[string]interface{}, args []interface{}) (int
 		return nil, err
 	}
 	if len(args) >= 2 {
-		myQuery.Columns, err = buildColumns(valueOf(context, args[1]).([]interface{}))
+		myQuery.Columns, err = buildColumns(args[1].([]interface{}))
 	}
 	if len(args) >= 3 {
-		myQuery.Filters, err = buildFilter(valueOf(context, args[2]).([]interface{}))
+		myQuery.Filters, err = buildFilter(args[2].([]interface{}))
 		if err != nil {
 			return nil, fmt.Errorf("query: Bad filter: %s", err.Error())
 		}

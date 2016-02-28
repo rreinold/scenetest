@@ -9,7 +9,7 @@ type callStmt struct{}
 type createServiceStmt struct{}
 type updateServiceStmt struct{}
 type deleteServiceStmt struct{}
-type getVersionStmt struct{}
+type getCurrentServiceVersionStmt struct{}
 type allLibrariesStmt struct{}
 type getLibraryStmt struct{}
 
@@ -18,7 +18,7 @@ func init() {
 	funcMap["createService"] = &createServiceStmt{}
 	funcMap["updateService"] = &updateServiceStmt{}
 	funcMap["deleteService"] = &deleteServiceStmt{}
-	funcMap["getVersion"] = &getVersionStmt{}
+	funcMap["getCurrentServiceVersion"] = &getCurrentServiceVersionStmt{}
 
 	funcMap["allLibraries"] = &allLibrariesStmt{}
 	funcMap["getLibrary"] = &getLibraryStmt{}
@@ -150,7 +150,7 @@ func (d *deleteServiceStmt) help() string {
 	return "[\"deleteService\", \"<serviceName>\"]"
 }
 
-func (g *getVersionStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
+func (g *getCurrentServiceVersionStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
 	if err := argCheck(args, 1, ""); err != nil {
 		return nil, err
 	}
@@ -161,12 +161,11 @@ func (g *getVersionStmt) run(context map[string]interface{}, args []interface{})
 	if err != nil {
 		return nil, fmt.Errorf("GetVersion call failed: %s", err.Error())
 	}
-	myPrintf("GET VERSION: %d\n", theSvc.Version)
 	return theSvc.Version, nil
 }
 
-func (g *getVersionStmt) help() string {
-	return "[\"getVersion\", \"<svcname>\"]"
+func (g *getCurrentServiceVersionStmt) help() string {
+	return "[\"getCurrentServiceVersion\", \"<svcname>\"]"
 }
 
 func (a *allLibrariesStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
