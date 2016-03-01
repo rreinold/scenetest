@@ -19,37 +19,31 @@ var syncLock *sync.Mutex
 type sleepStmt struct{}
 type repeatStmt struct{}
 type forStmt struct{}
-type whileStmt struct{}
 type ifStmt struct{}
 type ifElseStmt struct{}
 type printStmt struct{}
 type setStmt struct{}
 type setGlobalStmt struct{}
-type incrGlobalStmt struct{}
-type decrGlobalStmt struct{}
 type assertStmt struct{}
 type syncStmt struct{}
 type failStmt struct{}
 type breakStmt struct{}
+type elemOfStmt struct{}
 
 func init() {
-	funcMap["sleep"] = &sleepStmt{}
-	funcMap["repeat"] = &repeatStmt{}
-	funcMap["for"] = &forStmt{}
-	funcMap["while"] = &whileStmt{}
-	funcMap["if"] = &ifStmt{}
-	funcMap["if-else"] = &ifElseStmt{}
-	funcMap["ifelse"] = &ifElseStmt{}
-	funcMap["if else"] = &ifElseStmt{}
-	funcMap["print"] = &printStmt{}
 	funcMap["set"] = &setStmt{}
 	funcMap["setGlobal"] = &setGlobalStmt{}
-	funcMap["incrGlobal"] = &incrGlobalStmt{}
-	funcMap["decrGlobal"] = &decrGlobalStmt{}
+	funcMap["print"] = &printStmt{}
 	funcMap["assert"] = &assertStmt{}
-	funcMap["sync"] = &syncStmt{}
+	funcMap["sleep"] = &sleepStmt{}
 	funcMap["fail"] = &failStmt{}
+	funcMap["sync"] = &syncStmt{}
+	funcMap["repeat"] = &repeatStmt{}
+	funcMap["for"] = &forStmt{}
 	funcMap["break"] = &breakStmt{}
+	funcMap["if"] = &ifStmt{}
+	funcMap["ifElse"] = &ifElseStmt{}
+	funcMap["elemOf"] = &elemOfStmt{}
 	syncLock = new(sync.Mutex)
 }
 
@@ -104,43 +98,6 @@ func (p *printStmt) run(ctx map[string]interface{}, args []interface{}) (interfa
 
 func (p *printStmt) help() string {
 	return "[\"print\", <arg>, ...]"
-}
-
-func (w *whileStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
-	incrNestingLevel(ctx)
-	defer decrNestingLevel(ctx)
-	if len(args) != 4 {
-		return nil, fmt.Errorf("Usage: [while, <var>, <op>, <val>, [<stmt>...]]")
-	}
-	if _, ok := args[0].(string); !ok {
-		return nil, fmt.Errorf("First arg must be a variable name")
-	}
-	if _, ok := args[1].(string); !ok {
-		return nil, fmt.Errorf("Second arg must be a string value")
-	}
-	if _, ok := args[3].([]interface{}); !ok {
-		return nil, fmt.Errorf("While statements must be an array")
-	}
-	theVar := args[0].(string)
-	theOp := args[1].(string)
-	theVal := args[2]
-	theStmts := args[3].([]interface{})
-	iterCount := int(0)
-	for {
-		//  Test the condition and exit the loop if necessary
-		theVarsVal := getGlobal(theVar)
-		if !evaluateExpression(theOp, theVarsVal, theVal) {
-			break
-		}
-		iterCount++
-		myPrintf("While: iteration %d\n", iterCount)
-		for _, stmt := range theStmts {
-			if _, err := runOneStep(ctx, stmt.([]interface{})); err != nil {
-				return nil, err
-			}
-		}
-	}
-	return nil, nil
 }
 
 func evaluateExpression(op string, val1, val2 interface{}) bool {
@@ -287,16 +244,6 @@ func (i *ifStmt) run(ctx map[string]interface{}, args []interface{}) (interface{
 	condition := findTheTruth(args[0])
 	stmtList := args[1].([]interface{})
 
-	// eval the condition expression and return if error or false
-	/*
-		res, err := evalExprStmt(ctx, condition)
-		if err != nil {
-			return nil, err
-		}
-		if res == false {
-			return nil, nil
-		}
-	*/
 	if condition == false {
 		return nil, nil
 	}
@@ -349,10 +296,6 @@ func (i *ifElseStmt) help() string {
 	return "[\"if else\" [<exprStnt>], [<if-stmt>, <if stmt>...], [<else-stmt>, <else-stmt>...]"
 }
 
-func (w *whileStmt) help() string {
-	return "[\"while\", <varName>, <varVal>, [<statement>, ...]]"
-}
-
 func (s *setStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
 	return doTheSet(ctx, args, false)
 }
@@ -373,36 +316,6 @@ func doTheSet(ctx map[string]interface{}, args []interface{}, isGlobal bool) (in
 		ctx[varName] = value
 	}
 	return value, nil
-}
-
-func (i *incrGlobalStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
-	weInTheHouse()
-	defer weOuttaTheHouse()
-	if err := argCheck(args, 1, ""); err != nil {
-		return nil, fmt.Errorf("Call to incrGlobal failed: %s", err.Error())
-	}
-	varName := args[0].(string)
-	setGlobal(varName, makeNum(getGlobal(varName))+1)
-	return nil, nil
-}
-
-func (i *incrGlobalStmt) help() string {
-	return "[\"incrGlobal\", <varName>]"
-}
-
-func (d *decrGlobalStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
-	weInTheHouse()
-	defer weOuttaTheHouse()
-	if err := argCheck(args, 1, ""); err != nil {
-		return nil, fmt.Errorf("Call to decrGlobal failed: %s", err.Error())
-	}
-	varName := args[0].(string)
-	setGlobal(varName, makeNum(getGlobal(varName))-1)
-	return nil, nil
-}
-
-func (d *decrGlobalStmt) help() string {
-	return "[\"decrGlobal\", <varName>]"
 }
 
 func (s *setStmt) help() string {
@@ -446,18 +359,57 @@ func (b *breakStmt) help() string {
 
 func (f *failStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
 	if len(args) != 1 {
-		return nil, fmt.Errorf("fail statement takes one statement arg: %s", f.help())
+		return nil, fmt.Errorf("fail statement takes one arg: %s", f.help())
 	}
-	if _, ok := args[0].([]interface{}); !ok {
-		return nil, fmt.Errorf("fail statement expects one statement (slice) arg")
+	switch args[0].(type) {
+	case error:
+		return args[0].(error).Error(), nil
+	default:
+		theTruth := findTheTruth(args[0])
+		if !theTruth {
+			return theTruth, nil
+		}
+		return nil, fmt.Errorf("fail statement succeeded -- very bad: %v", args[0])
 	}
-	rval, err := runOneStep(ctx, args[0].([]interface{}))
-	if err == nil {
-		return nil, fmt.Errorf("fail statement succeeded -- very bad: %v", rval)
-	}
-	return err, nil
 }
 
 func (f *failStmt) help() string {
 	return "[\"fail\", <stmt>]"
+}
+
+func (e *elemOfStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	if len(args) != 2 {
+		return nil, fmt.Errorf("elemOf statement takes two args: %s", e.help())
+	}
+	switch args[0].(type) {
+	case map[string]interface{}:
+		theMap := args[0].(map[string]interface{})
+		if key, ok := args[1].(string); ok {
+			if val, ok := theMap[key]; ok {
+				return val, nil
+			} else {
+				return nil, fmt.Errorf("Bad key to elemOf: %s", key)
+			}
+		} else {
+			return nil, fmt.Errorf("elemOf: Map key must be a string")
+		}
+	case []interface{}:
+		theSlice := args[0].([]interface{})
+		if key, err := numberTypeOrFail(args[1]); err == nil {
+			intKey := int(key)
+			if intKey < 0 || intKey >= len(theSlice) {
+				return nil, fmt.Errorf("Bad index in elemOf: %d", key)
+			} else {
+				return theSlice[intKey], nil
+			}
+		} else {
+			return nil, err
+		}
+	default:
+		return nil, fmt.Errorf("elemOf statement takes either a slice or a map as the first arg\n")
+	}
+}
+
+func (e *elemOfStmt) help() string {
+	return "[\"elemOf\", <object>, <key>]"
 }

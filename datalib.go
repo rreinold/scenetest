@@ -12,7 +12,6 @@ type deleteAllItemsStmt struct{}
 
 func init() {
 	funcMap["query"] = &queryStmt{}
-	funcMap["select"] = &queryStmt{}
 	funcMap["createItem"] = &createItemStmt{}
 	funcMap["deleteItem"] = &deleteItemStmt{}
 	funcMap["deleteAllItems"] = &deleteAllItemsStmt{}
@@ -20,7 +19,7 @@ func init() {
 
 func (c *createItemStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
 	userClient := context["userClient"].(*cb.UserClient)
-	if len(args) != 2 {
+	if err := argCheck(args, 2, "", map[string]interface{}{}); err != nil {
 		return nil, fmt.Errorf("Usage: [createItem, <colName>, <argMap>]")
 	}
 	colName := args[0].(string)

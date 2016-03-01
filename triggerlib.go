@@ -18,7 +18,6 @@ func init() {
 	funcMap["createTimer"] = &createTimer{}
 	funcMap["waitTrigger"] = &waitTrigger{}
 	funcMap["subscribeTriggers"] = &subscribeTriggers{}
-	funcMap["subscribeTrigger"] = &subscribeTriggers{}
 }
 
 func (ct *createTrigger) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
@@ -30,24 +29,17 @@ func (ct *createTrigger) help() string {
 }
 
 func (ct *createTimer) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
-	if len(args) != 1 {
-		return nil, fmt.Errorf("Wrong number of args to create timer: %d", len(args))
+	if err := argCheck(args, 1, map[string]interface{}{}); err != nil {
+		return nil, err
 	}
-	timerInput, ok := args[0].(map[string]interface{})
+	timerInput := args[0].(map[string]interface{})
 	timerName := timerInput["name"].(string)
 	delete(timerInput, timerName)
-	if !ok {
-		return nil, fmt.Errorf("Argument to createTimer must be a map of attributes")
-	}
 	sysKey := scriptVars["systemKey"].(string)
 	devClient := ctx["adminClient"].(*cb.DevClient)
 	startTime := timerInput["start_time"].(string)
 	timerInput["start_time"] = startTime
-	newTimer, err := devClient.CreateTimer(sysKey, timerName, timerInput)
-	if err != nil {
-		return nil, err
-	}
-	return newTimer, nil
+	return devClient.CreateTimer(sysKey, timerName, timerInput)
 }
 
 func (ct *createTimer) help() string {

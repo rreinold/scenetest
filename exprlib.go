@@ -429,6 +429,8 @@ func findTheTruth(arg interface{}) bool {
 		return arg != 0
 	case string:
 		return arg != ""
+	case error:
+		return false
 	default:
 		return arg != nil
 	}
@@ -443,4 +445,11 @@ func evalExprStmt(ctx map[string]interface{}, stmt []interface{}) (bool, error) 
 		return result, nil
 	}
 	return false, fmt.Errorf("Expression evaluation yield non-boolean result")
+}
+
+func isExprStmt(stmt Stmt) bool {
+	_, aOk := stmt.(BinaryExprStmt)
+	_, bOk := stmt.(UnaryExprStmt)
+	_, cOk := stmt.(BinaryMathStmt)
+	return aOk || bOk || cOk
 }

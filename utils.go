@@ -87,7 +87,8 @@ func valueOf(context map[string]interface{}, thing interface{}) interface{} {
 		stmt := thing.([]interface{})
 		res, err := runOneStep(context, stmt)
 		if err != nil {
-			fatal(fmt.Sprintf("Substatement execution failed: %s", err.Error()))
+			return err
+			//fatal(fmt.Sprintf("Substatement execution failed: %s", err.Error()))
 		}
 		thing = res
 	}
@@ -118,19 +119,58 @@ func valueOf(context map[string]interface{}, thing interface{}) interface{} {
 	return thing
 }
 
-func showHelp() {
-	keys := make([]string, len(funcMap))
-	i := 0
-	for k := range funcMap {
-		keys[i] = k
-		i += 1
+func showHelp(args []string) {
+	if SceneTestEnvVar == "" {
+		return
 	}
-	sort.Strings(keys)
-	myPrintf("\n******************** Statements ********************\n")
-	for _, funcName := range keys {
-		stmt := funcMap[funcName]
-		myPrintf("\n%s\n", stmt.help())
+	helpStuff := ""
+	if len(args) == 0 {
+		helpStuff = showHelpArgs()
+	} else {
+		for _, arg := range args {
+			helpStuff += getHelpContents(arg)
+		}
 	}
+	myPrintf("%s", helpStuff)
+}
+
+func getHelpContents(name string) string {
+	fileName := name + ".txt"
+	fileNameFullPath := SceneRoot + "/help/" + fileName
+	byts, err := ioutil.ReadFile(fileNameFullPath)
+	if err != nil {
+		fatal(fmt.Sprintf("Could not read help file '%s'", fileNameFullPath))
+	}
+	return string(byts)
+}
+
+func showHelpArgs() string {
+	rval := ""
+	rval += "\nUsage: scenetest help <commandOrStatementName> ...\n"
+	rval += "\nEnter either one or more of the command names or statement names below\n"
+	rval += "(ie \"scenetest help setup\", \"scenetest help createItem\", ...)\n\n"
+	rval += "Commands:\n"
+	rval += "\tsetup\n\trun\n\tteardown\n"
+	exprStrings := []string{}
+	stmtStrings := []string{}
+	for key, theStmt := range funcMap {
+		if isExprStmt(theStmt) {
+			exprStrings = append(exprStrings, key)
+		} else {
+			stmtStrings = append(stmtStrings, key)
+		}
+	}
+	sort.Strings(exprStrings)
+	sort.Strings(stmtStrings)
+	rval += "\nExpressions:\n"
+	for _, exprString := range exprStrings {
+		rval += fmt.Sprintf("\t%s\n", exprString)
+	}
+	rval += "\nStatements:\n"
+	for _, stmtString := range stmtStrings {
+		rval += fmt.Sprintf("\t%s\n", stmtString)
+	}
+	return rval
 }
 
 func setupSceneRoot() {

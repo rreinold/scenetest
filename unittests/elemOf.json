@@ -1,0 +1,18 @@
+{
+    "name": "test set on an expression",
+    "scenarios": [ ["just try", 1] ],
+    "sequencing": "Parallel",
+    "globals": {
+        "freddy": {
+            "smith": "No way",
+            "jones": "yes way"
+        }
+    },
+    "just try": {
+        "name": "statements as args",
+        "steps": [
+            ["print", ["elemOf", "@freddy", "jones"]],
+            ["print", ["fail", ["elemOf", "@freddy", "smithey"]]]
+        ]
+    }
+}

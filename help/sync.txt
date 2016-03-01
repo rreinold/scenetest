@@ -1,0 +1,90 @@
+--------------------------------------------------------------------------------
+Usage:
+    
+    ["sync", "<syncPoint>", <numberOfSyncers>]
+
+Description:
+
+    The sync statement allows multiple scenario instances to rendezvous at a
+    certain point in their execution.  The “<syncPoint>” argument is any unique
+    string such as “Wait for everybody to subscribe”. It is essentially an
+    identifier for the point on which everybody is syncing. This is important;
+    you can have multiple sync points (defined by the <syncPoint> parameter) in
+    your scenetest.
+
+    The <numberOfSyncers> argument defines the number of scenario instances
+    that must execute the statement before all of the syncing
+    scenarios can proceed
+
+    Here’s how it works: When a scenario executes a sync statement, it
+    increments an internal sync count and is blocked if the internal sync count
+    is less than <numberOfSyncers>. As other scenario instances encounter the
+    sync statement, they also increment the internal sync count and block
+    if the count is less than <numberOfSyncers>. Eventually, the number of
+    scenario instances that are blocked will reach the <numberOfSyncers> value.
+    At this point, all blocked scenario instances are unblocked and proceed on
+    their merry way. The sync point is then reset so that it can be re-executed
+    (if inside a loop, for example).
+
+    For an example use of sync, consider a scenetest that publishes and subscribes
+    to mqtt messages: 
+
+    {
+        "name": "Let's do producers and consumers with mqtt",
+        "scenarios": [ ["producer", 3], ["consumer", 2] ],
+        "sequencing": "Parallel",
+        "producer": {
+            "name": "Spewing out MQTT",
+            "steps": [
+                ["setUser", "foo@bar.com"],
+                ["sync", "all subscribed", 5],
+                ["repeat", 10000,
+                    [
+                        ["publish", "/clearblade/test/spewer", "This is the spew", 1]
+                    ]
+                ]
+            ]
+        },
+        "consumer": {
+            "name": "Cleaning up the spew",
+            "steps": [
+                ["setUser", "bar@bar.com"],
+                ["subscribe", "/clearblade/test/spewer", 1],
+                ["sync", "all subscribed", 5],
+                ["repeat", 30000,
+                    [
+                        ["waitMessage", "/clearblade/test/spewer", 300]
+                    ]
+                ]
+            ]
+        }
+    }
+
+    In this example, there are three producers publishing 10,000 messages each
+    for a total of 30,000 messages. There are two consumers who subscribe and
+    thus each expect to receive 30,000 messages. The sync statement is used here
+    to make sure that all of the consumers have subscribed before any message
+    gets published. Note that they sync on “all subscribed”, and that the number
+    of instances syncing is 5. This is because there are three producer
+    instances and two consumer instances. A common mistake is to miscount the
+    number of instances that will be doing the syncing.
+
+    Note that if we don’t have the sync statement in this test, the producers
+    might start publishing messages before the consumers have subscribed. This
+    will cause some messages to be “missed” and will result in one or more
+    consumers hanging before the test completes (because they’re waiting for
+    30,000 messages but will likely receive less than that.)
+
+
+Return Value:
+
+    Sync just returns nil on success. It could return the number of syncers, but
+    that would be pointless. Note that sync only fails if you pass in
+    incorrect args.
+
+Example(s):
+
+    See the above example, as well as the file 
+    $SCENETEST_PATH/regression/timerPubTrigger.json
+
+--------------------------------------------------------------------------------

@@ -1,0 +1,14 @@
+--------------------------------------------------------------------------------
+Usage:
+
+    ["fail", <stmt> ]
+
+Description:
+
+    The fail statement succeeds if its <stmt> arg fails, and fails when
+    the <stmt> arg  succeeds.
+    
+Examples:
+
+    ["fail", ["==", 3, 2]]
+--------------------------------------------------------------------------------

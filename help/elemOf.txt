@@ -1,0 +1,12 @@
+--------------------------------------------------------------------------------
+Usage:
+    ["elemOf", <mapOrSlice>, <element>
+
+Description:
+    elemOf is simple a subscripting mechanism for maps and slices. For
+    maps, the <element> must be a string. For slices, the element must
+    be an integer.
+
+Examples:
+    ["print", ["elemOf", "@returnValue", "results"]]
+--------------------------------------------------------------------------------

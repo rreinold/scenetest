@@ -1,13 +1,10 @@
 package main
 
 import (
-	//"bytes"
-	"github.com/clearblade/cbjson"
-	//"encoding/json"
 	"flag"
 	"fmt"
 	cb "github.com/clearblade/Go-SDK"
-	//"io/ioutil"
+	"github.com/clearblade/cbjson"
 	"os"
 	"sync"
 )
@@ -112,6 +109,7 @@ func mustHaveAll(stuff ...string) {
 }
 
 func main() {
+	warnScenetestPath()
 	theCommand, err := extractCommand()
 	if err != nil {
 		fmt.Println(err.Error())
@@ -137,14 +135,19 @@ func main() {
 		cb.CB_ADDR = scriptVars["platformUrl"].(string)
 		cb.CB_MSG_ADDR = scriptVars["messagingUrl"].(string)
 		executeTestScript(getJSON(ScriptFile))
+
 	} else if theCommand == "teardown" {
+
 		mustHaveAll("info", InfoFile)
 		scriptVars = getJSON(InfoFile)
 		cb.CB_ADDR = scriptVars["platformUrl"].(string)
 		cb.CB_MSG_ADDR = scriptVars["messagingUrl"].(string)
 		performTeardown()
+
 	} else if theCommand == "help" {
-		showHelp()
+
+		showHelp(flag.Args())
+
 	} else {
 		fmt.Printf("Unknown Command '%s'\n", theCommand)
 		os.Exit(1)
@@ -219,4 +222,11 @@ func myNestingPrintf(ctx map[string]interface{}, theFmt string, args ...interfac
 		duhFmt += "    "
 	}
 	myPrintf(duhFmt+theFmt, args...)
+}
+
+func warnScenetestPath() {
+	SceneRoot = os.Getenv(SceneTestEnvVar)
+	if SceneRoot == "" {
+		myPrintf("Warning: SCENETEST_PATH environment variable is not set. Help is disabled\n")
+	}
 }

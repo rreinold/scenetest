@@ -1,0 +1,20 @@
+--------------------------------------------------------------------------------
+Usage:
+
+    ["set", "<varName>", <value> ]
+
+Description:
+    
+    The set command is scenetest's main assignment statement. The variable
+    <varName> gets assigned the value <value>. Set first attempts to find
+    <varName> in the local context. If not there it attempts to find it
+    in the global variables. If it finds <varName> in either of those
+    scopes, it uses that existing variable. If it is not found, it creates
+    a new variable <varName> in the local context. The set statement
+    returns <value>
+
+Examples:
+
+    ["set", "i", 0]                 // Sets "i" to zero - Duh
+    ["set", "i", ["+", "@i", 1]]    // increments variable "i"
+--------------------------------------------------------------------------------

@@ -1,0 +1,12 @@
+--------------------------------------------------------------------------------
+Usage:
+    
+    [WE AINT DONE HELP FOR THIS COMMAND/EXPRESSION/STATEMENT YET. YELL AT STEVE]
+
+Description:
+
+Return Value:
+
+Example(s):
+
+--------------------------------------------------------------------------------

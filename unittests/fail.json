@@ -1,0 +1,11 @@
+{
+    "name": "test set on an expression",
+    "scenarios": [ ["just try", 1] ],
+    "sequencing": "Parallel",
+    "just try": {
+        "name": "statements as args",
+        "steps": [
+            ["fail", ["==", 10, 20]]
+        ]
+    }
+}
