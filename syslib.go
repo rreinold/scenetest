@@ -48,8 +48,8 @@ func init() {
 }
 
 func (s *syncStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
-	if len(args) != 2 {
-		return nil, fmt.Errorf("Usage: %s", s.help())
+	if err := argCheck(args, 2, "", float64(1.11)); err != nil {
+		return nil, err
 	}
 	syncKey := args[0].(string)
 	syncCount := int(args[1].(float64))
