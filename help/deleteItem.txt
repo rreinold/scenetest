@@ -1,19 +1,12 @@
 --------------------------------------------------------------------------------
 Usage:
     
-    ["break"]
+    [WE AINT DONE HELP FOR THIS COMMAND/EXPRESSION/STATEMENT YET. YELL AT STEVE]
 
 Description:
 
-    This breaks out of the innermost looping statement (for, repeat). If it
-    was executed from outside of one of these statements, it failes.
-
 Return Value:
 
-    Break returns nil.
-
 Example(s):
-
-    ["break"]  // WOW!
 
 --------------------------------------------------------------------------------
