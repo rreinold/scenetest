@@ -1,12 +1,21 @@
 --------------------------------------------------------------------------------
 Usage:
     
-    [WE AINT DONE HELP FOR THIS COMMAND/EXPRESSION/STATEMENT YET. YELL AT STEVE]
+    ["assert", <stmtOrValueOrWhatever>]
 
 Description:
 
+    Assert is essentially the opposite of the "fail" statement. If its arg
+    is true, it succeeds, if its arg is false, it fails. Pretty simple.
+    Note that you can abritrarily nest statements in assert's arg.
+
 Return Value:
 
+    Assert returns true or false.
+
 Example(s):
+
+    ["assert", true] // Duh
+    ["assert", ["==" "@thing", "the value of thing"]]
 
 --------------------------------------------------------------------------------

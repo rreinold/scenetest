@@ -1,12 +1,20 @@
 --------------------------------------------------------------------------------
 Usage:
     
-    [WE AINT DONE HELP FOR THIS COMMAND/EXPRESSION/STATEMENT YET. YELL AT STEVE]
+    ["call", "<serviceName>", <params>]
 
 Description:
 
+    The call statement invokes the ClearBlade service <serviceName> with 
+    the appropriate <params>. The <params> argument is optional. If it exists,
+    must be a json object with key/value pairs denoting each parameter.
+
 Return Value:
 
+    On success, call returns the "results" field of the response object.
+
 Example(s):
+
+    ["call", "myCodeService", {"myParam":4}]
 
 --------------------------------------------------------------------------------
