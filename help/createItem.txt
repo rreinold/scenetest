@@ -1,12 +1,19 @@
 --------------------------------------------------------------------------------
 Usage:
     
-    [WE AINT DONE HELP FOR THIS COMMAND/EXPRESSION/STATEMENT YET. YELL AT STEVE]
+    ["createItem", "<collectionName>", {"<columnName>": <value>, ...}]
 
 Description:
 
+    This call creates a new item (row) in the collection (table)
+    <collectionName>. 
+
 Return Value:
 
+    On success, createItem returns the item id (string).
+
 Example(s):
+
+    ["createItem", "DuhCollection", {"name":"Fred","address":"123 4th Street"}]
 
 --------------------------------------------------------------------------------

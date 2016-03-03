@@ -1,0 +1,16 @@
+{
+    "name": "test set on an expression",
+    "scenarios": [ ["just try", 1] ],
+    "sequencing": "Parallel",
+    "locals": {
+        "iterations": 100
+    },
+    "just try": {
+        "name": "Concat Test",
+        "steps": [
+            ["for", [["set", "i", 0], ["<", "@i", "@iterations"], ["set", "i", ["+", "@i", 1]]], [
+                ["print", ["concat", "foo", "@i"]]]
+            ]
+        ]
+    }
+}

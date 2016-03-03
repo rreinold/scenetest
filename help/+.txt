@@ -1,12 +1,18 @@
 --------------------------------------------------------------------------------
 Usage:
     
-    [WE AINT DONE HELP FOR THIS COMMAND/EXPRESSION/STATEMENT YET. YELL AT STEVE]
+    ["+", <left>, <right>]
 
 Description:
 
+    Addition operator. Args are converted to float64 before the addition.
+
 Return Value:
 
+    the addition result -- as float64
+
 Example(s):
+
+    ["+", 2, 3] // 5
 
 --------------------------------------------------------------------------------

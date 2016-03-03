@@ -1,0 +1,36 @@
+{
+    "name": "Mess with collections",
+    "scenarios": [ ["Create Collections", 1], ["Delete Collections", 1] ],
+    "sequencing": "Parallel",
+
+    "globals": {
+        "iterations": 100
+    },
+
+    "locals": {
+    },
+
+
+    "Create Collections": {
+        "name": "Create Collections",
+        "steps": [
+            ["setUser", "foo@bar.com"],
+            ["for", [["set", "i", 0], ["<", "@i", "@iterations"], ["set", "i", ["+", "@i", 1]]], [
+                ["createCollection", ["concat", "Super Duper Collection", "@i"]],
+                ["sync", "created collection", 2]]
+            ]
+        ]
+    },
+
+
+    "Delete Collections": {
+        "name": "Delete Collections",
+        "steps": [
+            ["setUser", "bar@bar.com"],
+            ["for", [["set", "i", 0], ["<", "@i", "@iterations"], ["set", "i", ["+", "@i", 1]]], [
+                ["sync", "created collection", 2],
+                ["deleteCollection", ["concat", "Super Duper Collection", "@i"] ] ]
+            ]
+        ]
+    }
+}

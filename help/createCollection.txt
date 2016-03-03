@@ -1,19 +1,12 @@
 --------------------------------------------------------------------------------
 Usage:
     
-    ["*", <left>, <right>]
+    [WE AINT DONE HELP FOR THIS COMMAND/EXPRESSION/STATEMENT YET. YELL AT STEVE]
 
 Description:
 
-    Multiply operator. Both args are numbers and are converted to float64
-    before the multiplication is applied.
-
 Return Value:
 
-    The float64 result of the multiplication
-
 Example(s):
-
-    ["*", 2, 3] // 6
 
 --------------------------------------------------------------------------------

@@ -1,12 +1,19 @@
 --------------------------------------------------------------------------------
 Usage:
     
-    [WE AINT DONE HELP FOR THIS COMMAND/EXPRESSION/STATEMENT YET. YELL AT STEVE]
+    ["!", <arg>]
 
 Description:
 
+    This is the logical not operator. It returns true if <arg> is false and
+    false if <arg> is true. Duh.
+
 Return Value:
 
+    True or false!
+
 Example(s):
+
+    ["!", 0] // will return true
 
 --------------------------------------------------------------------------------

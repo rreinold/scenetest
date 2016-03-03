@@ -1,12 +1,20 @@
 --------------------------------------------------------------------------------
 Usage:
     
-    [WE AINT DONE HELP FOR THIS COMMAND/EXPRESSION/STATEMENT YET. YELL AT STEVE]
+    ["%", <left>, <right>]
 
 Description:
 
+    The good ole modulo (modulus) operator -- <left> % <right>
+    <left> and <right> must be number types, and they're converted to int
+    before performing the operation.
+
 Return Value:
 
+    The result of the operation -- an integer
+
 Example(s):
+
+    ["%", 104, 5] // returns 4
 
 --------------------------------------------------------------------------------

@@ -9,12 +9,16 @@ type queryStmt struct{}
 type createItemStmt struct{}
 type deleteItemStmt struct{}
 type deleteAllItemsStmt struct{}
+type createCollectionStmt struct{}
+type deleteCollectionStmt struct{}
 
 func init() {
 	funcMap["query"] = &queryStmt{}
 	funcMap["createItem"] = &createItemStmt{}
 	funcMap["deleteItem"] = &deleteItemStmt{}
 	funcMap["deleteAllItems"] = &deleteAllItemsStmt{}
+	funcMap["createCollection"] = &createCollectionStmt{}
+	funcMap["deleteCollection"] = &deleteCollectionStmt{}
 }
 
 func (c *createItemStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
@@ -85,6 +89,46 @@ func (d *deleteAllItemsStmt) run(context map[string]interface{}, args []interfac
 		return nil, err
 	}
 	return nil, nil
+}
+
+func (c *createCollectionStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
+	if err := argCheck(args, 1, ""); err != nil {
+		return nil, err
+	}
+	colName := args[0].(string)
+	adminClient := context["adminClient"].(*cb.DevClient)
+	systemKey := scriptVars["systemKey"].(string)
+	rval, err := adminClient.NewCollection(systemKey, colName)
+	if err != nil {
+		return nil, err
+	}
+	allCollections := scriptVars["collections"].(map[string]interface{})
+	allCollections[colName] = rval
+	return rval, nil
+}
+
+func (c *createCollectionStmt) help() string {
+	return "[\"createCollection\", \"<collectionName>\"]"
+}
+
+func (d *deleteCollectionStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
+	if err := argCheck(args, 1, ""); err != nil {
+		return nil, err
+	}
+	colName := args[0].(string)
+	collectionId, err := collectionNameToId(colName)
+	if err != nil {
+		return nil, err
+	}
+	adminClient := context["adminClient"].(*cb.DevClient)
+	if err := adminClient.DeleteCollection(collectionId); err != nil {
+		return nil, err
+	}
+	return nil, nil
+}
+
+func (d *deleteCollectionStmt) help() string {
+	return "[\"deleteCollection\", \"<collectionName>\"]"
 }
 
 //

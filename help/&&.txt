@@ -1,12 +1,20 @@
 --------------------------------------------------------------------------------
 Usage:
     
-    [WE AINT DONE HELP FOR THIS COMMAND/EXPRESSION/STATEMENT YET. YELL AT STEVE]
+    ["&&", <left>, <right>]
 
 Description:
 
+    The familiar logical and operator. Works as expected, except it DOES
+    NOT do short-circuit evaluation. Both the left and right arg are
+    evaluated every time
+
 Return Value:
 
+    true or false.
+
 Example(s):
+
+    ["&&", ["==", 1, 1], ["!=", 1, 2]]
 
 --------------------------------------------------------------------------------

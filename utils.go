@@ -131,6 +131,7 @@ func showHelp(args []string) {
 			helpStuff += getHelpContents(arg)
 		}
 	}
+
 	myPrintf("%s", helpStuff)
 }
 

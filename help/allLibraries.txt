@@ -1,12 +1,18 @@
 --------------------------------------------------------------------------------
 Usage:
     
-    [WE AINT DONE HELP FOR THIS COMMAND/EXPRESSION/STATEMENT YET. YELL AT STEVE]
+    ["allLibraries"]
 
 Description:
 
+    This call fetches all libraries for the system.
+
 Return Value:
 
+    An array of maps, where each map holds the meta data for the library
+
 Example(s):
+
+    ["allLibraries"] // duh
 
 --------------------------------------------------------------------------------

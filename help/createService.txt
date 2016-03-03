@@ -1,12 +1,23 @@
 --------------------------------------------------------------------------------
 Usage:
     
-    [WE AINT DONE HELP FOR THIS COMMAND/EXPRESSION/STATEMENT YET. YELL AT STEVE]
+    ["createService", "<serviceName>", <code>, [<param>, ...]]
 
 Description:
 
+    Creates service <serviceName> with the code specified by <code>. Keep
+    in mind if you put the code in $SCENETEST_PATH/js/<filename.js> then
+    you can specify the code here using "@filename.js".
+
+    The last argument (array of parameters) is optional. It is just
+    a list of parameter names used by the service.
+
 Return Value:
 
+    On success, createService returns nil.
+
 Example(s):
+
+    ["createService", "freddy", "@js/freddy.js", ["param1", param2"]]
 
 --------------------------------------------------------------------------------

@@ -34,7 +34,6 @@ type lessEqualOp struct{}
 type andOp struct{}
 type orOp struct{}
 type notOp struct{}
-type truthOp struct{}
 type addOp struct{}
 type subOp struct{}
 type multOp struct{}
@@ -51,7 +50,6 @@ func init() {
 	funcMap["&&"] = &andOp{}
 	funcMap["||"] = &orOp{}
 	funcMap["!"] = &notOp{}
-	funcMap["()"] = &truthOp{}
 	funcMap["+"] = &addOp{}
 	funcMap["-"] = &subOp{}
 	funcMap["*"] = &multOp{}
@@ -191,18 +189,6 @@ func (n *notOp) help() string {
 
 func (n *notOp) compare(operand interface{}) bool {
 	return !operand.(bool)
-}
-
-func (t *truthOp) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
-	return unaryLogicalOp(t, ctx, args)
-}
-
-func (t *truthOp) help() string {
-	return "[\"()\", <operand>]"
-}
-
-func (t *truthOp) compare(operand interface{}) bool {
-	return operand.(bool)
 }
 
 //   math operators here

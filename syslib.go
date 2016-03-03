@@ -29,6 +29,7 @@ type syncStmt struct{}
 type failStmt struct{}
 type breakStmt struct{}
 type elemOfStmt struct{}
+type concatStmt struct{}
 
 func init() {
 	funcMap["set"] = &setStmt{}
@@ -44,6 +45,7 @@ func init() {
 	funcMap["if"] = &ifStmt{}
 	funcMap["ifElse"] = &ifElseStmt{}
 	funcMap["elemOf"] = &elemOfStmt{}
+	funcMap["concat"] = &concatStmt{}
 	syncLock = new(sync.Mutex)
 }
 
@@ -412,4 +414,17 @@ func (e *elemOfStmt) run(ctx map[string]interface{}, args []interface{}) (interf
 
 func (e *elemOfStmt) help() string {
 	return "[\"elemOf\", <object>, <key>]"
+}
+
+func (r *concatStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	if err := argCheck(args, 2, "", float64(0)); err != nil {
+		return nil, err
+	}
+	baseString := args[0].(string)
+	baseInt := int(args[1].(float64))
+	return fmt.Sprintf("%s%d", baseString, baseInt), nil
+}
+
+func (r *concatStmt) help() string {
+	return "[\"concat\", \"<stringArg>\", <intArg>]"
 }

@@ -1,12 +1,19 @@
 --------------------------------------------------------------------------------
 Usage:
     
-    [WE AINT DONE HELP FOR THIS COMMAND/EXPRESSION/STATEMENT YET. YELL AT STEVE]
+    ["!=", <left>, <right>]
 
 Description:
 
+    The usual old not-equals operator. Works on numbers and strings. Currently,
+    does NOT do deep equals on slices and maps. Exercise for the reader.
+
 Return Value:
 
+    true or false
+
 Example(s):
+
+    ["!=", 3, 4] // returns true
 
 --------------------------------------------------------------------------------
