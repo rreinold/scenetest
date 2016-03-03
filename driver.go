@@ -33,6 +33,8 @@ func executeTestScript(theScript map[string]interface{}) {
 }
 
 func authDevForScriptRun() {
+	scriptVarsLock.RLock()
+	defer scriptVarsLock.RUnlock()
 	theDev := scriptVars["developer"].(map[string]interface{})
 	email, password := theDev["email"].(string), theDev["password"].(string)
 	adminClient = cb.NewDevClient(email, password)

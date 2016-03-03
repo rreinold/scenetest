@@ -36,6 +36,8 @@ func (c *callStmt) run(context map[string]interface{}, args []interface{}) (inte
 	}
 	svcName := args[0].(string)
 	params := args[1].(map[string]interface{})
+	scriptVarsLock.RLock()
+	defer scriptVarsLock.RUnlock()
 	sysKey := scriptVars["systemKey"].(string)
 	userClient := context["userClient"].(*cb.UserClient)
 	resp, err := userClient.CallService(sysKey, svcName, params)
@@ -79,6 +81,8 @@ func (c *createServiceStmt) run(context map[string]interface{}, args []interface
 	//  Create the service
 	svcName, code, params := args[0].(string), args[1].(string), fixParams(args[2].([]interface{}))
 	adminClient := context["adminClient"].(*cb.DevClient)
+	scriptVarsLock.RLock()
+	defer scriptVarsLock.RUnlock()
 	sysKey := scriptVars["systemKey"].(string)
 	if err := adminClient.NewService(sysKey, svcName, code, params); err != nil {
 		return nil, err
@@ -116,6 +120,8 @@ func (u *updateServiceStmt) run(context map[string]interface{}, args []interface
 	//  Create the service
 	svcName, code, params := args[0].(string), args[1].(string), fixParams(args[2].([]interface{}))
 	adminClient := context["adminClient"].(*cb.DevClient)
+	scriptVarsLock.RLock()
+	defer scriptVarsLock.RUnlock()
 	sysKey := scriptVars["systemKey"].(string)
 	if err := adminClient.UpdateService(sysKey, svcName, code, params); err != nil {
 		return nil, err
@@ -139,6 +145,8 @@ func (d *deleteServiceStmt) run(context map[string]interface{}, args []interface
 	//  Create the service
 	svcName := args[0].(string)
 	adminClient := context["adminClient"].(*cb.DevClient)
+	scriptVarsLock.RLock()
+	defer scriptVarsLock.RUnlock()
 	sysKey := scriptVars["systemKey"].(string)
 	if err := adminClient.DeleteService(sysKey, svcName); err != nil {
 		return nil, err
@@ -155,6 +163,8 @@ func (g *getCurrentServiceVersionStmt) run(context map[string]interface{}, args 
 		return nil, err
 	}
 	svcName := args[0].(string)
+	scriptVarsLock.RLock()
+	defer scriptVarsLock.RUnlock()
 	sysKey := scriptVars["systemKey"].(string)
 	adminClient := context["adminClient"].(*cb.DevClient)
 	theSvc, err := adminClient.GetService(sysKey, svcName)
@@ -173,6 +183,8 @@ func (a *allLibrariesStmt) run(context map[string]interface{}, args []interface{
 	if len(args) != 0 {
 		return nil, fmt.Errorf("Usage: %s\n", a.help())
 	}
+	scriptVarsLock.RLock()
+	defer scriptVarsLock.RUnlock()
 	sysKey := scriptVars["systemKey"].(string)
 	adminClient := context["adminClient"].(*cb.DevClient)
 	allLibs, err := adminClient.GetLibraries(sysKey)
@@ -194,6 +206,8 @@ func (g *getLibraryStmt) run(context map[string]interface{}, args []interface{})
 	if !ok {
 		return nil, fmt.Errorf("Library name argument to getLibrary must be a string")
 	}
+	scriptVarsLock.RLock()
+	defer scriptVarsLock.RUnlock()
 	sysKey := scriptVars["systemKey"].(string)
 	adminClient := context["adminClient"].(*cb.DevClient)
 	theLib, err := adminClient.GetLibrary(sysKey, libName)

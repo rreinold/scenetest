@@ -22,6 +22,8 @@ func init() {
 }
 
 func (s *setUserStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	scriptVarsLock.RLock()
+	defer scriptVarsLock.RUnlock()
 	sysKey := scriptVars["systemKey"].(string)
 	sysSec := scriptVars["systemSecret"].(string)
 	email := getArg(args, 0).(string)
@@ -67,6 +69,8 @@ func (c *createUserStmt) run(ctx map[string]interface{}, args []interface{}) (in
 	}
 	email := args[0].(string)
 	password := args[1].(string)
+	scriptVarsLock.RLock()
+	defer scriptVarsLock.RUnlock()
 	sysKey := scriptVars["systemKey"].(string)
 	sysSec := scriptVars["systemSecret"].(string)
 	newUser, err := devCli.RegisterNewUser(email, password, sysKey, sysSec)
@@ -97,6 +101,8 @@ func (d *deleteUserStmt) run(ctx map[string]interface{}, args []interface{}) (in
 		return nil, fmt.Errorf("First arg to deleteUser must be a string")
 	}
 	userId := args[0].(string)
+	scriptVarsLock.RLock()
+	defer scriptVarsLock.RUnlock()
 	sysKey := scriptVars["systemKey"].(string)
 	if err := devCli.DeleteUser(sysKey, userId); err != nil {
 		return nil, fmt.Errorf("Could not delete user: %s", err.Error())
@@ -121,6 +127,8 @@ func (c *createUserColumnStmt) run(ctx map[string]interface{}, args []interface{
 	}
 	colName := args[0].(string)
 	colType := args[1].(string)
+	scriptVarsLock.RLock()
+	defer scriptVarsLock.RUnlock()
 	sysKey := scriptVars["systemKey"].(string)
 	if err := devCli.CreateUserColumn(sysKey, colName, colType); err != nil {
 		return nil, fmt.Errorf("Could not create users table column: %s", err.Error())
@@ -137,6 +145,8 @@ func (g *getUserColumnsStmt) run(ctx map[string]interface{}, args []interface{})
 	if len(args) != 0 {
 		return nil, fmt.Errorf(g.help())
 	}
+	scriptVarsLock.RLock()
+	defer scriptVarsLock.RUnlock()
 	sysKey := scriptVars["systemKey"].(string)
 	cols, err := devCli.GetUserColumns(sysKey)
 	if err != nil {

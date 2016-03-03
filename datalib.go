@@ -92,6 +92,8 @@ func (d *deleteAllItemsStmt) run(context map[string]interface{}, args []interfac
 }
 
 func (c *createCollectionStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
+	scriptVarsLock.Lock()
+	defer scriptVarsLock.Unlock()
 	if err := argCheck(args, 1, ""); err != nil {
 		return nil, err
 	}
@@ -194,6 +196,8 @@ func (q *queryStmt) run(context map[string]interface{}, args []interface{}) (int
 }
 
 func collectionNameToId(colName string) (string, error) {
+	scriptVarsLock.RLock()
+	defer scriptVarsLock.RUnlock()
 	cols := scriptVars["collections"].(map[string]interface{})
 	if colId, ok := cols[colName]; ok {
 		return colId.(string), nil

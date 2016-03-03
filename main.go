@@ -34,11 +34,12 @@ var (
 )
 
 var (
-	funcMap    = map[string]Stmt{}
-	scriptVars = map[string]interface{}{}
-	globals    = map[string]interface{}{}
-	globalLock = sync.RWMutex{}
-	printLock  = sync.Mutex{}
+	funcMap        = map[string]Stmt{}
+	scriptVars     = map[string]interface{}{}
+	globals        = map[string]interface{}{}
+	globalLock     = sync.RWMutex{}
+	printLock      = sync.Mutex{}
+	scriptVarsLock = sync.RWMutex{}
 )
 
 func init() {
