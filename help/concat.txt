@@ -1,12 +1,24 @@
 --------------------------------------------------------------------------------
 Usage:
     
-    [WE AINT DONE HELP FOR THIS COMMAND/EXPRESSION/STATEMENT YET. YELL AT STEVE]
+    ["concat", "<string>", <int>]
 
 Description:
 
+    The concat statement simply creates a new string by concatenating the
+    <int> arg to the <string> arg and returning the result. Why would I use
+    this? If you're inside a loop creating stuff and you want the names to
+    be unique, this will accomplish that
+
+    So, if <string> is "foo" and <int> is 6, concat will return "foo6"
+
 Return Value:
 
+    On success, a new concatenated string is returned.
+
 Example(s):
+
+    // i is an integer incremented in a loop
+    ["createCollection", ["concat", "MyCollectionName", "@i"]]
 
 --------------------------------------------------------------------------------

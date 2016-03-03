@@ -1,12 +1,19 @@
 --------------------------------------------------------------------------------
 Usage:
     
-    [WE AINT DONE HELP FOR THIS COMMAND/EXPRESSION/STATEMENT YET. YELL AT STEVE]
+    ["deleteCollection", "<collectionName>"]
 
 Description:
 
+    Delete the collection! Pretty simple. That said, this must be a collection
+    that was created in the setup step or in the current test script.
+
 Return Value:
 
+    On success, nil
+
 Example(s):
+
+    ["deleteCollection", "deadCollection"]
 
 --------------------------------------------------------------------------------

@@ -1,12 +1,19 @@
 --------------------------------------------------------------------------------
 Usage:
     
-    [WE AINT DONE HELP FOR THIS COMMAND/EXPRESSION/STATEMENT YET. YELL AT STEVE]
+    ["createCollection", "<collectionName>"]
 
 Description:
 
+    The createCollection statement creates a new collection named
+    <collectionName>. It does not add columns at this point.
+
 Return Value:
 
+    On success, the collection id is returned.
+
 Example(s):
+
+    ["createCollection", "myCollection"]
 
 --------------------------------------------------------------------------------
