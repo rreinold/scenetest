@@ -4,7 +4,7 @@
     "sequencing": "Parallel",
 
     "globals": {
-        "iterations": 100
+        "iterations": 1000
     },
 
     "locals": {

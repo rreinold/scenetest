@@ -192,6 +192,8 @@ func (r *repeatStmt) help() string {
 ///////////////////////////////// "for" statement
 
 func (f *forStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	incrNestingLevel(ctx)
+	defer decrNestingLevel(ctx)
 	if err := argCheck(args, 2, []interface{}{}, []interface{}{}); err != nil {
 		return nil, fmt.Errorf("Bad arguments to for statement: %s", err.Error())
 	}
@@ -208,11 +210,16 @@ func (f *forStmt) run(ctx map[string]interface{}, args []interface{}) (interface
 
 	var val interface{}
 	var err error
+	iterCount := 0
 	for {
 		// Eval test condition, break out of loop if false
 		val = valueOf(ctx, testCond)
 		if !findTheTruth(val) {
 			break
+		}
+		iterCount++
+		if !ShutUp {
+			myPrintf("For: iteration %d\n", iterCount)
 		}
 
 		//  true test condition -- now execute each sub statement
