@@ -10,8 +10,8 @@ function publishTrigger(req, resp, msgClass, msgType) {
         systemSecret: req.systemSecret,
         userToken: req.userToken
     }
-    ClearBlade.init({request:req});
-    //ClearBlade.init(yowza);
+    //ClearBlade.init({request:req});
+    ClearBlade.init(yowza);
     var messaging = ClearBlade.Messaging({}, function(){});
     messaging.publish("/clearblade/internal/trigger", JSON.stringify(msgInfo));
 }

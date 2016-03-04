@@ -135,6 +135,23 @@ func (d *deleteCollectionStmt) help() string {
 	return "[\"deleteCollection\", \"<collectionName>\"]"
 }
 
+func (a *allCollectionsStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
+	if err := argCheck(args, 0); err != nil {
+		return nil, err
+	}
+	adminClient := context["adminClient"].(*cb.DevClient)
+	sysKey := scriptVars["systemKey"].(string)
+	cols, err := adminClient.GetAllCollections(sysKey)
+	if err != nil {
+		return nil, err
+	}
+	return cols, nil
+}
+
+func (a *allCollectionsStmt) help() string {
+	return "[\"allCollections\"]"
+}
+
 //
 //  Query format is:
 //  ["query|select", "colName", [<columns>], [<optFilters>],
