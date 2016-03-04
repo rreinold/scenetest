@@ -69,8 +69,8 @@ func (st *subscribeTriggers) help() string {
 }
 
 func (wt *waitTrigger) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
-	if len(args) != 3 {
-		return nil, fmt.Errorf("Wrong number of arguments to waitTrigger: %d", len(args))
+	if err := argCheck(args, 3, "", "", float64(0)); err != nil {
+		return nil, err
 	}
 	eClass := args[0].(string)
 	eType := args[1].(string)
@@ -81,37 +81,41 @@ func (wt *waitTrigger) run(ctx map[string]interface{}, args []interface{}) (inte
 	}
 	trigChan := ctx["triggerChannel"].(<-chan *mqtt.Publish)
 
-	var stuff *mqtt.Publish
-	select {
-	case stuff = <-trigChan:
-	case <-time.After(time.Second * timeout):
-		return nil, fmt.Errorf("Timed out waiting for trigger notification")
-	}
-	byts := stuff.Payload
+	for {
+		var stuff *mqtt.Publish
+		select {
+		case stuff = <-trigChan:
+		case <-time.After(time.Second * timeout):
+			return nil, fmt.Errorf("Timed out waiting for trigger notification")
+		}
+		byts := stuff.Payload
 
-	realStuff := map[string]interface{}{}
-	if err := json.Unmarshal(byts, &realStuff); err != nil {
-		return nil, fmt.Errorf("Unmarshal of trigger message payload failed: %s", err.Error())
-	}
+		realStuff := map[string]interface{}{}
+		if err := json.Unmarshal(byts, &realStuff); err != nil {
+			return nil, fmt.Errorf("Unmarshal of trigger message payload failed: %s", err.Error())
+		}
 
-	if err := validateTrigger(eClass, eType, realStuff); err != nil {
-		return nil, err
+		if validateTrigger(eClass, eType, realStuff) {
+			return nil, nil
+		}
 	}
-	return nil, nil
 }
 
 func (wt *waitTrigger) help() string {
 	return "waitTrigger help not yet implemented"
 }
 
-func validateTrigger(trigClass, trigType string, msgBody map[string]interface{}) error {
+func validateTrigger(trigClass, trigType string, msgBody map[string]interface{}) bool {
 	realClass := msgBody["msgClass"].(string)
 	realType := msgBody["msgType"].(string)
-	if trigClass != realClass {
-		return fmt.Errorf("Bad message class: %s; expected %s", realClass, trigClass)
-	}
-	if trigType != realType {
-		return fmt.Errorf("Bad message type: %s; expected %s", realType, trigType)
-	}
-	return nil
+	return trigClass != realClass || trigType != realType
+	/*
+		if trigClass != realClass {
+			return fmt.Errorf("Bad message class: %s; expected %s", realClass, trigClass)
+		}
+		if trigType != realType {
+			return fmt.Errorf("Bad message type: %s; expected %s", realType, trigType)
+		}
+		return nil
+	*/
 }

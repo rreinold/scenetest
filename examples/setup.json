@@ -184,6 +184,28 @@
                 "Authenticated": 1,
                 "Anonymous": 0
             }
+        },
+        {
+            "name": "collectionCreatedTrigger",
+            "code": "@js/collectionCreatedTrigger.js",
+            "dependencies": "TriggerLib,log",
+            "parameters": [],
+            "roles":{
+                "a": 1,
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        },
+        {
+            "name": "collectionDeletedTrigger",
+            "code": "@js/collectionDeletedTrigger.js",
+            "dependencies": "TriggerLib,log",
+            "parameters": [],
+            "roles":{
+                "a": 1,
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
         }
     ],
     "codeLibraries": [
@@ -237,6 +259,20 @@
             "service_name": "userDeletedTrigger",
             "def_module": "User",
             "def_name": "UserDeleted",
+            "key_value_pairs": {}
+        },
+        {
+            "name": "Created a collection",
+            "service_name": "collectionCreatedTrigger",
+            "def_module": "Data",
+            "def_name": "CollectionCreated",
+            "key_value_pairs": {}
+        },
+        {
+            "name": "Deleted a collection",
+            "service_name": "collectionDeletedTrigger",
+            "def_module": "Data",
+            "def_name": "CollectionDeleted",
             "key_value_pairs": {}
         }
     ],
