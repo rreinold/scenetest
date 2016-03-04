@@ -11,6 +11,7 @@ type deleteItemStmt struct{}
 type deleteAllItemsStmt struct{}
 type createCollectionStmt struct{}
 type deleteCollectionStmt struct{}
+type allCollectionsStmt struct{}
 
 func init() {
 	funcMap["query"] = &queryStmt{}
@@ -19,6 +20,7 @@ func init() {
 	funcMap["deleteAllItems"] = &deleteAllItemsStmt{}
 	funcMap["createCollection"] = &createCollectionStmt{}
 	funcMap["deleteCollection"] = &deleteCollectionStmt{}
+	funcMap["allCollections"] = &allCollectionsStmt{}
 }
 
 func (c *createItemStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {

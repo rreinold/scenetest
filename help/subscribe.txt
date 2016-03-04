@@ -1,12 +1,22 @@
 --------------------------------------------------------------------------------
 Usage:
     
-    [WE AINT DONE HELP FOR THIS COMMAND/EXPRESSION/STATEMENT YET. YELL AT STEVE]
+    ["subscribe", "<mqttPathSpec>", <QoSLevel>]
 
 Description:
 
+    The subscribe statement lets you subscribe to mqtt messages. The 
+    <mqttTopicSpec> is a standard mqtt topic. The QoSLevel is either
+    0, 1, or 2.
+
 Return Value:
 
+    The return value (on success) happens to be the trigger channel
+    for the topic. You really don't want to mess with this. Just ignore
+    the return value.
+
 Example(s):
+
+    ["subscribe", "/this/is/really/cool/#", 2]
 
 --------------------------------------------------------------------------------

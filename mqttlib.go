@@ -18,8 +18,8 @@ func init() {
 }
 
 func (s *subscribeStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
-	if len(args) != 2 {
-		return nil, fmt.Errorf("Usage: [subscribe, topic, qos(int)]")
+	if err := argCheck(args, 2, "", float64(0)); err != nil {
+		return nil, err
 	}
 	topic := args[0].(string)
 	qos := int(args[1].(float64))
