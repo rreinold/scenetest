@@ -5,3 +5,4 @@ Test*.json
 *out
 Local.json
 Cluster.json
+Staging.json
