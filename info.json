@@ -1,0 +1,188 @@
+{
+    "codeLibraries": {
+        "TriggerLib": {
+            "api": "",
+            "code": "function publishTrigger(req, resp, msgClass, msgType) {\n    var msgInfo = {\n        msgClass:msgClass,\n        msgType:msgType\n    };\n    var yowza = {\n        steve: \"This is steven\",\n        email: req.userEmail,\n        systemKey: req.systemKey,\n        systemSecret: req.systemSecret,\n        userToken: req.userToken\n    }\n    //ClearBlade.init({request:req});\n    ClearBlade.init(yowza);\n    var messaging = ClearBlade.Messaging({}, function(){});\n    messaging.publish(\"/clearblade/internal/trigger\", JSON.stringify(msgInfo));\n}\n",
+            "dependencies": "clearblade,log",
+            "description": "publishes trigger event over mqtt",
+            "library_key": "b29ad0ed0afc83ade8c0dbb5eece01::TriggerLib",
+            "name": "TriggerLib",
+            "system_key": "b29ad0ed0afc83ade8c0dbb5eece01",
+            "version": 1,
+            "visibility": "system"
+        }
+    },
+    "codeServices": {
+        "Stage1": {
+            "code": "function Stage1(req, resp) {\n\tlogStdErr(\"stage 1\");\n\n\tClearBlade.init({request:req});\n    var messaging = ClearBlade.Messaging();\n\tmessaging.publish(\"/clearblade/test/jobQueue/stage1/results\", \"Adam\");\n\n    resp.success(\"OK\");\n}\n",
+            "dependencies": "clearblade",
+            "euid": "",
+            "name": "Stage1",
+            "params": [
+                "payload"
+            ]
+        },
+        "Stage2": {
+            "code": "function Stage2(req, resp) {\n\tlogStdErr(\"stage 2!\");\n\n\tClearBlade.init({request:req});\n    var messaging = ClearBlade.Messaging();\n\tmessaging.publish(\"/clearblade/test/jobQueue/stage2/results\", \"Adam\");\n\n    resp.success(\"OK\");\n}\n",
+            "dependencies": "clearblade",
+            "euid": "",
+            "name": "Stage2",
+            "params": [
+                "payload"
+            ]
+        },
+        "Stage3": {
+            "code": "function Stage3(req, resp) {\n\tlogStdErr(\"stage 3!!\");\n\n\tClearBlade.init({request:req});\n\tvar collection = ClearBlade.Collection({collectionName:\"CityInfo\"});\n\tcollection.create({name:req[\"params\"][\"body\"]}, function(err,val){\n\t\tif (err) {\n\t\t\tlogStdErr(val);\n\t\t}\n\t\tresp.success();\n\t});\n}\n",
+            "dependencies": "clearblade",
+            "euid": "",
+            "name": "Stage3",
+            "params": [
+                "payload"
+            ]
+        },
+        "itemCreatedTrigger": {
+            "code": "\nfunction itemCreatedTrigger(req, resp) {\n    sysKey = req.systemKey;\n    var sysSec = req.systemSecret;\n    var userToken = req.userToken;\n    publishTrigger(req, resp, \"Data\", \"ItemCreated\");\n    resp.success(\"We win! Request object: \" + JSON.stringify(req));\n}\n",
+            "dependencies": "TriggerLib,log",
+            "euid": "",
+            "name": "itemCreatedTrigger",
+            "params": []
+        }
+    },
+    "collections": {
+        "CityInfo": "b29ad0ed0ab8ad81a583949af7d901"
+    },
+    "developer": {
+        "email": "dev@test.com",
+        "password": "asdfasdfasdf",
+        "userId": null
+    },
+    "items": {},
+    "messagingUrl": "127.0.0.1:1883",
+    "platformUrl": "http://127.0.0.1:9000",
+    "roles": {
+        "Admin": "Admin",
+        "Anonymous": "Anonymous",
+        "Authenticated": "Authenticated"
+    },
+    "systemKey": "b29ad0ed0afc83ade8c0dbb5eece01",
+    "systemSecret": "B29AD0ED0A808FBEC1D5E693CBEA01",
+    "teardown": {
+        "adminClient": {
+            "DevToken": "usFuIIjn3k4m29D-PqWM4p--lzqi96OTjzTRI9e-IDuZuuQqSCqa_Xz36pZRB6tQMhWaWHtQVcuk5vW4",
+            "MQTTClient": null,
+            "Email": "dev@test.com",
+            "Password": "asdfasdfasdf"
+        },
+        "collections": [
+            "b29ad0ed0ab8ad81a583949af7d901"
+        ],
+        "dev_email": "dev@test.com",
+        "dev_password": "asdfasdfasdf",
+        "developer": null,
+        "libraries": [
+            "TriggerLib"
+        ],
+        "messagingUrl": "127.0.0.1:1883",
+        "platformUrl": "http://127.0.0.1:9000",
+        "roles": [],
+        "services": [
+            "Stage1",
+            "Stage2",
+            "Stage3",
+            "itemCreatedTrigger"
+        ],
+        "systemKey": "b29ad0ed0afc83ade8c0dbb5eece01",
+        "systemSecret": "B29AD0ED0A808FBEC1D5E693CBEA01",
+        "timers": [],
+        "triggers": [
+            "Stage1GetMessage",
+            "Stage2GetMessage",
+            "Stage3GetMessage",
+            "Added A Row"
+        ],
+        "users": [
+            "b29ad0ed0a9abcf2d3f9f4e49050"
+        ]
+    },
+    "timers": {},
+    "triggers": {
+        "Added A Row": {
+            "event_definition": {
+                "def_keys": [
+                    "collectionId",
+                    "collectionName"
+                ],
+                "def_module": "Data",
+                "def_name": "ItemCreated",
+                "visibility": true
+            },
+            "key_value_pairs": {
+                "collectionName": "CityInfo"
+            },
+            "name": "Added A Row",
+            "service_name": "itemCreatedTrigger",
+            "system_key": "b29ad0ed0afc83ade8c0dbb5eece01",
+            "system_secret": "B29AD0ED0A808FBEC1D5E693CBEA01"
+        },
+        "Stage1GetMessage": {
+            "event_definition": {
+                "def_keys": [
+                    "topic"
+                ],
+                "def_module": "Messaging",
+                "def_name": "Publish",
+                "visibility": true
+            },
+            "key_value_pairs": {
+                "topic": "/clearblade/test/jobQueue/letsStart"
+            },
+            "name": "Stage1GetMessage",
+            "service_name": "Stage1",
+            "system_key": "b29ad0ed0afc83ade8c0dbb5eece01",
+            "system_secret": "B29AD0ED0A808FBEC1D5E693CBEA01"
+        },
+        "Stage2GetMessage": {
+            "event_definition": {
+                "def_keys": [
+                    "topic"
+                ],
+                "def_module": "Messaging",
+                "def_name": "Publish",
+                "visibility": true
+            },
+            "key_value_pairs": {
+                "topic": "/clearblade/test/jobQueue/stage1/results"
+            },
+            "name": "Stage2GetMessage",
+            "service_name": "Stage2",
+            "system_key": "b29ad0ed0afc83ade8c0dbb5eece01",
+            "system_secret": "B29AD0ED0A808FBEC1D5E693CBEA01"
+        },
+        "Stage3GetMessage": {
+            "event_definition": {
+                "def_keys": [
+                    "topic"
+                ],
+                "def_module": "Messaging",
+                "def_name": "Publish",
+                "visibility": true
+            },
+            "key_value_pairs": {
+                "topic": "/clearblade/test/jobQueue/stage2/results"
+            },
+            "name": "Stage3GetMessage",
+            "service_name": "Stage3",
+            "system_key": "b29ad0ed0afc83ade8c0dbb5eece01",
+            "system_secret": "B29AD0ED0A808FBEC1D5E693CBEA01"
+        }
+    },
+    "users": {
+        "user@test.com": {
+            "creation_date": "2016-03-04T16:05:13-06:00",
+            "email": "user@test.com",
+            "password": "asdfasd",
+            "user_id": "b29ad0ed0a9abcf2d3f9f4e49050",
+            "user_token": "3AQKiOeg9mKu-mWRe7ZHMsMKjPuDvIHEXBNggLSEk7JBv5hu2Gt6aEEhy5tze0I3k84edDxfoKk_WOff"
+        }
+    }
+}

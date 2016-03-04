@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	cb "github.com/clearblade/Go-SDK"
 	mqtt "github.com/clearblade/mqtt_parsing"
@@ -57,13 +58,23 @@ func (w *waitMessageStmt) help() string {
 	return "[\"waitMessage\", \"topic\", timeout]"
 }
 
-func (p *publishStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
+func (p *publishStmt) run(context map[string]interface{}, args []interface{}) (retVal interface{}, err error) {
 	if len(args) != 3 {
 		return nil, fmt.Errorf("Usage: [publish, topic, message_body, qos]")
 	}
 	userClient := context["userClient"].(*cb.UserClient)
 	topic := args[0].(string)
-	body := []byte(args[1].(string))
+	var body []byte
+	switch args[1].(type) {
+	case string:
+		body = []byte(args[1].(string))
+	case map[string]interface{}:
+		if body, err = json.Marshal(args[1].(map[string]interface{})); err != nil {
+			return nil, fmt.Errorf("Can't serialize message body %s", err.Error())
+		}
+	default:
+		return nil, fmt.Errorf("Unsupported message body")
+	}
 	qos := int(args[2].(float64))
 	if err := userClient.Publish(topic, body, qos); err != nil {
 		return nil, fmt.Errorf("Publish failed: %s", err.Error())

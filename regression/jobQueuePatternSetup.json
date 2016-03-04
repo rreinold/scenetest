@@ -1,0 +1,125 @@
+{
+    //
+    //  Here's our setup file that we have to run prior
+    //  to running any tests. This is just an example. Copy
+    //  this file and change it to meet your testing needs.
+    //
+    "name": "Example Test System",
+    "description": "Just a stupid description",
+    "userAuth": true,
+    "developer": {
+        "email": "dev@test.com",
+        "password": "asdfasdfasdf",
+        "firstname": "Dev",
+        "lastname": "Eloper",
+        "org": "Clearblade"
+    },
+    "roles": [],
+    "userColumns": [],
+    "users": [
+        {
+            "email": "user@test.com",
+            "password": "asdfasd",
+            "roles": []
+        }
+    ],
+    "collections": [
+        {
+            "name": "CityInfo",
+            "columns": {
+                "name": "string",
+                "city": "string",
+                "currentTemp":"string"
+            },
+            "roles":{
+                "Authenticated": 15
+            },
+            "items": []
+        }
+    ],
+    "codeServices": [
+        {
+            "name": "Stage1",
+            "code": "@js/jqStage1.js",
+            "dependencies": "clearblade",
+            "parameters": ["payload"],
+            "roles":{
+                "Authenticated": 1
+            }
+        },
+        {
+            "name": "Stage2",
+            "code": "@js/jqStage2.js",
+            "dependencies": "clearblade",
+            "parameters": ["payload"],
+            "roles":{
+                "Authenticated": 1
+            }
+        },
+        {
+            "name": "Stage3",
+            "code": "@js/jqStage3.js",
+            "dependencies": "clearblade",
+            "parameters": ["payload"],
+            "roles":{
+                "Authenticated": 1
+            }
+        },
+        {
+            "name": "itemCreatedTrigger",
+            "code": "@js/itemCreatedTrigger.js",
+            "dependencies": "TriggerLib,log",
+            "parameters": [],
+            "roles":{
+                "Authenticated": 1
+            }
+        }
+    ],
+    "codeLibraries": [
+        {
+            "name": "TriggerLib",
+            "code": "@js/triggerLib.js",
+            "description": "publishes trigger event over mqtt",
+            "dependencies":"clearblade,log"
+        }
+    ],
+    "triggers": [
+        {
+            "name": "Stage1GetMessage",
+            "service_name":"Stage1",
+            "def_module": "Messaging",
+            "def_name": "Publish",
+            "key_value_pairs": {
+                "topic": "/clearblade/test/jobQueue/letsStart"
+            }
+        },
+        {
+            "name": "Stage2GetMessage",
+            "service_name": "Stage2",
+            "def_module": "Messaging",
+            "def_name": "Publish",
+            "key_value_pairs": {
+                "topic":"/clearblade/test/jobQueue/stage1/results"
+            }
+        },
+        {
+            "name": "Stage3GetMessage",
+            "service_name": "Stage3",
+            "def_module": "Messaging",
+            "def_name": "Publish",
+            "key_value_pairs": {
+                "topic":"/clearblade/test/jobQueue/stage2/results"
+            }
+        },
+        {
+            "name": "Added A Row",
+            "service_name": "itemCreatedTrigger",
+            "def_module": "Data",
+            "def_name": "ItemCreated",
+            "key_value_pairs": {
+                "collectionName":"CityInfo"
+            }
+        }
+    ],
+    "timers": []
+}
