@@ -1,0 +1,31 @@
+{
+    //
+    //  My goal here is it to try and implement a job queue pattern
+    //  I'll use a series of triggers
+    //  and pass around a payload through MQTT
+    //
+
+    "name": "jobQueuePattern",
+    "scenarios": [ ["Publisher", 100] ],
+    "sequencing": "Parallel",
+    "locals": {
+        "payload": {
+            "Name":"Adam",
+            "City":"Austin"
+        }
+    },
+    "Publisher": {
+        "name": "I'm sending a payload over MQTT",
+        "steps": [
+            ["setUser", "user@test.com"],
+            ["subscribeTriggers"],
+            ["sync", "all subscribed", 100],
+            ["repeat", 5,
+                [
+                    ["publish", "/clearblade/test/jobQueue/letsStart", "@payload", 1],
+                    ["waitTrigger", "Data", "ItemCreated", 30]
+                ]
+            ]
+        ]
+    }
+}

@@ -354,6 +354,7 @@ func mkSvcParams(params []interface{}) []string {
 
 func setupCodeService(svc map[string]interface{}) {
 	svcName := getString(svc, "name")
+	svcEuid := getString(svc, "euid")
 	svcCode := getVarOrFile(svc, "code")
 	svcParams := mkSvcParams(svc["parameters"].([]interface{}))
 	svcDeps := ""
@@ -366,10 +367,16 @@ func setupCodeService(svc map[string]interface{}) {
 	if err := adminClient.EnableLogsForService(sysKey, svcName); err != nil {
 		fatal(err.Error())
 	}
+	if len(svcEuid) > 0 {
+		if err := adminClient.SetServiceEffectiveUser(sysKey, svcName, svcEuid); err != nil {
+			fatal(err.Error())
+		}
+	}
 	setupCodeServiceRoles(svc)
 	svcMap := scriptVars["codeServices"].(map[string]interface{})
 	svcMap[svcName] = map[string]interface{}{
 		"name":         svcName,
+		"euid":         svcEuid,
 		"code":         svcCode,
 		"params":       svcParams,
 		"dependencies": svcDeps,
@@ -463,7 +470,9 @@ func getCount(stuff map[string]interface{}) int {
 
 func getString(stuff map[string]interface{}, theThing string) string {
 	if _, ok := stuff[theThing]; !ok {
-		fatal(fmt.Sprintf("The value for %s does not exist\n", theThing))
+		// fatal(fmt.Sprintf("The value for %s does not exist\n", theThing))
+		warn(fmt.Sprintf("The value for %s does not exist\n", theThing))
+		return ""
 	}
 	switch stuff[theThing].(type) {
 	case string:

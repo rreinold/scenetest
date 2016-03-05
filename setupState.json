@@ -1,0 +1,54 @@
+{
+    "adminClient": {
+        "DevToken": "lvwrFzdBo5uQe6AtBfaHr4fc4T4ceinBUahEgL6mhoS3BrfslbQdPLaFFH04xMcBPYCln4mtVDWVTWlW",
+        "MQTTClient": null,
+        "Email": "theDev@developer.com",
+        "Password": "IAmTheDev"
+    },
+    "collections": [
+        "d0dab0ed0af4d5c0cfb5f7e88fa101",
+        "d0dab0ed0ac0b9aba8b48b87eebd01",
+        "d0dab0ed0af4b0aedcbb9ad0829501"
+    ],
+    "dev_email": "theDev@developer.com",
+    "dev_password": "IAmTheDev",
+    "developer": null,
+    "libraries": [
+        "TestLibrary",
+        "TriggerLib",
+        "JustPublish"
+    ],
+    "messagingUrl": "127.0.0.1:1883",
+    "platformUrl": "http://127.0.0.1:9000",
+    "roles": [
+        "d0dab0ed0aa6eb9cfe93b3e8f505",
+        "d0dab0ed0afccafba2cd8097a49a01",
+        "d0dab0ed0ab2c1a7b8e0988ce08401",
+        "d0dab0ed0aa88cf6d8a1b1d39523",
+        "d0dab0ed0a8885dce6fccdaa97a501"
+    ],
+    "services": [
+        "example",
+        "HorribleService",
+        "itemCreatedTrigger",
+        "handlePublish",
+        "userCreatedTrigger",
+        "userDeletedTrigger"
+    ],
+    "systemKey": "d0dab0ed0ad88bffa4aec1ca88dc01",
+    "systemSecret": "D0DAB0ED0AF6C8E9CFC7ACA9817E",
+    "timers": [
+        "DoSomething"
+    ],
+    "triggers": [
+        "PublishHandler",
+        "Added A Row",
+        "Created a user",
+        "Deleted a user"
+    ],
+    "users": [
+        "d0dab0ed0ac4edcf978fe1e2ca21",
+        "d0dab0ed0abadc9db9bbd7b5f9cb01",
+        "d0dab0ed0aa6f7aef3a0dc9fcc3c"
+    ]
+}
