@@ -1,13 +1,18 @@
 {
     "name": "Mess with collections",
 
+    //
+    // Lotsa creating and deleting collection. We also make calls
+    // to grab all the collections, and we have scenarios that
+    // make sure the appropriate triggers are firing.
+    //
     "scenarios": [
         ["Create Collections", 1],
         ["Delete Collections", 1],
         ["Create/Delete", 1],
         ["Get All Collections", 1],
-        ["Create Collection Trigger", 1],
-        ["Delete Collection Trigger", 1]
+        ["Handle Collection Create Trigger", 1],
+        ["Handle Collection Delete Trigger", 1]
      ],
 
     "sequencing": "Parallel",
@@ -16,75 +21,57 @@
         "iterations": 100
     },
 
-    "Create Collections": {
-        "name": "Create Collections",
-        "steps": [
-            ["setUser", "foo@bar.com"],
-            ["sync", "Wait For Trigger Subscription", 6],
-            ["for", [["set", "i", 0], ["<", "@i", "@iterations"], ["set", "i", ["+", "@i", 1]]], [
-                ["createCollection", ["concat", "Super Duper Collection", "@i"]],
-                ["sync", "created collection", 2] ]
-            ]
+    "Create Collections": [
+        ["setUser", "foo@bar.com"],
+        ["sync", "Wait For Trigger Subscription", 6],
+        ["for", [["set", "i", 0], ["<", "@i", "@iterations"], ["set", "i", ["+", "@i", 1]]], [
+            ["createCollection", ["concat", "Super Duper Collection", "@i"]],
+            ["sync", "created collection", 2] ]
         ]
-    },
+    ],
 
-    "Delete Collections": {
-        "name": "Delete Collections",
-        "steps": [
-            ["setUser", "bar@bar.com"],
-            ["sync", "Wait For Trigger Subscription", 6],
-            ["for", [["set", "i", 0], ["<", "@i", "@iterations"], ["set", "i", ["+", "@i", 1]]], [
-                ["sync", "created collection", 2],
-                ["deleteCollection", ["concat", "Super Duper Collection", "@i"] ] ]
-            ]
+    "Delete Collections": [
+        ["setUser", "bar@bar.com"],
+        ["sync", "Wait For Trigger Subscription", 6],
+        ["for", [["set", "i", 0], ["<", "@i", "@iterations"], ["set", "i", ["+", "@i", 1]]], [
+            ["sync", "created collection", 2],
+            ["deleteCollection", ["concat", "Super Duper Collection", "@i"] ] ]
         ]
-    },
+    ],
 
 
-    "Create/Delete": {
-        "name": "Create/Delete",
-        "steps": [
-            ["setUser", "bar@bar.com"],
-            ["sync", "Wait For Trigger Subscription", 6],
-            ["repeat", "@iterations", [
-                ["createCollection", "futz"],
-                ["deleteCollection", "futz"] ]
-            ]
+    "Create/Delete": [
+        ["setUser", "bar@bar.com"],
+        ["sync", "Wait For Trigger Subscription", 6],
+        ["repeat", "@iterations", [
+            ["createCollection", "futz"],
+            ["deleteCollection", "futz"] ]
         ]
-    },
+    ],
 
-    "Get All Collections": {
-        "name": "Get All The Collections",
-        "steps": [
-            ["setUser", "swm@clearblade.com"],
-            ["sync", "Wait For Trigger Subscription", 6],
-            ["repeat", ["*", "@iterations", 3], [
-                ["allCollections"] ]
-            ]
+    "Get All Collections": [
+        ["setUser", "swm@clearblade.com"],
+        ["sync", "Wait For Trigger Subscription", 6],
+        ["repeat", ["*", "@iterations", 3], [
+            ["allCollections"] ]
         ]
-    },
+    ],
 
-    "Create Collection Trigger": {
-        "name": "Create Collection Trigger",
-        "steps": [
-            ["setUser", "swm@clearblade.com"],
-            ["subscribeTriggers"],
-            ["sync", "Wait For Trigger Subscription", 6],
-            ["repeat", ["*", "@iterations", 2], [
-                ["waitTrigger", "Data", "CollectionCreated", 60] ]
-            ]
+    "Handle Collection Create Trigger": [
+        ["setUser", "swm@clearblade.com"],
+        ["subscribeTriggers"],
+        ["sync", "Wait For Trigger Subscription", 6],
+        ["repeat", ["*", "@iterations", 2], [
+            ["waitTrigger", "Data", "CollectionCreated", 60] ]
         ]
-    },
+    ],
 
-    "Delete Collection Trigger": {
-        "name": "Delete Collection Trigger",
-        "steps": [
-            ["setUser", "swm@clearblade.com"],
-            ["subscribeTriggers"],
-            ["sync", "Wait For Trigger Subscription", 6],
-            ["repeat", ["*", "@iterations", 2], [
-                ["waitTrigger", "Data", "CollectionDeleted", 60] ]
-            ]
+    "Handle Collection Delete Trigger": [
+        ["setUser", "swm@clearblade.com"],
+        ["subscribeTriggers"],
+        ["sync", "Wait For Trigger Subscription", 6],
+        ["repeat", ["*", "@iterations", 2], [
+            ["waitTrigger", "Data", "CollectionDeleted", 60] ]
         ]
-    }
+    ]
 }

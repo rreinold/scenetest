@@ -43,6 +43,39 @@ func authDevForScriptRun() {
 	}
 }
 
+//
+//  This little gem just allows us to have two different models for a scenario: The old one
+//  I don't like:
+//
+//		"scenarioName": {
+//			"name": "scenarioName",
+//			"steps": [
+//				<steps>
+//			]
+//		}
+//
+//  and a stripped down new one:
+//
+//  	"scenarioName": [
+//  		<steps>
+//  	]
+//
+//  It just "maps" the stripped down scenario into what we're used to. Maintain backward
+//  compatibility and provide a streamlined new syntax.
+//
+func getNameAndSteps(outerName string, scenario interface{}) (string, map[string]interface{}) {
+	switch scenario.(type) {
+	case map[string]interface{}:
+		mapScen := scenario.(map[string]interface{})
+		return mapScen["name"].(string), mapScen
+	case []interface{}:
+		return outerName, map[string]interface{}{"name": outerName, "steps": scenario}
+	default:
+		fatal(fmt.Sprintf("Poorly defined scenario: %#v", scenario))
+		return "", nil
+	}
+}
+
 func runSerial(scenarios []interface{}) {
 	for _, scenarioSpec := range scenarios {
 		name, count, err := parseScenario(scenarioSpec)
@@ -53,9 +86,10 @@ func runSerial(scenarios []interface{}) {
 		if !ok {
 			panic(fmt.Errorf("Scenario %s not found", name))
 		}
-		scenario := duh.(map[string]interface{})
+		name, scenario := getNameAndSteps(name, duh)
+		//scenario := duh.(map[string]interface{})
 		for i := 0; i < count; i++ {
-			nm := fmt.Sprintf("%s(%d)", scenario["name"].(string), i+1)
+			nm := fmt.Sprintf("%s(%d)", name, i+1)
 			runOneScenario(nm, scenario, nil)
 		}
 	}
@@ -73,10 +107,11 @@ func runParallel(scenarios []interface{}) {
 		if !ok {
 			fatal(fmt.Sprintf("Couldn't find script %s", name))
 		}
-		scenario := duh.(map[string]interface{})
+		name, scenario := getNameAndSteps(name, duh)
+		//scenario := duh.(map[string]interface{})
 		totalCount += count
 		for i := 0; i < count; i++ {
-			nm := fmt.Sprintf("%s(%d)", scenario["name"].(string), i+1)
+			nm := fmt.Sprintf("%s(%d)", name, i+1)
 			go runOneScenario(nm, scenario, doneChan)
 		}
 
