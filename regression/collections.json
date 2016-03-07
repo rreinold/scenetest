@@ -2,7 +2,7 @@
     "name": "Mess with collections",
 
     //
-    // Lotsa creating and deleting collection. We also make calls
+    // Lotsa creating and deleting collections. We also make calls
     // to grab all the collections, and we have scenarios that
     // make sure the appropriate triggers are firing.
     //
@@ -18,7 +18,7 @@
     "sequencing": "Parallel",
 
     "globals": {
-        "iterations": 100
+        "iterations": 10000
     },
 
     "Create Collections": [
@@ -39,39 +39,29 @@
         ]
     ],
 
-
     "Create/Delete": [
         ["setUser", "bar@bar.com"],
         ["sync", "Wait For Trigger Subscription", 6],
-        ["repeat", "@iterations", [
-            ["createCollection", "futz"],
-            ["deleteCollection", "futz"] ]
-        ]
+        ["repeat", "@iterations", [ ["createCollection", "futz"], ["deleteCollection", "futz"] ] ]
     ],
 
     "Get All Collections": [
         ["setUser", "swm@clearblade.com"],
         ["sync", "Wait For Trigger Subscription", 6],
-        ["repeat", ["*", "@iterations", 3], [
-            ["allCollections"] ]
-        ]
+        ["repeat", ["*", "@iterations", 3], [ ["allCollections"] ] ]
     ],
 
     "Handle Collection Create Trigger": [
         ["setUser", "swm@clearblade.com"],
         ["subscribeTriggers"],
         ["sync", "Wait For Trigger Subscription", 6],
-        ["repeat", ["*", "@iterations", 2], [
-            ["waitTrigger", "Data", "CollectionCreated", 60] ]
-        ]
+        ["repeat", ["*", "@iterations", 2], [ ["waitTrigger", "Data", "CollectionCreated", 60] ] ]
     ],
 
     "Handle Collection Delete Trigger": [
         ["setUser", "swm@clearblade.com"],
         ["subscribeTriggers"],
         ["sync", "Wait For Trigger Subscription", 6],
-        ["repeat", ["*", "@iterations", 2], [
-            ["waitTrigger", "Data", "CollectionDeleted", 60] ]
-        ]
+        ["repeat", ["*", "@iterations", 2], [ ["waitTrigger", "Data", "CollectionDeleted", 60] ] ]
     ]
 }
