@@ -29,6 +29,7 @@ type syncStmt struct{}
 type failStmt struct{}
 type breakStmt struct{}
 type elemOfStmt struct{}
+type setElemStmt struct{}
 type concatStmt struct{}
 
 func init() {
@@ -45,6 +46,7 @@ func init() {
 	funcMap["if"] = &ifStmt{}
 	funcMap["ifElse"] = &ifElseStmt{}
 	funcMap["elemOf"] = &elemOfStmt{}
+	funcMap["setElem"] = &setElemStmt{}
 	funcMap["concat"] = &concatStmt{}
 	syncLock = new(sync.Mutex)
 }
@@ -421,6 +423,45 @@ func (e *elemOfStmt) run(ctx map[string]interface{}, args []interface{}) (interf
 
 func (e *elemOfStmt) help() string {
 	return "[\"elemOf\", <object>, <key>]"
+}
+
+func (e *setElemStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	if len(args) != 3 {
+		return nil, fmt.Errorf("setElemStmt statement takes three args: %s", e.help())
+	}
+	if err := argCheck(args, 3, "", nil, nil); err != nil {
+		return nil, err
+	}
+	variable := args[0].(string)
+	element := args[1]
+	value := args[2]
+	theVar := lookupVar(ctx, variable)
+	if theVar == nil {
+		return nil, fmt.Errorf("The variable '%s' does not exist", variable)
+	}
+	switch theVar.(type) {
+	case map[string]interface{}:
+		if _, ok := element.(string); !ok {
+			return nil, fmt.Errorf("setElem: map key must be a string")
+		}
+		theMap := theVar.(map[string]interface{})
+		index := element.(string)
+		theMap[index] = value
+	case []interface{}:
+		if _, ok := element.(float64); !ok {
+			return nil, fmt.Errorf("setElem: slice key must be a number")
+		}
+		theSlice := theVar.([]interface{})
+		index := int(element.(float64))
+		theSlice[index] = value
+	default:
+		return nil, fmt.Errorf("Type for variable '%s' must be a map or a slice", variable)
+	}
+	return theVar, nil
+}
+
+func (e *setElemStmt) help() string {
+	return "[\"setElem\", \"<objName>\", \"<elemName>\", <value>]"
 }
 
 func (r *concatStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {

@@ -1,0 +1,16 @@
+{
+    "name": "test setElem statement",
+    "scenarios": [ ["setElem, dammit", 1] ],
+    "sequencing": "Parallel",
+    "locals": {
+        "payload": {
+            "name": "foo",
+            "value": "bar"
+        }
+    },
+    "setElem, dammit": [
+        ["print", "@payload"],
+        ["setElem", "payload", "value", "yowza"],
+        ["print", "@payload"]
+    ]
+}

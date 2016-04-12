@@ -70,7 +70,7 @@
             ["subscribeTriggers"],
             ["sync", "Ready For Timer", 41],
             ["repeat", "@iterations", [
-                ["waitTrigger", "Messaging", "Publish", 300]]
+                ["waitTrigger", "Messaging", "Publish", 30]]
             ]
         ]
     },

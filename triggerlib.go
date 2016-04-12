@@ -9,23 +9,51 @@ import (
 )
 
 type createTrigger struct{}
+type deleteTrigger struct{}
 type createTimer struct{}
 type waitTrigger struct{}
 type subscribeTriggers struct{}
 
 func init() {
 	funcMap["createTrigger"] = &createTrigger{}
+	funcMap["deleteTrigger"] = &deleteTrigger{}
 	funcMap["createTimer"] = &createTimer{}
 	funcMap["waitTrigger"] = &waitTrigger{}
 	funcMap["subscribeTriggers"] = &subscribeTriggers{}
 }
 
 func (ct *createTrigger) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
-	return nil, nil
+	if err := argCheck(args, 1, map[string]interface{}{}); err != nil {
+		return nil, err
+	}
+	triggerInput := args[0].(map[string]interface{})
+	triggerName := triggerInput["name"].(string)
+	delete(triggerInput, triggerName)
+	scriptVarsLock.RLock()
+	defer scriptVarsLock.RUnlock()
+	sysKey := scriptVars["systemKey"].(string)
+	devClient := ctx["adminClient"].(*cb.DevClient)
+	return devClient.CreateEventHandler(sysKey, triggerName, triggerInput)
+}
+
+func (ct *deleteTrigger) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	if err := argCheck(args, 1, ""); err != nil {
+		return nil, err
+	}
+	triggerName := args[0].(string)
+	scriptVarsLock.RLock()
+	defer scriptVarsLock.RUnlock()
+	sysKey := scriptVars["systemKey"].(string)
+	devClient := ctx["adminClient"].(*cb.DevClient)
+	return nil, devClient.DeleteEventHandler(sysKey, triggerName)
+}
+
+func (ct *deleteTrigger) help() string {
+	return "[\"deleteTrigger\", \"triggerName\"]"
 }
 
 func (ct *createTrigger) help() string {
-	return "createTrigger help not yet implemented"
+	return "[\"createTrigger\", {<trigger meta>}]"
 }
 
 func (ct *createTimer) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
@@ -54,12 +82,10 @@ func (st *subscribeTriggers) run(ctx map[string]interface{}, args []interface{})
 		return nil, fmt.Errorf("subscribeTriggers takes no arguments")
 	}
 	userClient := ctx["userClient"].(*cb.UserClient)
-	myPrintf("Doing the subscribe\n")
 	triggerChan, err := userClient.Subscribe("/clearblade/internal/trigger", 0)
 	if err != nil {
 		return nil, err
 	}
-	myPrintf("Done subscribing\n")
 	ctx["triggerChannel"] = triggerChan
 	return triggerChan, nil
 }
@@ -108,14 +134,5 @@ func (wt *waitTrigger) help() string {
 func validateTrigger(trigClass, trigType string, msgBody map[string]interface{}) bool {
 	realClass := msgBody["msgClass"].(string)
 	realType := msgBody["msgType"].(string)
-	return trigClass != realClass || trigType != realType
-	/*
-		if trigClass != realClass {
-			return fmt.Errorf("Bad message class: %s; expected %s", realClass, trigClass)
-		}
-		if trigType != realType {
-			return fmt.Errorf("Bad message type: %s; expected %s", realType, trigType)
-		}
-		return nil
-	*/
+	return (trigClass == realClass) && (trigType == realType)
 }

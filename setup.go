@@ -26,6 +26,7 @@ func init() {
 	setupState["timers"] = []string{}
 	setupState["roles"] = []string{}
 	setupState["users"] = []string{}
+	setupState["devices"] = []string{}
 }
 
 func performSetup(setupInfo interface{}) {
@@ -95,6 +96,12 @@ func setupSystem(system map[string]interface{}) {
 		setupTimers(timers.([]interface{}))
 	} else {
 		warn("No timers found")
+	}
+
+	if devices, ok := system["devices"]; ok {
+		setupDevices(devices.([]interface{}))
+	} else {
+		warn("No devices found")
 	}
 }
 
@@ -450,6 +457,24 @@ func setupTimer(timer map[string]interface{}) {
 	timerMap[timerName] = newTimer
 	appendState("timers", timerName)
 	myPrintf("Set up timer %+v\n", newTimer)
+}
+
+func setupDevices(devices []interface{}) {
+	for _, device := range devices {
+		setupDevice(device.(map[string]interface{}))
+	}
+}
+
+func setupDevice(device map[string]interface{}) {
+	deviceName := device["name"].(string)
+	newDevice, err := adminClient.CreateDevice(sysKey, deviceName, device)
+	if err != nil {
+		fatal(fmt.Sprintf("Could not create device: %s\n", err.Error()))
+	}
+	deviceMap := scriptVars["devices"].(map[string]interface{})
+	deviceMap[deviceName] = newDevice
+	appendState("devices", deviceName)
+	myPrintf("Set up device %+v\n", newDevice)
 }
 
 func warn(msg string) {

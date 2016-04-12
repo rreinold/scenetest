@@ -1,0 +1,13 @@
+{
+    "name": "Test Library APIs",
+    "scenarios": [ ["call the thing", 1] ],
+    "sequencing": "Parallel",
+    "call the thing": [
+        ["setUser", "foo@bar.com"],
+        ["repeat", 100000, 
+            [
+                ["call", "HorribleService", {}]
+            ]
+        ]
+    ]
+}

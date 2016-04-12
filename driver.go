@@ -127,7 +127,7 @@ func putVarsInContext(context map[string]interface{}) map[string]interface{} {
 		return context
 	}
 	for key, val := range locals.(map[string]interface{}) {
-		context[key] = val
+		context[key] = copyVariable(val)
 	}
 	return context
 }
@@ -218,5 +218,24 @@ func parseScenario(scenario interface{}) (string, int, error) {
 		return parsedScenario[0].(string), int(parsedScenario[1].(float64)), nil
 	default:
 		return "", 0, fmt.Errorf("Bad scenario type")
+	}
+}
+
+func copyVariable(variable interface{}) interface{} {
+	switch variable.(type) {
+	case map[string]interface{}:
+		mapCopy := map[string]interface{}{}
+		for key, val := range variable.(map[string]interface{}) {
+			mapCopy[key] = val
+		}
+		return mapCopy
+	case []interface{}:
+		sliceCopy := make([]interface{}, len(variable.([]interface{})))
+		for idx, val := range variable.([]interface{}) {
+			sliceCopy[idx] = val
+		}
+		return sliceCopy
+	default:
+		return variable
 	}
 }

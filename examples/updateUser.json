@@ -1,0 +1,12 @@
+{
+    "name": "Update a user",
+    "scenarios": [ ["updater", 1] ],
+    "sequencing": "Parallel",
+    "updater": [
+        ["setUser", "foo@bar.com"],
+        ["subscribeTriggers"],
+        ["call", "updateUser", {}],
+        ["print", "@returnValue"],
+        ["waitTrigger", "User", "UserUpdated", 30]
+    ]
+}

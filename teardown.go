@@ -26,6 +26,7 @@ func teardownSystem(system map[string]interface{}) {
 	sysKey = system["systemKey"].(string)
 	authTheDevGod(system)
 
+	deleteDevices(system)
 	deleteTimers(system)
 	deleteTriggers(system)
 	deleteLibraries(system)
@@ -36,6 +37,16 @@ func teardownSystem(system map[string]interface{}) {
 	deleteSystem(system)
 	deleteDeveloper(system)
 
+}
+
+func deleteDevices(system map[string]interface{}) {
+	for _, deviceName := range system["devices"].([]interface{}) {
+		if err := adm.DeleteDevice(sysKey, deviceName.(string)); err != nil {
+			warn(fmt.Sprintf("Could not delete device %v: %s", deviceName, err.Error()))
+		} else {
+			myPrintf("Deleted device %v\n", deviceName)
+		}
+	}
 }
 
 func deleteTimers(system map[string]interface{}) {

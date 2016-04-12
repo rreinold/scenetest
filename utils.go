@@ -215,3 +215,16 @@ func isAStatement(arg interface{}) bool {
 	}
 	return true
 }
+
+func lookupVar(context map[string]interface{}, varName string) interface{} {
+	//  first check locals (context)
+	if val, ok := context[varName]; ok {
+		return val
+	}
+
+	//  now check globals
+	if val, ok := globals[varName]; ok {
+		return val
+	}
+	return nil
+}

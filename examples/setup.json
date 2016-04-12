@@ -4,7 +4,7 @@
     //  to running any tests. This is just an example. Copy
     //  this file and change it to meet your testing needs.
     //
-    "name": "Example Test System",
+    "name": "Device Test System: v0",
     "description": "Just a stupid description",
     "userAuth": true,
     "developer": {
@@ -120,6 +120,39 @@
     ],
     "codeServices": [
         {
+            "name": "updateUser",
+            "code": "@js/updateUser.js",
+            "dependencies": "clearblade,log",
+            "parameters": [],
+            "roles":{
+                "a": 1,
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        },
+        {
+            "name": "userUpdatedTrigger",
+            "code": "@js/userUpdatedTrigger.js",
+            "dependencies": "TriggerLib,log",
+            "parameters": [],
+            "roles":{
+                "a": 1,
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        },
+        {
+            "name": "handleDeviceTrigger",
+            "code": "@js/handleDeviceTrigger.js",
+            "dependencies": "TriggerLib,log",
+            "parameters": [],
+            "roles":{
+                "a": 1,
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        },
+        {
             "name": "example",
             "code": "@js/example.js",
             "dependencies": "TestLibrary,log",
@@ -197,6 +230,17 @@
             }
         },
         {
+            "name": "updateDeviceTrigger",
+            "code": "@js/updateDeviceTrigger.js",
+            "dependencies": "clearblade,log",
+            "parameters": [],
+            "roles": {
+                "a": 1,
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        },
+        {
             "name": "collectionDeletedTrigger",
             "code": "@js/collectionDeletedTrigger.js",
             "dependencies": "TriggerLib,log",
@@ -230,6 +274,15 @@
     ],
     "triggers": [
         {
+            "name": "DeviceUpdateHandler",
+            "service_name":"updateDeviceTrigger",
+            "def_module": "Messaging",
+            "def_name": "Publish",
+            "key_value_pairs": {
+                "topic": "/device/update"
+            }
+        },
+        {
             "name": "PublishHandler",
             "service_name":"example",
             "def_module": "Messaging",
@@ -237,6 +290,13 @@
             "key_value_pairs": {
                 "topic": "/foo/#"
             }
+        },
+        {
+            "name": "Updated A User",
+            "service_name": "updatedUserTrigger",
+            "def_module": "User",
+            "def_name": "UserUpdated",
+            "key_value_pairs": { }
         },
         {
             "name": "Added A Row",
@@ -284,6 +344,47 @@
             "repeats": 1,
             "frequency": 1,
             "service_name":"example"
+        }
+    ],
+    "devices": [
+        {
+            "name": "Noisy Hammer",
+            "type": "Hammer",
+            "state": "",
+            "description": "Shut up",
+            "enabled": true,
+            "allow_key_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "allow_certificate_auth": false,
+            "certificate": "I do not have one",
+            "location": "Initial Location"
+        },
+        {
+            "name": "Quiet Hammer",
+            "type": "Hammer",
+            "state": "",
+            "description": "Hello?",
+            "enabled": true,
+            "allow_key_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "allow_certificate_auth": false,
+            "certificate": "I do not have one",
+            "location": "Initial Location"
+        },
+        {
+            "name": "Dorky Torque Wrench",
+            "type": "Torque Wrench",
+            "state": "",
+            "description": "How torqued am I?",
+            "enabled": true,
+            "allow_key_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "allow_certificate_auth": false,
+            "certificate": "I do not have one",
+            "torque": 0
         }
     ]
 }
