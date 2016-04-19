@@ -6,7 +6,7 @@
     "globals": {
         "NumberOfHammers": 100,
         "SleepMilliSeconds": 250,
-        "Iterations": 10
+        "Iterations": 100000
     },
     "locals": {
         "payload": {
@@ -22,7 +22,8 @@
             ["set", "i", ["+", "@i", 1]],
             ["setElem", "payload", "state", "@i"],
             ["publish", "device/update", "@payload", 0],
-            ["sleep", "@SleepMilliSeconds"] ]
+            ["sleep", "@SleepMilliSeconds"] 
+            ]
         ]
     ]
 }

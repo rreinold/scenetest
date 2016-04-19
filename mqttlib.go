@@ -1,10 +1,12 @@
 package main
 
 import (
+	//d "clearblade/utils/debug"
 	"encoding/json"
 	"fmt"
 	cb "github.com/clearblade/Go-SDK"
 	mqtt "github.com/clearblade/mqtt_parsing"
+	"strings"
 	"time"
 )
 
@@ -62,7 +64,6 @@ func (p *publishStmt) run(context map[string]interface{}, args []interface{}) (r
 	if len(args) != 3 {
 		return nil, fmt.Errorf("Usage: [publish, topic, message_body, qos]")
 	}
-	userClient := context["userClient"].(*cb.UserClient)
 	topic := args[0].(string)
 	var body []byte
 	switch args[1].(type) {
@@ -76,7 +77,7 @@ func (p *publishStmt) run(context map[string]interface{}, args []interface{}) (r
 		return nil, fmt.Errorf("Unsupported message body")
 	}
 	qos := int(args[2].(float64))
-	if err := userClient.Publish(topic, body, qos); err != nil {
+	if err := reconnPublish(context, topic, body, qos); err != nil {
 		return nil, fmt.Errorf("Publish failed: %s", err.Error())
 	}
 	return nil, nil
@@ -84,4 +85,36 @@ func (p *publishStmt) run(context map[string]interface{}, args []interface{}) (r
 
 func (p *publishStmt) help() string {
 	return "publish help not yet implemented"
+}
+
+const Retries = 3
+
+func reconnPublish(context map[string]interface{}, topic string, body []byte, qos int) error {
+	userClient := context["userClient"].(*cb.UserClient)
+	for i := 0; i < Retries; i++ {
+		err := userClient.Publish(topic, body, qos)
+		if err == nil {
+			return nil // yea!
+		}
+		if !strings.Contains(err.Error(), "broken pipe") {
+			return err
+		}
+		// Broken pipe, try reconnecting
+		fmt.Printf("Publish, BROKEN PIPE: Attempting to reconnect\n")
+		if initErr := reinitMQTT(userClient); initErr != nil {
+			return initErr
+		}
+	}
+	return fmt.Errorf("Publish failed: Could not reconnect to mqtt")
+}
+
+func reinitMQTT(uc *cb.UserClient) error {
+	uc.MQTTClient = nil
+	if err := uc.InitializeMQTT("", "", 60); err != nil {
+		return err
+	}
+	if err := uc.ConnectMQTT(nil, nil); err != nil {
+		return err
+	}
+	return nil
 }

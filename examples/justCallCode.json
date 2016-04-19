@@ -9,7 +9,7 @@
         "name": "Just callin' some code",
         "steps": [
             ["setUser", "foo@bar.com"],
-            ["repeat", 5000, [
+            ["repeat", 500000, [
                 ["call", "HorribleService", {}],
                 ["print", "@returnValue"] ]
             ]
