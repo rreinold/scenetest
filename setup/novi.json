@@ -1,0 +1,401 @@
+{
+    //
+    //  Here's our setup file that we have to run prior
+    //  to running any tests. This is just an example. Copy
+    //  this file and change it to meet your testing needs.
+    //
+    "name": "Device Test System: v0",
+    "description": "Just a stupid description",
+    "userAuth": true,
+    "developer": {
+        "email": "theDev@developer.com",
+        "password": "IAmTheDev",
+        "firstname": "Dev",
+        "lastname": "Eloper",
+        "org": "Clearblade"
+    },
+    "roles": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e"
+    ],
+    "userColumns": [
+        {
+            "column_name":"dafizzle",
+            "type":"string"
+        },
+        {
+            "column_name":"dasizzley",
+            "type":"int"
+        }
+    ],
+    "users": [
+        {
+            "email": "foo@bar.com",
+            "password": "IAmFoo",
+            "roles": ["a", "b", "c"]
+        },
+        {
+            "email": "bar@bar.com",
+            "password": "IAmBar",
+            "roles": ["a", "b", "c"]
+        },
+        {
+            "email": "swm@clearblade.com",
+            "password": "IAmSWM",
+            "roles": ["a", "b"]
+        }
+    ],
+    "collections": [
+        {
+            "name": "DaCollection",
+            "count": 5,
+            "columns": {
+                "name": "string",
+                "age": "int",
+                "hair_color":"string"
+            },
+            "roles":{
+                "Authenticated": 15,
+                "Anonymous": 0,
+                "a": 3
+            },
+            "items": [
+                {
+                    "name": "Steve",
+                    "age": 87,
+                    "hair_color": "None",
+                    "count": 10
+                },
+                {
+                    "name": "Aaron",
+                    "age": 22,
+                    "hair_color": "Brown"
+                }
+            ]
+        },
+        {
+            "name": "DuhCollection",
+            "columns": {
+                "name": "string",
+                "address": "string"
+            },
+            "roles": {
+                "Authenticated": 15,
+                "Anonymous": 1,
+                "a": 15
+            },
+            "items": [
+                {
+                    "name": "Steve",
+                    "address": "123 4th St."
+                },
+                {
+                    "name": "Aaron",
+                    "address": "567 8th St.",
+                    "count": 10
+                }
+            ]
+        },
+        {
+            "name": "YaddaYadda",
+            "columns": {
+                "yickety": "string",
+                "yak": "string"
+            },
+            "roles": {
+                "Authenticated": 15,
+                "Anonymous": 1,
+                "a": 15
+            },
+            "items": [
+                {
+                    "yickety": "talk",
+                    "yak": "more talk"
+                }
+            ]
+        }
+    ],
+    "codeServices": [
+        {
+            "name": "updateUser",
+            "code": "@js/updateUser.js",
+            "dependencies": "clearblade,log",
+            "parameters": [],
+            "roles":{
+                "a": 1,
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        },
+        {
+            "name": "userUpdatedTrigger",
+            "code": "@js/userUpdatedTrigger.js",
+            "dependencies": "TriggerLib,log",
+            "parameters": [],
+            "roles":{
+                "a": 1,
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        },
+        {
+            "name": "handleDeviceTrigger",
+            "code": "@js/handleDeviceTrigger.js",
+            "dependencies": "TriggerLib,log",
+            "parameters": [],
+            "roles":{
+                "a": 1,
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        },
+        {
+            "name": "example",
+            "code": "@js/example.js",
+            "dependencies": "TestLibrary,log",
+            "parameters": ["badabada"],
+            "roles":{
+                "a": 1,
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        },
+        {
+            "name": "HorribleService",
+            "code": "@js/HorribleService1.js",
+            "dependencies": "",
+            "parameters": [],
+            "roles":{
+                "a": 1,
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        },
+        {
+            "name": "itemCreatedTrigger",
+            "code": "@js/itemCreatedTrigger.js",
+            "dependencies": "TriggerLib,log",
+            "parameters": [],
+            "roles":{
+                "a": 1,
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        },
+        {
+            "name": "handlePublish",
+            "code": "@js/handlePublish.js",
+            "dependencies": "JustPublish,TriggerLib,log",
+            "parameters": [],
+            "roles":{
+                "a": 1,
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        },
+        {
+            "name": "userCreatedTrigger",
+            "code": "@js/userCreatedTrigger.js",
+            "dependencies": "TriggerLib,log",
+            "parameters": [],
+            "roles":{
+                "a": 1,
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        },
+        {
+            "name": "userDeletedTrigger",
+            "code": "@js/userDeletedTrigger.js",
+            "dependencies": "TriggerLib,log",
+            "parameters": [],
+            "roles":{
+                "a": 1,
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        },
+        {
+            "name": "collectionCreatedTrigger",
+            "code": "@js/collectionCreatedTrigger.js",
+            "dependencies": "TriggerLib,log",
+            "parameters": [],
+            "roles":{
+                "a": 1,
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        },
+        {
+            "name": "updateDeviceTrigger",
+            "code": "@js/updateDeviceTrigger.js",
+            "dependencies": "clearblade,log",
+            "parameters": [],
+            "roles": {
+                "a": 1,
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        },
+        {
+            "name": "collectionDeletedTrigger",
+            "code": "@js/collectionDeletedTrigger.js",
+            "dependencies": "TriggerLib,log",
+            "parameters": [],
+            "roles":{
+                "a": 1,
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        }
+    ],
+    "codeLibraries": [
+        {
+            "name": "TestLibrary",
+            "code": "@js/exampleLib.js",
+            "description": "Kinda useless",
+            "dependencies":"log"
+        },
+        {
+            "name": "TriggerLib",
+            "code": "@js/triggerLib.js",
+            "description": "publishes trigger event over mqtt",
+            "dependencies":"clearblade,log"
+        },
+        {
+            "name": "JustPublish",
+            "code": "@js/justPublish.js",
+            "description": "publishes normal message over mqtt",
+            "dependencies":"clearblade,log"
+        }
+    ],
+    "triggers": [
+        {
+            "name": "DeviceUpdateHandler",
+            "service_name":"updateDeviceTrigger",
+            "def_module": "Messaging",
+            "def_name": "Publish",
+            "key_value_pairs": {
+                "topic": "/device/update"
+            }
+        },
+        {
+            "name": "PublishHandler",
+            "service_name":"example",
+            "def_module": "Messaging",
+            "def_name": "Publish",
+            "key_value_pairs": {
+                "topic": "/foo/#"
+            }
+        },
+        {
+            "name": "Updated A User",
+            "service_name": "updatedUserTrigger",
+            "def_module": "User",
+            "def_name": "UserUpdated",
+            "key_value_pairs": { }
+        },
+        {
+            "name": "Added A Row",
+            "service_name": "itemCreatedTrigger",
+            "def_module": "Data",
+            "def_name": "ItemCreated",
+            "key_value_pairs": {
+                "collectionName":"DuhCollection"
+            }
+        },
+        {
+            "name": "Created a user",
+            "service_name": "userCreatedTrigger",
+            "def_module": "User",
+            "def_name": "UserCreated",
+            "key_value_pairs": {}
+        },
+        {
+            "name": "Deleted a user",
+            "service_name": "userDeletedTrigger",
+            "def_module": "User",
+            "def_name": "UserDeleted",
+            "key_value_pairs": {}
+        },
+        {
+            "name": "Created a collection",
+            "service_name": "collectionCreatedTrigger",
+            "def_module": "Data",
+            "def_name": "CollectionCreated",
+            "key_value_pairs": {}
+        },
+        {
+            "name": "Deleted a collection",
+            "service_name": "collectionDeletedTrigger",
+            "def_module": "Data",
+            "def_name": "CollectionDeleted",
+            "key_value_pairs": {}
+        }
+    ],
+    "timers": [
+        {
+            "name": "DoSomething",
+            "description": "Does something",
+            "start_time": "Now",
+            "repeats": 1,
+            "frequency": 1,
+            "service_name":"example"
+        }
+    ],
+    "edges": [
+        {
+            "name": "Cutting Edge",
+            "system_key": "f0a4fdf10af4a18dc68cd6acd273",
+            "system_secret": "F0A4FDF10AC0FE83FFCBACFFBD9D01",
+            "token": "FakeToken",
+            "description": "Fake Description",
+            "public_addr": "127.0.0.1",
+            "local_addr": "127.0.0.1"
+        }
+    ],
+    "devices": [
+        {
+            "name": "Noisy Hammer",
+            "type": "Hammer",
+            "state": "",
+            "description": "Shut up",
+            "enabled": true,
+            "allow_key_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "allow_certificate_auth": false,
+            "certificate": "I do not have one",
+            "location": "Initial Location"
+        },
+        {
+            "name": "Quiet Hammer",
+            "type": "Hammer",
+            "state": "",
+            "description": "Hello?",
+            "enabled": true,
+            "allow_key_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "allow_certificate_auth": false,
+            "certificate": "I do not have one",
+            "location": "Initial Location"
+        },
+        {
+            "name": "Dorky Torque Wrench",
+            "type": "Torque Wrench",
+            "state": "",
+            "description": "How torqued am I?",
+            "enabled": true,
+            "allow_key_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "allow_certificate_auth": false,
+            "certificate": "I do not have one",
+            "torque": 0
+        }
+    ]
+}
