@@ -63,6 +63,7 @@ func init() {
 	scriptVars["triggers"] = map[string]interface{}{}
 	scriptVars["timers"] = map[string]interface{}{}
 	scriptVars["devices"] = map[string]interface{}{}
+	scriptVars["edges"] = map[string]interface{}{}
 }
 
 func extractCommand() (string, error) {

@@ -27,6 +27,7 @@ func init() {
 	setupState["roles"] = []string{}
 	setupState["users"] = []string{}
 	setupState["devices"] = []string{}
+	setupState["edges"] = []string{}
 }
 
 func performSetup(setupInfo interface{}) {
@@ -100,6 +101,12 @@ func setupSystem(system map[string]interface{}) {
 
 	if devices, ok := system["devices"]; ok {
 		setupDevices(devices.([]interface{}))
+	} else {
+		warn("No devices found")
+	}
+
+	if edges, ok := system["edges"]; ok {
+		setupEdges(edges.([]interface{}))
 	} else {
 		warn("No devices found")
 	}
@@ -475,6 +482,25 @@ func setupDevice(device map[string]interface{}) {
 	deviceMap[deviceName] = newDevice
 	appendState("devices", deviceName)
 	myPrintf("Set up device %+v\n", newDevice)
+}
+
+func setupEdges(edges []interface{}) {
+	for _, edge := range edges {
+		setupEdge(edge.(map[string]interface{}))
+	}
+}
+
+func setupEdge(edge map[string]interface{}) {
+	edgeName := edge["name"].(string)
+	delete(edge, "name")
+	newEdge, err := adminClient.CreateEdge(sysKey, edgeName, edge)
+	if err != nil {
+		fatal(fmt.Sprintf("Could not create edge: %s\n", err.Error()))
+	}
+	edgeMap := scriptVars["edges"].(map[string]interface{})
+	edgeMap[edgeName] = newEdge
+	appendState("edges", edgeName)
+	myPrintf("Set up edge %+v\n", newEdge)
 }
 
 func warn(msg string) {

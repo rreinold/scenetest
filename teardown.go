@@ -26,6 +26,7 @@ func teardownSystem(system map[string]interface{}) {
 	sysKey = system["systemKey"].(string)
 	authTheDevGod(system)
 
+	deleteEdges(system)
 	deleteDevices(system)
 	deleteTimers(system)
 	deleteTriggers(system)
@@ -37,6 +38,16 @@ func teardownSystem(system map[string]interface{}) {
 	deleteSystem(system)
 	deleteDeveloper(system)
 
+}
+
+func deleteEdges(system map[string]interface{}) {
+	for _, edgeName := range system["edges"].([]interface{}) {
+		if err := adm.DeleteEdge(sysKey, edgeName.(string)); err != nil {
+			warn(fmt.Sprintf("Could not delete edge %v: %s", edgeName, err.Error()))
+		} else {
+			myPrintf("Deleted edge %v\n", edgeName)
+		}
+	}
 }
 
 func deleteDevices(system map[string]interface{}) {

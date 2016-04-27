@@ -4,9 +4,9 @@
     "sequencing": "Parallel",
 
     "globals": {
-        "NumberOfHammers": 100,
+        "NumberOfHammers": 10,
         "SleepMilliSeconds": 250,
-        "Iterations": 100000
+        "Iterations": 10
     },
     "locals": {
         "payload": {
