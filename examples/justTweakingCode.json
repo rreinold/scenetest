@@ -6,10 +6,15 @@
         "name": "Just update some code",
         "steps": [
             ["setUser", "foo@bar.com"],
-            ["repeat", 1000, [
-                ["updateService", "HorribleService", "@HorribleService1.js", ["paramXXX"]],
-                ["updateService", "HorribleService", "@HorribleService2.js", ["paramYYY"]],
-                ["updateService", "HorribleService", "@HorribleService3.js", ["paramZZZ"]]]
+            ["repeat", 1000, 
+                [
+                    ["updateService", "HorribleService", "@HorribleService1.js", ["paramXXX"]],
+                    ["print", "@returnValue"],
+                    ["updateService", "HorribleService", "@HorribleService2.js", ["paramYYY"]],
+                    ["print", "@returnValue"],
+                    ["updateService", "HorribleService", "@HorribleService3.js", ["paramZZZ"]],
+                    ["print", "@returnValue"]
+                ]
             ]
         ]
     }

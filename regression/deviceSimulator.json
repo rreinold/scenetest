@@ -4,9 +4,9 @@
     "sequencing": "Parallel",
 
     "globals": {
-        "NumberOfHammers": 10,
-        "SleepMilliSeconds": 250,
-        "Iterations": 10
+        "NumberOfHammers": 100,
+        "SleepMilliSeconds": 100,
+        "Iterations": 5
     },
     "locals": {
         "payload": {
@@ -15,6 +15,7 @@
         }
     },
 
+    // This is the main worker.
     "TheHammer": [
         ["setUser", "foo@bar.com"],
         ["set", "i", 0],

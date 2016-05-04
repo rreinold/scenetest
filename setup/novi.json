@@ -120,6 +120,17 @@
     ],
     "codeServices": [
         {
+            "name": "amIAnEdge",
+            "code": "@js/amIAnEdge.js",
+            "dependencies": "clearblade,log",
+            "parameters": [],
+            "roles":{
+                "a": 1,
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        },
+        {
             "name": "updateUser",
             "code": "@js/updateUser.js",
             "dependencies": "clearblade,log",

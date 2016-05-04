@@ -1,0 +1,10 @@
+{
+    "name": "Am I an Edge",
+    "scenarios": [ ["Runit", 1] ],
+    "sequencing": "Parallel",
+    "Runit": [
+        ["setUser", "foo@bar.com"],
+        ["call", "amIAnEdge", {}],
+        ["print", "@returnValue"]
+    ]
+}
