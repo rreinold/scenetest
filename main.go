@@ -31,6 +31,7 @@ var (
 	FileSearchPath []string
 	NoLogin        bool
 	ShutUp         bool
+	Csv 		 bool
 )
 
 var (
@@ -53,6 +54,7 @@ func init() {
 	//flag.BoolVar(&JustParse, "parse", false, "Just parse everything and don't execute")
 	flag.BoolVar(&NoLogin, "nologin", false, "login to the clearblade system as specified by cmd line args to TestSystemInfo.json")
 	flag.BoolVar(&ShutUp, "silent", false, "Shut Up!")
+	flag.BoolVar(&Csv, "csv", false, "For CSV log file")
 
 	scriptVars["roles"] = map[string]interface{}{}
 	scriptVars["users"] = map[string]interface{}{}
@@ -220,11 +222,32 @@ func myPrintf(theFmt string, args ...interface{}) {
 
 func myNestingPrintf(ctx map[string]interface{}, theFmt string, args ...interface{}) {
 	duhFmt := ""
+	argsSeperated := ""
 	lvl := ctx["__nestingLevel"].(int)
 	for i := 0; i < lvl; i++ {
 		duhFmt += "    "
 	}
+	for _,val := range args{
+		argsSeperated += fmt.Sprintf("%s,",val)
+	}
+	if Csv{
+		csvOrNot(argsSeperated)
+	}else{
 	myPrintf(duhFmt+theFmt, args...)
+	}
+}
+
+func csvOrNot(argsSeperated string){
+	file, err := os.OpenFile("log.txt", os.O_WRONLY | os.O_CREATE | os.O_APPEND, 0777)
+    if err != nil {
+        if os.IsPermission(err) {
+            fmt.Println("Error: Write permission denied.")
+        }
+    }
+    n1, err := file.WriteString(argsSeperated+"\n")
+    fmt.Printf("wrote %d bytes\n", n1)
+    file.Sync()
+    file.Close()
 }
 
 func warnScenetestPath() {

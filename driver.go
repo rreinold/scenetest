@@ -4,6 +4,7 @@ import (
 	"fmt"
 	cb "github.com/clearblade/Go-SDK"
 	"time"
+	"strconv"
 )
 
 var script map[string]interface{}
@@ -171,8 +172,12 @@ func runOneStep(context map[string]interface{}, step []interface{}) (interface{}
 	method := step[0].(string)
 	args := dereferenceVariables(context, step[1:])
 	if theStmt, ok := funcMap[method]; ok {
+		timeStart := time.Now().UnixNano()
 		rval, err := theStmt.run(context, args)
-		timeStr := time.Now().Format(time.UnixDate)
+		timeEnd := time.Now().UnixNano()
+		timeDiff := timeEnd - timeStart
+		timeDiff = timeDiff
+		timeStr := strconv.FormatInt(timeDiff, 10)
 		if err == nil {
 			context["returnValue"] = rval
 			if !ShutUp {
