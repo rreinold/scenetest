@@ -4,7 +4,7 @@ function updateDeviceTrigger(req, resp) {
     body.state = body.state.toString();
 
 
-    ClearBlade.updateDevice("Dorky Torque Wrench", body)
+    ClearBlade.updateDevice("Dorky Torque Wrench", body, false);
 
     resp.success("I think it worked");
 }

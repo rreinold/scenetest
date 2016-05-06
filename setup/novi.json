@@ -365,7 +365,9 @@
             "token": "FakeToken",
             "description": "Fake Description",
             "public_addr": "127.0.0.1",
-            "local_addr": "127.0.0.1"
+            "public_port": 1885,
+            "local_addr": "127.0.0.1",
+            "local_port": 1885
         }
     ],
     "devices": [
