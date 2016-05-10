@@ -252,6 +252,17 @@
             }
         },
         {
+            "name": "realUpdateDeviceTrigger",
+            "code": "@js/realUpdateDeviceTrigger.js",
+            "dependencies": "clearblade,log",
+            "parameters": [],
+            "roles": {
+                "a": 1,
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        },
+        {
             "name": "collectionDeletedTrigger",
             "code": "@js/collectionDeletedTrigger.js",
             "dependencies": "TriggerLib,log",
@@ -284,6 +295,13 @@
         }
     ],
     "triggers": [
+        {
+            "name": "RealDeviceUpdateHandler",
+            "service_name":"realUpdateDeviceTrigger",
+            "def_module": "Device",
+            "def_name": "DeviceUpdated",
+            "key_value_pairs": {}
+        },
         {
             "name": "DeviceUpdateHandler",
             "service_name":"updateDeviceTrigger",
