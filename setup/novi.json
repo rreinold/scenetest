@@ -254,7 +254,7 @@
         {
             "name": "realUpdateDeviceTrigger",
             "code": "@js/realUpdateDeviceTrigger.js",
-            "dependencies": "clearblade,log",
+            "dependencies": "clearblade,TriggerLib,log",
             "parameters": [],
             "roles": {
                 "a": 1,

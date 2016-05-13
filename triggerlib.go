@@ -108,9 +108,11 @@ func (wt *waitTrigger) run(ctx map[string]interface{}, args []interface{}) (inte
 	trigChan := ctx["triggerChannel"].(<-chan *mqtt.Publish)
 
 	for {
+		fmt.Printf("GOING INTO SELECT\n")
 		var stuff *mqtt.Publish
 		select {
 		case stuff = <-trigChan:
+			fmt.Printf("GOT STUFF\n")
 		case <-time.After(time.Second * timeout):
 			return nil, fmt.Errorf("Timed out waiting for trigger notification")
 		}
