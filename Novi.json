@@ -1,0 +1,488 @@
+{
+    "codeLibraries": {
+        "JustPublish": {
+            "api": "",
+            "code": "function justPublishOneMessage(req, resp, topic, payload) {\n    ClearBlade.init({request:req});\n    var messaging = ClearBlade.Messaging({}, function(){});\n    result = messaging.publish(topic, payload);\n}\n",
+            "dependencies": "clearblade,log",
+            "description": "publishes normal message over mqtt",
+            "library_key": "caa4b2f30aa49da0d0f0edf6cab201::JustPublish",
+            "name": "JustPublish",
+            "system_key": "caa4b2f30aa49da0d0f0edf6cab201",
+            "version": 1,
+            "visibility": "system"
+        },
+        "TestLibrary": {
+            "api": "",
+            "code": "function freddy() {\n    return 1;\n}\n",
+            "dependencies": "log",
+            "description": "Kinda useless",
+            "library_key": "caa4b2f30aa49da0d0f0edf6cab201::TestLibrary",
+            "name": "TestLibrary",
+            "system_key": "caa4b2f30aa49da0d0f0edf6cab201",
+            "version": 1,
+            "visibility": "system"
+        },
+        "TriggerLib": {
+            "api": "",
+            "code": "function publishTrigger(req, resp, msgClass, msgType) {\n    var msgInfo = {\n        msgClass:msgClass,\n        msgType:msgType\n    };\n    ClearBlade.init({request:req});\n    var messaging = ClearBlade.Messaging({}, function(){});\n    messaging.publish(\"/clearblade/internal/trigger\", JSON.stringify(msgInfo));\n}\n",
+            "dependencies": "clearblade,log",
+            "description": "publishes trigger event over mqtt",
+            "library_key": "caa4b2f30aa49da0d0f0edf6cab201::TriggerLib",
+            "name": "TriggerLib",
+            "system_key": "caa4b2f30aa49da0d0f0edf6cab201",
+            "version": 1,
+            "visibility": "system"
+        }
+    },
+    "codeServices": {
+        "HorribleService": {
+            "code": "function HorribleService(req, resp) {\n\t// ok\n    resp.success(\"This is horrible 1\")\n}\n",
+            "dependencies": "",
+            "euid": "",
+            "name": "HorribleService",
+            "params": []
+        },
+        "amIAnEdge": {
+            "code": "function amIAnEdge(req, resp) {\n    ClearBlade.init({request:req});\n    if (ClearBlade.isEdge() === true) {\n        resp.success(\"We are an edge: \" + ClearBlade.edgeId());\n    } else {\n        resp.success(\"We are NOT an edge\");\n    }\n}\n",
+            "dependencies": "clearblade,log",
+            "euid": "",
+            "name": "amIAnEdge",
+            "params": []
+        },
+        "collectionCreatedTrigger": {
+            "code": "\nfunction collectionCreatedTrigger(req, resp) {\n    publishTrigger(req, resp, \"Data\", \"CollectionCreated\");\n    resp.success(\"Collection Created Trigger Fired\");\n}\n",
+            "dependencies": "TriggerLib,log",
+            "euid": "",
+            "name": "collectionCreatedTrigger",
+            "params": []
+        },
+        "collectionDeletedTrigger": {
+            "code": "\nfunction collectionDeletedTrigger(req, resp) {\n    publishTrigger(req, resp, \"Data\", \"CollectionDeleted\");\n    resp.success(\"Collection Deleted Trigger Fired\");\n}\n",
+            "dependencies": "TriggerLib,log",
+            "euid": "",
+            "name": "collectionDeletedTrigger",
+            "params": []
+        },
+        "example": {
+            "code": "function example(req, resp) {\n    resp.success(\"Hello world: \" + JSON.stringify(req))\n}\n",
+            "dependencies": "TestLibrary,log",
+            "euid": "",
+            "name": "example",
+            "params": [
+                "badabada"
+            ]
+        },
+        "handleDeviceTrigger": {
+            "code": "\nfunction handleDeviceTrigger(req, resp) {\n    sysKey = req.systemKey;\n    var sysSec = req.systemSecret;\n    var userToken = req.userToken;\n    publishTrigger(req, resp, \"Messaging\", \"Publish\");\n    resp.success(\"We win! Request object: \" + JSON.stringify(req));\n}\n",
+            "dependencies": "TriggerLib,log",
+            "euid": "",
+            "name": "handleDeviceTrigger",
+            "params": []
+        },
+        "handlePublish": {
+            "code": "\nfunction handlePublish(req, resp) {\n    sysKey = req.systemKey;\n    var sysSec = req.systemSecret;\n    var userToken = req.userToken;\n    justPublishOneMessage(req, resp, \"/timer/popped\", \"Not much to say\");\n    publishTrigger(req, resp, \"Messaging\", \"Publish\");\n    resp.success(\"Should have published by now\");\n}\n",
+            "dependencies": "JustPublish,TriggerLib,log",
+            "euid": "",
+            "name": "handlePublish",
+            "params": []
+        },
+        "itemCreatedTrigger": {
+            "code": "\nfunction itemCreatedTrigger(req, resp) {\n    sysKey = req.systemKey;\n    var sysSec = req.systemSecret;\n    var userToken = req.userToken;\n    publishTrigger(req, resp, \"Data\", \"ItemCreated\");\n    resp.success(\"We win! Request object: \" + JSON.stringify(req));\n}\n",
+            "dependencies": "TriggerLib,log",
+            "euid": "",
+            "name": "itemCreatedTrigger",
+            "params": []
+        },
+        "realUpdateDeviceTrigger": {
+            "code": "function realUpdateDeviceTrigger(req, resp) {\n    ClearBlade.init({request:req});\n    if (ClearBlade.isEdge() === true) {\n        logStdErr(\"update device trigger on EDGE\");\n        publishTrigger(req, resp, \"Device\", \"DeviceUpdated\");\n        resp.success(ClearBlade.edgeId() + \" Got the update device trigger pull\");\n    } else {\n        logStdErr(\"update device trigger on NOVI\");\n        publishTrigger(req, resp, \"Device\", \"DeviceUpdated\");\n        resp.success(\"Novi Ignoring update device trigger pull\");\n    }\n}\n",
+            "dependencies": "clearblade,TriggerLib,log",
+            "euid": "",
+            "name": "realUpdateDeviceTrigger",
+            "params": []
+        },
+        "updateDeviceTrigger": {
+            "code": "function updateDeviceTrigger(req, resp) {\n    logStdErr(\"In update device TRIGGER\")\n    ClearBlade.init({request:req});\n    var body = JSON.parse(req.params.body);\n    body.state = body.state.toString();\n\n\n    ClearBlade.updateDevice(\"Dorky Torque Wrench\", body, false);\n\n    resp.success(\"I think it worked\");\n}\n",
+            "dependencies": "clearblade,log",
+            "euid": "",
+            "name": "updateDeviceTrigger",
+            "params": []
+        },
+        "updateUser": {
+            "code": "function updateUser(req, resp) {\n    ClearBlade.init({request:req});\n\n\n    var q = ClearBlade.Query();\n\n\n    q.equalTo(\"email\", \"foo@bar.com\");\n\n\n    ClearBlade.User().setUsers(q, {\"dafizzle\": \"WOW\"});\n\n\n    resp.success(\"I think it worked\");\n}\n",
+            "dependencies": "clearblade,log",
+            "euid": "",
+            "name": "updateUser",
+            "params": []
+        },
+        "userCreatedTrigger": {
+            "code": "\nfunction userCreatedTrigger(req, resp) {\n    sysKey = req.systemKey;\n    var sysSec = req.systemSecret;\n    var userToken = req.userToken;\n    publishTrigger(req, resp, \"User\", \"UserCreated\");\n    resp.success(\"Should have published by now\");\n}\n",
+            "dependencies": "TriggerLib,log",
+            "euid": "",
+            "name": "userCreatedTrigger",
+            "params": []
+        },
+        "userDeletedTrigger": {
+            "code": "\nfunction userDeletedTrigger(req, resp) {\n    publishTrigger(req, resp, \"User\", \"UserDeleted\");\n    resp.success(\"Should have published by now\");\n}\n",
+            "dependencies": "TriggerLib,log",
+            "euid": "",
+            "name": "userDeletedTrigger",
+            "params": []
+        },
+        "userUpdatedTrigger": {
+            "code": "\nfunction userUpdatedTrigger(req, resp) {\n    sysKey = req.systemKey;\n    var sysSec = req.systemSecret;\n    var userToken = req.userToken;\n    publishTrigger(req, resp, \"User\", \"UserUpdated\");\n    resp.success(\"We win! Request object: \" + JSON.stringify(req));\n}\n",
+            "dependencies": "TriggerLib,log",
+            "euid": "",
+            "name": "userUpdatedTrigger",
+            "params": []
+        }
+    },
+    "collections": {
+        "DaCollection": "caa4b2f30a9eebe3acbb99cfd6e901",
+        "DuhCollection": "caa4b2f30a9a8cb791e5b68acf9801",
+        "YaddaYadda": "caa4b2f30aeea3ea8886c9bafb8101"
+    },
+    "developer": {
+        "email": "theDev@developer.com",
+        "password": "IAmTheDev",
+        "userId": "caa4b2f30adef8e5e2a5c292be54"
+    },
+    "devices": {
+        "Dorky Torque Wrench": {
+            "active_key": "I Be Active",
+            "allow_certificate_auth": false,
+            "allow_key_auth": true,
+            "certificate": "I do not have one",
+            "created_date": "2016-05-13T16:37:41-05:00",
+            "description": "How torqued am I?",
+            "device_key": "caa4b2f30aa49da0d0f0edf6cab201 :: Dorky Torque Wrench",
+            "enabled": true,
+            "keys": "I Be Active:I Am Not Active",
+            "last_active_date": "2016-05-13T16:37:41-05:00",
+            "name": "Dorky Torque Wrench",
+            "state": "",
+            "system_key": "caa4b2f30aa49da0d0f0edf6cab201",
+            "torque": 0,
+            "type": "Torque Wrench"
+        },
+        "Noisy Hammer": {
+            "active_key": "I Be Active",
+            "allow_certificate_auth": false,
+            "allow_key_auth": true,
+            "certificate": "I do not have one",
+            "created_date": "2016-05-13T16:37:41-05:00",
+            "description": "Shut up",
+            "device_key": "caa4b2f30aa49da0d0f0edf6cab201 :: Noisy Hammer",
+            "enabled": true,
+            "keys": "I Be Active:I Am Not Active",
+            "last_active_date": "2016-05-13T16:37:41-05:00",
+            "location": "Initial Location",
+            "name": "Noisy Hammer",
+            "state": "",
+            "system_key": "caa4b2f30aa49da0d0f0edf6cab201",
+            "type": "Hammer"
+        },
+        "Quiet Hammer": {
+            "active_key": "I Be Active",
+            "allow_certificate_auth": false,
+            "allow_key_auth": true,
+            "certificate": "I do not have one",
+            "created_date": "2016-05-13T16:37:41-05:00",
+            "description": "Hello?",
+            "device_key": "caa4b2f30aa49da0d0f0edf6cab201 :: Quiet Hammer",
+            "enabled": true,
+            "keys": "I Be Active:I Am Not Active",
+            "last_active_date": "2016-05-13T16:37:41-05:00",
+            "location": "Initial Location",
+            "name": "Quiet Hammer",
+            "state": "",
+            "system_key": "caa4b2f30aa49da0d0f0edf6cab201",
+            "type": "Hammer"
+        }
+    },
+    "edges": {
+        "Cutting Edge": {
+            "description": "Fake Description",
+            "edge_key": "caa4b2f30aa49da0d0f0edf6cab201:Cutting Edge",
+            "local_addr": "127.0.0.1",
+            "local_port": 1885,
+            "name": "Cutting Edge",
+            "novi_system_key": "caa4b2f30aa49da0d0f0edf6cab201",
+            "public_addr": "127.0.0.1",
+            "public_port": 1885,
+            "system_key": "f0a4fdf10af4a18dc68cd6acd273",
+            "system_secret": "F0A4FDF10AC0FE83FFCBACFFBD9D01",
+            "token": "FakeToken"
+        }
+    },
+    "items": {},
+    "messagingUrl": "127.0.0.1:1883",
+    "platformUrl": "http://127.0.0.1:9000",
+    "roles": {
+        "Admin": "Admin",
+        "Anonymous": "Anonymous",
+        "Authenticated": "Authenticated",
+        "a": "caa4b2f30a8899b6affc91ccfe3a",
+        "b": "caa4b2f30a86aa80d9b6e9adae38",
+        "c": "caa4b2f30ab6cee680d8cb8ff63c",
+        "d": "caa4b2f30a8aff94d0b4f6a9dfc501",
+        "e": "caa4b2f30af0f8dba1d789dcb52e"
+    },
+    "systemKey": "caa4b2f30aa49da0d0f0edf6cab201",
+    "systemSecret": "CAA4B2F30AF0B8BFA8FEB4EE8EC601",
+    "teardown": {
+        "adminClient": {
+            "DevToken": "Nee3-bzKSyZIHV9OnU_KYSRaq0dFzKTyhW6jh6Juh3-T5iG1k-YcSqJM3f4yQQRLRpGZbg4TtR6EpdPs",
+            "MQTTClient": null,
+            "Email": "theDev@developer.com",
+            "Password": "IAmTheDev",
+            "HttpAddr": "http://127.0.0.1:9000",
+            "MqttAddr": "127.0.0.1:1883"
+        },
+        "collections": [
+            "caa4b2f30a9eebe3acbb99cfd6e901",
+            "caa4b2f30a9a8cb791e5b68acf9801",
+            "caa4b2f30aeea3ea8886c9bafb8101"
+        ],
+        "dev_email": "theDev@developer.com",
+        "dev_password": "IAmTheDev",
+        "developer": "caa4b2f30adef8e5e2a5c292be54",
+        "devices": [
+            "Noisy Hammer",
+            "Quiet Hammer",
+            "Dorky Torque Wrench"
+        ],
+        "edges": [
+            "Cutting Edge"
+        ],
+        "libraries": [
+            "TestLibrary",
+            "TriggerLib",
+            "JustPublish"
+        ],
+        "messagingUrl": "127.0.0.1:1883",
+        "platformUrl": "http://127.0.0.1:9000",
+        "roles": [
+            "caa4b2f30a8899b6affc91ccfe3a",
+            "caa4b2f30a86aa80d9b6e9adae38",
+            "caa4b2f30ab6cee680d8cb8ff63c",
+            "caa4b2f30a8aff94d0b4f6a9dfc501",
+            "caa4b2f30af0f8dba1d789dcb52e"
+        ],
+        "services": [
+            "amIAnEdge",
+            "updateUser",
+            "userUpdatedTrigger",
+            "handleDeviceTrigger",
+            "example",
+            "HorribleService",
+            "itemCreatedTrigger",
+            "handlePublish",
+            "userCreatedTrigger",
+            "userDeletedTrigger",
+            "collectionCreatedTrigger",
+            "updateDeviceTrigger",
+            "realUpdateDeviceTrigger",
+            "collectionDeletedTrigger"
+        ],
+        "systemKey": "caa4b2f30aa49da0d0f0edf6cab201",
+        "systemSecret": "CAA4B2F30AF0B8BFA8FEB4EE8EC601",
+        "timers": [
+            "DoSomething"
+        ],
+        "triggers": [
+            "RealDeviceUpdateHandler",
+            "DeviceUpdateHandler",
+            "PublishHandler",
+            "Updated A User",
+            "Added A Row",
+            "Created a user",
+            "Deleted a user",
+            "Created a collection",
+            "Deleted a collection"
+        ],
+        "users": [
+            "caa4b2f30aee87d1eea6c9e6e8a801",
+            "caa4b2f30ab6e3daaccbd8ecaf62",
+            "caa4b2f30acefb8fc983a5c0ae0e"
+        ]
+    },
+    "timers": {
+        "DoSomething": {
+            "description": "Does something",
+            "frequency": 1,
+            "name": "DoSomething",
+            "repeats": 1,
+            "service_name": "example",
+            "start_time": "2016-05-13T16:37:41.232921293-05:00",
+            "system_key": "caa4b2f30aa49da0d0f0edf6cab201",
+            "system_secret": "CAA4B2F30AF0B8BFA8FEB4EE8EC601",
+            "timer_key": "caa4b2f30aa49da0d0f0edf6cab201::DoSomething",
+            "user_id": "caa4b2f30adef8e5e2a5c292be54",
+            "user_token": "Nee3-bzKSyZIHV9OnU_KYSRaq0dFzKTyhW6jh6Juh3-T5iG1k-YcSqJM3f4yQQRLRpGZbg4TtR6EpdPs"
+        }
+    },
+    "triggers": {
+        "Added A Row": {
+            "event_definition": {
+                "def_keys": [
+                    "collectionId",
+                    "collectionName"
+                ],
+                "def_module": "Data",
+                "def_name": "ItemCreated",
+                "visibility": true
+            },
+            "key_value_pairs": {
+                "collectionName": "DuhCollection"
+            },
+            "name": "Added A Row",
+            "service_name": "itemCreatedTrigger",
+            "system_key": "caa4b2f30aa49da0d0f0edf6cab201",
+            "system_secret": "CAA4B2F30AF0B8BFA8FEB4EE8EC601"
+        },
+        "Created a collection": {
+            "event_definition": {
+                "def_keys": [],
+                "def_module": "Data",
+                "def_name": "CollectionCreated",
+                "visibility": true
+            },
+            "key_value_pairs": {},
+            "name": "Created a collection",
+            "service_name": "collectionCreatedTrigger",
+            "system_key": "caa4b2f30aa49da0d0f0edf6cab201",
+            "system_secret": "CAA4B2F30AF0B8BFA8FEB4EE8EC601"
+        },
+        "Created a user": {
+            "event_definition": {
+                "def_keys": [],
+                "def_module": "User",
+                "def_name": "UserCreated",
+                "visibility": true
+            },
+            "key_value_pairs": {},
+            "name": "Created a user",
+            "service_name": "userCreatedTrigger",
+            "system_key": "caa4b2f30aa49da0d0f0edf6cab201",
+            "system_secret": "CAA4B2F30AF0B8BFA8FEB4EE8EC601"
+        },
+        "Deleted a collection": {
+            "event_definition": {
+                "def_keys": [
+                    "collectionId",
+                    "collectionName"
+                ],
+                "def_module": "Data",
+                "def_name": "CollectionDeleted",
+                "visibility": true
+            },
+            "key_value_pairs": {},
+            "name": "Deleted a collection",
+            "service_name": "collectionDeletedTrigger",
+            "system_key": "caa4b2f30aa49da0d0f0edf6cab201",
+            "system_secret": "CAA4B2F30AF0B8BFA8FEB4EE8EC601"
+        },
+        "Deleted a user": {
+            "event_definition": {
+                "def_keys": [
+                    "userId"
+                ],
+                "def_module": "User",
+                "def_name": "UserDeleted",
+                "visibility": true
+            },
+            "key_value_pairs": {},
+            "name": "Deleted a user",
+            "service_name": "userDeletedTrigger",
+            "system_key": "caa4b2f30aa49da0d0f0edf6cab201",
+            "system_secret": "CAA4B2F30AF0B8BFA8FEB4EE8EC601"
+        },
+        "DeviceUpdateHandler": {
+            "event_definition": {
+                "def_keys": [
+                    "topic"
+                ],
+                "def_module": "Messaging",
+                "def_name": "Publish",
+                "visibility": true
+            },
+            "key_value_pairs": {
+                "topic": "/device/update"
+            },
+            "name": "DeviceUpdateHandler",
+            "service_name": "updateDeviceTrigger",
+            "system_key": "caa4b2f30aa49da0d0f0edf6cab201",
+            "system_secret": "CAA4B2F30AF0B8BFA8FEB4EE8EC601"
+        },
+        "PublishHandler": {
+            "event_definition": {
+                "def_keys": [
+                    "topic"
+                ],
+                "def_module": "Messaging",
+                "def_name": "Publish",
+                "visibility": true
+            },
+            "key_value_pairs": {
+                "topic": "/foo/#"
+            },
+            "name": "PublishHandler",
+            "service_name": "example",
+            "system_key": "caa4b2f30aa49da0d0f0edf6cab201",
+            "system_secret": "CAA4B2F30AF0B8BFA8FEB4EE8EC601"
+        },
+        "RealDeviceUpdateHandler": {
+            "event_definition": {
+                "def_keys": [
+                    "deviceName"
+                ],
+                "def_module": "Device",
+                "def_name": "DeviceUpdated",
+                "visibility": true
+            },
+            "key_value_pairs": {},
+            "name": "RealDeviceUpdateHandler",
+            "service_name": "realUpdateDeviceTrigger",
+            "system_key": "caa4b2f30aa49da0d0f0edf6cab201",
+            "system_secret": "CAA4B2F30AF0B8BFA8FEB4EE8EC601"
+        },
+        "Updated A User": {
+            "event_definition": {
+                "def_keys": [
+                    "userId"
+                ],
+                "def_module": "User",
+                "def_name": "UserUpdated",
+                "visibility": true
+            },
+            "key_value_pairs": {},
+            "name": "Updated A User",
+            "service_name": "updatedUserTrigger",
+            "system_key": "caa4b2f30aa49da0d0f0edf6cab201",
+            "system_secret": "CAA4B2F30AF0B8BFA8FEB4EE8EC601"
+        }
+    },
+    "users": {
+        "bar@bar.com": {
+            "creation_date": "2016-05-13T16:37:41-05:00",
+            "email": "bar@bar.com",
+            "password": "IAmBar",
+            "user_id": "caa4b2f30ab6e3daaccbd8ecaf62",
+            "user_token": "3H7-CHt6grLjbIPfjMwlfuBxgfJcglUekBDsYmVkBJjGKmweWImco7apQyVe2VviG5D5DpDcVrr6siFM"
+        },
+        "foo@bar.com": {
+            "creation_date": "2016-05-13T16:37:41-05:00",
+            "email": "foo@bar.com",
+            "password": "IAmFoo",
+            "user_id": "caa4b2f30aee87d1eea6c9e6e8a801",
+            "user_token": "Y6FfMvLMft7oLinCWSY5ne4O1ztDExH1qsiTxzBEP4cERB4DJ7WkDQH2xSDwx2X_StQcjq58sGOAv70w"
+        },
+        "swm@clearblade.com": {
+            "creation_date": "2016-05-13T16:37:41-05:00",
+            "email": "swm@clearblade.com",
+            "password": "IAmSWM",
+            "user_id": "caa4b2f30acefb8fc983a5c0ae0e",
+            "user_token": "cG8GoQCQfbOSyLfuyIG9MyOHfh92KJVyOuDN0Ll3_oeWtn7Emr1yTJ9ii8c26vB71h4EgBfD5ofP_q8U"
+        }
+    }
+}
