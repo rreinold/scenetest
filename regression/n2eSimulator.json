@@ -5,7 +5,7 @@
 
     "globals": {
         "NumberOfHammers": 100,
-        "SleepMilliSeconds": 100,
+        "SleepMilliSeconds": 250,
         "Iterations": 1
     },
     "locals": {
@@ -15,7 +15,6 @@
         }
     },
 
-    // This is the main worker.
     "TheHammer": [
         ["connectNovi", "foo@bar.com"],
         ["set", "i", 0],
