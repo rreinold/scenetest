@@ -8,11 +8,12 @@ import (
 
 var script map[string]interface{}
 var adminClient *cb.DevClient
+var adminClients = map[string]*cb.DevClient{}
 
 func executeTestScript(theScript map[string]interface{}) {
 	script = theScript
 	if !NoLogin { // nice double negative
-		authDevForScriptRun()
+		adminClient = authDevForScriptRun()
 	}
 
 	//  Get the scenarios and dereference any variables appearing
@@ -32,15 +33,25 @@ func executeTestScript(theScript map[string]interface{}) {
 	}
 }
 
-func authDevForScriptRun() {
+func authDevForScriptRun() *cb.DevClient {
+	return authDevWithAddrs(cb.CB_ADDR, cb.CB_MSG_ADDR)
+}
+
+func authDevWithAddrs(httpAddr, mqttAddr string) *cb.DevClient {
 	scriptVarsLock.RLock()
 	defer scriptVarsLock.RUnlock()
+	if cli, ok := adminClients[httpAddr]; ok {
+		fmt.Printf("FOUND THE DAMN DEV CLIENT\n")
+		return cli
+	}
 	theDev := scriptVars["developer"].(map[string]interface{})
 	email, password := theDev["email"].(string), theDev["password"].(string)
-	adminClient = cb.NewDevClient(email, password)
-	if err := adminClient.Authenticate(); err != nil {
+	ac := cb.NewDevClientWithAddrs(httpAddr, mqttAddr, email, password)
+	if err := ac.Authenticate(); err != nil {
 		fatal("Could not authenticate developer: " + err.Error())
 	}
+	adminClients[httpAddr] = ac
+	return ac
 }
 
 //

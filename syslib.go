@@ -27,6 +27,7 @@ type setGlobalStmt struct{}
 type assertStmt struct{}
 type syncStmt struct{}
 type failStmt struct{}
+type ignoreStmt struct{}
 type breakStmt struct{}
 type elemOfStmt struct{}
 type setElemStmt struct{}
@@ -39,6 +40,7 @@ func init() {
 	funcMap["assert"] = &assertStmt{}
 	funcMap["sleep"] = &sleepStmt{}
 	funcMap["fail"] = &failStmt{}
+	funcMap["ignore"] = &ignoreStmt{}
 	funcMap["sync"] = &syncStmt{}
 	funcMap["repeat"] = &repeatStmt{}
 	funcMap["for"] = &forStmt{}
@@ -386,6 +388,17 @@ func (f *failStmt) run(ctx map[string]interface{}, args []interface{}) (interfac
 
 func (f *failStmt) help() string {
 	return "[\"fail\", <stmt>]"
+}
+
+func (f *ignoreStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	if len(args) != 1 {
+		return nil, fmt.Errorf("ignore statement takes one arg: %s", f.help())
+	}
+	return true, nil
+}
+
+func (f *ignoreStmt) help() string {
+	return "[\"ignore\", <stmt>]"
 }
 
 func (e *elemOfStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {

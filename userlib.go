@@ -81,10 +81,11 @@ func (s *setUserEdgeStmt) run(ctx map[string]interface{}, args []interface{}) (i
 
 	h, m := edgeInfo.makeNiceAddrs()
 	userClient := cb.NewUserClientWithAddrs(h, m, sysKey, sysSec, email, password)
-	fmt.Printf("SET USER EDGE: AUTHENTICATE: %+#v\n", userClient)
 	if err := userClient.Authenticate(); err != nil {
 		return nil, err
 	}
+
+	ctx["adminClient"] = authDevWithAddrs(h, m)
 
 	// Now, might as well set up mqtt
 	if err := userClient.InitializeMQTT("", "", 60); err != nil {
