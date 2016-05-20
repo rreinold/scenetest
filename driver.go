@@ -3,12 +3,14 @@ package main
 import (
 	"fmt"
 	cb "github.com/clearblade/Go-SDK"
+	"sync"
 	"time"
 )
 
 var script map[string]interface{}
 var adminClient *cb.DevClient
 var adminClients = map[string]*cb.DevClient{}
+var adminClientsLock = sync.RWMutex{}
 
 func executeTestScript(theScript map[string]interface{}) {
 	script = theScript
@@ -40,8 +42,9 @@ func authDevForScriptRun() *cb.DevClient {
 func authDevWithAddrs(httpAddr, mqttAddr string) *cb.DevClient {
 	scriptVarsLock.RLock()
 	defer scriptVarsLock.RUnlock()
+	adminClientsLock.Lock()
+	defer adminClientsLock.Unlock()
 	if cli, ok := adminClients[httpAddr]; ok {
-		fmt.Printf("FOUND THE DAMN DEV CLIENT\n")
 		return cli
 	}
 	theDev := scriptVars["developer"].(map[string]interface{})

@@ -71,7 +71,6 @@ func (ct *createTimer) run(ctx map[string]interface{}, args []interface{}) (inte
 	devClient := ctx["adminClient"].(*cb.DevClient)
 	startTime := timerInput["start_time"].(string)
 	timerInput["start_time"] = startTime
-	fmt.Printf("CREATING TIMER ON %+#v\n", devClient)
 	return devClient.CreateTimer(sysKey, timerName, timerInput)
 }
 

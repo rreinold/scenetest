@@ -4,10 +4,11 @@
     "sequencing": "Parallel",
 
     "globals": {
-        "NumberOfHammers": 10,
+        "NumberOfHammers": 1,
         "SleepMilliSeconds": 250,
-        "Iterations": 1000
+        "Iterations": 10
     },
+
     "locals": {
         "payload": {
             "deviceName": "Dorky Torque Wrench",
@@ -17,15 +18,16 @@
             "name": "Dump Msg History Timer",
             "description": "Get and delete msg history",
             "start_time": "Now",
-            "repeats": 10,
+            "repeats": 20,
             "frequency": 1,
             "service_name": "msgHistoryTimer"
         }
     },
+
     "TimerGod": [
         ["connectEdge", "Cutting Edge", "foo@bar.com"],
-        ["sync", "Wait for subscriber", ["+", "@NumberOfHammers", 2]],
         ["ignore", ["deleteTimer", "Dump Msg History Timer"]],
+        ["sync", "Wait for subscriber", ["+", "@NumberOfHammers", 2]],
         ["createTimer", "@Message History Timer"]
     ],
 
@@ -41,11 +43,12 @@
             ]
         ]
     ],
+
     "TheNovi": [
         ["connectNovi", "swm@clearblade.com"],
         ["subscribeTriggers"],
         ["sync", "Wait for subscriber", ["+", "@NumberOfHammers", 2]],
-        ["repeat", 50, [
+        ["repeat", 3, [
             ["waitTrigger", "Device", "DeviceUpdated", 60]
             ]
         ]
