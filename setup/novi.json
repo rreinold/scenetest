@@ -392,11 +392,7 @@
             "system_key": "f0a4fdf10af4a18dc68cd6acd273",
             "system_secret": "F0A4FDF10AC0FE83FFCBACFFBD9D01",
             "token": "FakeToken",
-            "description": "Fake Description",
-            "public_addr": "127.0.0.1",
-            "public_port": 1885,
-            "local_addr": "127.0.0.1",
-            "local_port": 1885
+            "description": "Fake Description"
         }
     ],
     "devices": [
