@@ -80,7 +80,6 @@ func (dcn *deviceConnectNovi) run(ctx map[string]interface{}, args []interface{}
 	defer scriptVarsLock.RUnlock()
 	sysKey := scriptVars["systemKey"].(string)
 	sysSec := scriptVars["systemSecret"].(string)
-	fmt.Printf("sysk syss: %s, %s", sysKey, sysSec)
 	deviceInfo := scriptVars["devices"].(map[string]interface{})[deviceName].(map[string]interface{})
 	activeKey := deviceInfo["active_key"].(string)
 	deviceClient := cb.NewDeviceClient(sysKey, sysSec, deviceName, activeKey)
