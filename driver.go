@@ -3,17 +3,19 @@ package main
 import (
 	"fmt"
 	cb "github.com/clearblade/Go-SDK"
+	"sync"
 	"time"
-	"strconv"
 )
 
 var script map[string]interface{}
 var adminClient *cb.DevClient
+var adminClients = map[string]*cb.DevClient{}
+var adminClientsLock = sync.RWMutex{}
 
 func executeTestScript(theScript map[string]interface{}) {
 	script = theScript
 	if !NoLogin { // nice double negative
-		authDevForScriptRun()
+		adminClient = authDevForScriptRun()
 	}
 
 	//  Get the scenarios and dereference any variables appearing
@@ -33,15 +35,26 @@ func executeTestScript(theScript map[string]interface{}) {
 	}
 }
 
-func authDevForScriptRun() {
+func authDevForScriptRun() *cb.DevClient {
+	return authDevWithAddrs(cb.CB_ADDR, cb.CB_MSG_ADDR)
+}
+
+func authDevWithAddrs(httpAddr, mqttAddr string) *cb.DevClient {
 	scriptVarsLock.RLock()
 	defer scriptVarsLock.RUnlock()
+	adminClientsLock.Lock()
+	defer adminClientsLock.Unlock()
+	if cli, ok := adminClients[httpAddr]; ok {
+		return cli
+	}
 	theDev := scriptVars["developer"].(map[string]interface{})
 	email, password := theDev["email"].(string), theDev["password"].(string)
-	adminClient = cb.NewDevClient(email, password)
-	if err := adminClient.Authenticate(); err != nil {
+	ac := cb.NewDevClientWithAddrs(httpAddr, mqttAddr, email, password)
+	if err := ac.Authenticate(); err != nil {
 		fatal("Could not authenticate developer: " + err.Error())
 	}
+	adminClients[httpAddr] = ac
+	return ac
 }
 
 //
@@ -172,12 +185,8 @@ func runOneStep(context map[string]interface{}, step []interface{}) (interface{}
 	method := step[0].(string)
 	args := dereferenceVariables(context, step[1:])
 	if theStmt, ok := funcMap[method]; ok {
-		timeStart := time.Now().UnixNano()
 		rval, err := theStmt.run(context, args)
-		timeEnd := time.Now().UnixNano()
-		timeDiff := timeEnd - timeStart
-		timeDiff = timeDiff
-		timeStr := strconv.FormatInt(timeDiff, 10)
+		timeStr := time.Now().Format(time.UnixDate)
 		if err == nil {
 			context["returnValue"] = rval
 			if !ShutUp {

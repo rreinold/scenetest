@@ -1,0 +1,39 @@
+{
+    "name": "Simulate Devices Sending Location Coordinates",
+    "scenarios": [ ["TheHammer", "@NumberOfHammers"], ["TheNovi", 1] ],
+    "sequencing": "Parallel",
+
+    "globals": {
+        "NumberOfHammers": 10,
+        "SleepMilliSeconds": 250,
+        "Iterations": 10
+    },
+    "locals": {
+        "payload": {
+            "deviceName": "Dorky Torque Wrench",
+            "state": 0
+        }
+    },
+
+    "TheHammer": [
+        ["connectEdge", "Cutting Edge", "foo@bar.com"],
+        ["set", "i", 0],
+        ["sync", "Wait for subscriber", ["+", "@NumberOfHammers", 1]],
+        ["repeat", "@Iterations", [
+            ["set", "i", ["+", "@i", 1]],
+            ["setElem", "payload", "state", "@i"],
+            ["publish", "device/update", "@payload", 0],
+            ["sleep", "@SleepMilliSeconds"] 
+            ]
+        ]
+    ],
+    "TheNovi": [
+        ["connectNovi", "swm@clearblade.com"],
+        ["subscribeTriggers"],
+        ["sync", "Wait for subscriber", ["+", "@NumberOfHammers", 1]],
+        ["repeat", ["*", "@NumberOfHammers", "@Iterations"], [
+            ["waitTrigger", "Device", "DeviceUpdated", 60]
+            ]
+        ]
+    ]
+}

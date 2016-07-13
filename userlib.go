@@ -6,6 +6,7 @@ import (
 )
 
 type setUserStmt struct{}
+type setUserEdgeStmt struct{}
 type createUserStmt struct{}
 type updateUserStmt struct{}
 type deleteUserStmt struct{}
@@ -14,6 +15,8 @@ type getUserColumnsStmt struct{}
 
 func init() {
 	funcMap["setUser"] = &setUserStmt{}
+	funcMap["connectNovi"] = &setUserStmt{}
+	funcMap["connectEdge"] = &setUserEdgeStmt{}
 	funcMap["createUser"] = &createUserStmt{}
 	funcMap["updateUser"] = &updateUserStmt{}
 	funcMap["deleteUser"] = &deleteUserStmt{}
@@ -30,9 +33,60 @@ func (s *setUserStmt) run(ctx map[string]interface{}, args []interface{}) (inter
 	userInfo := scriptVars["users"].(map[string]interface{})[email].(map[string]interface{})
 	password := userInfo["password"].(string)
 	userClient := cb.NewUserClient(sysKey, sysSec, email, password)
+	fmt.Printf("SET USER: AUTHENTICATE: %+#v\n", userClient)
 	if err := userClient.Authenticate(); err != nil {
 		return nil, err
 	}
+
+	// Now, might as well set up mqtt
+	if err := userClient.InitializeMQTT("", "", 60); err != nil {
+		return nil, err
+	}
+	fmt.Printf("mqtt CLIENT: %+v\n", userClient.MQTTClient)
+	if err := userClient.ConnectMQTT(nil, nil); err != nil {
+		return nil, err
+	}
+
+	ctx["userClient"] = userClient
+	if err := userClient.Publish("/who/am/i", []byte(fmt.Sprintf("%p", userClient.MQTTClient)), 2); err != nil {
+		return nil, err
+	}
+	ctx["email"] = email
+	//ctx["triggerChannel"] = triggerChan
+
+	return userClient, nil
+}
+
+func (s *setUserStmt) help() string {
+	return "[\"userConnectNovi\", \"email\"]"
+}
+
+func (s *setUserEdgeStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	scriptVarsLock.RLock()
+	defer scriptVarsLock.RUnlock()
+
+	if err := argCheck(args, 2, "", ""); err != nil {
+		return nil, err
+	}
+	edgeName := args[0].(string)
+	email := args[1].(string)
+	sysKey := scriptVars["systemKey"].(string)
+	sysSec := scriptVars["systemSecret"].(string)
+	userInfo := scriptVars["users"].(map[string]interface{})[email].(map[string]interface{})
+	password := userInfo["password"].(string)
+
+	edgeInfo, err := getEdgeInfo(edgeName)
+	if err != nil {
+		return nil, err
+	}
+
+	h, m := edgeInfo.makeNiceAddrs()
+	userClient := cb.NewUserClientWithAddrs(h, m, sysKey, sysSec, email, password)
+	if err := userClient.Authenticate(); err != nil {
+		return nil, err
+	}
+
+	ctx["adminClient"] = authDevWithAddrs(h, m)
 
 	// Now, might as well set up mqtt
 	if err := userClient.InitializeMQTT("", "", 60); err != nil {
@@ -47,13 +101,11 @@ func (s *setUserStmt) run(ctx map[string]interface{}, args []interface{}) (inter
 		return nil, err
 	}
 	ctx["email"] = email
-	//ctx["triggerChannel"] = triggerChan
-
 	return nil, nil
 }
 
-func (s *setUserStmt) help() string {
-	return "setUser help not yet implemented"
+func (s *setUserEdgeStmt) help() string {
+	return "setUserEdge help not yet implemented"
 }
 
 func (c *createUserStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {

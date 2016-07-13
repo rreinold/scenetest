@@ -1,0 +1,9 @@
+{
+    "name": "Test if users can connect to novi and mqtt",
+    "scenarios": [ ["do it", 1] ],
+    "sequencing": "Parallel",
+    "do it": [
+        //["deviceConnectNovi", "Noisy Hammer"]
+        ["connectNovi", "foo@bar.com"]
+    ]
+}

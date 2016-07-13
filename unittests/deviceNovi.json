@@ -1,0 +1,9 @@
+{
+    "name": "Test if devices can connect to novi and mqtt",
+    "scenarios": [ ["do it", 1] ],
+    "sequencing": "Parallel",
+    "do it": [
+        ["deviceConnectNovi", "Noisy Hammer"],
+        ["createItem", "DuhCollection", {"name":"Steve", "address":"Sticks"}]
+    ]
+}

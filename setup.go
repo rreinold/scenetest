@@ -9,6 +9,8 @@ import (
 	//"time"
 )
 
+type AddRoleFunc func(string, string, []interface{})
+
 var (
 	devEmail    string
 	devPassword string
@@ -67,6 +69,18 @@ func setupSystem(system map[string]interface{}) {
 		setupUsers(users.([]interface{}))
 	} else {
 		warn("No users found")
+	}
+
+	if userTablePerms, ok := system["userTableRoles"]; ok {
+		setupUserDeviceTablePerms("users", userTablePerms.(map[string]interface{}))
+	} else {
+		warn("No user table permissions ('userTableRoles') found")
+	}
+
+	if deviceTablePerms, ok := system["deviceTableRoles"]; ok {
+		setupUserDeviceTablePerms("devices", deviceTablePerms.(map[string]interface{}))
+	} else {
+		warn("No device table permissions ('deviceTableRoles') found")
 	}
 
 	if collections, ok := system["collections"]; ok {
@@ -252,9 +266,54 @@ func addUserToRoles(user map[string]interface{}, userId string) {
 	}
 }
 
+func addDeviceToRoles(device map[string]interface{}, deviceName string) {
+	if _, ok := device["roles"]; !ok {
+		warn(fmt.Sprintf("No roles found for %s\n", device["name"].(string)))
+		return
+	}
+	roleNames := device["roles"].([]interface{})
+	roleIds := []string{}
+	roleMap := scriptVars["roles"].(map[string]interface{})
+	for i, _ := range roleNames {
+		roleName := roleNames[i].(string)
+		if roleId, ok := roleMap[roleName]; ok {
+			roleIds = append(roleIds, roleId.(string))
+		} else {
+			fatal(fmt.Sprintf("Undefined role: %s\n", roleName))
+		}
+	}
+	if len(roleIds) == 0 {
+		return
+	}
+	err := adminClient.AddDeviceToRoles(sysKey, deviceName, roleIds)
+	if err != nil {
+		fatal(err.Error())
+	}
+}
+
 func setupCollections(cols []interface{}) {
 	for _, col := range cols {
 		setupCollection(col.(map[string]interface{}))
+	}
+}
+
+func addThingToRoles(id string, roleNames []interface{}) {
+	roleIds := []string{}
+	roleMap := scriptVars["roles"].(map[string]interface{})
+	for i, _ := range roleNames {
+		roleName := roleNames[i].(string)
+		if roleId, ok := roleMap[roleName]; ok {
+			roleIds = append(roleIds, roleId.(string))
+		} else {
+			fatal(fmt.Sprintf("Undefined role: %s\n", roleName))
+		}
+	}
+	if len(roleIds) == 0 {
+		return
+	}
+	err := adminClient.AddUserToRoles(sysKey, id, roleIds)
+	if err != nil {
+		fatal(err.Error())
 	}
 }
 
@@ -478,6 +537,8 @@ func setupDevice(device map[string]interface{}) {
 	if err != nil {
 		fatal(fmt.Sprintf("Could not create device: %s\n", err.Error()))
 	}
+	addDeviceToRoles(newDevice, deviceName)
+
 	deviceMap := scriptVars["devices"].(map[string]interface{})
 	deviceMap[deviceName] = newDevice
 	appendState("devices", deviceName)
@@ -492,6 +553,8 @@ func setupEdges(edges []interface{}) {
 
 func setupEdge(edge map[string]interface{}) {
 	edgeName := edge["name"].(string)
+	edge["system_key"] = sysKey
+	edge["system_secret"] = sysSec
 	delete(edge, "name")
 	newEdge, err := adminClient.CreateEdge(sysKey, edgeName, edge)
 	if err != nil {
@@ -501,6 +564,21 @@ func setupEdge(edge map[string]interface{}) {
 	edgeMap[edgeName] = newEdge
 	appendState("edges", edgeName)
 	myPrintf("Set up edge %+v\n", newEdge)
+}
+
+func setupUserDeviceTablePerms(name string, theGoods map[string]interface{}) {
+	roleMap := scriptVars["roles"].(map[string]interface{})
+	for roleName, permsIF := range theGoods {
+		perms := int(permsIF.(float64))
+		roleId, ok := roleMap[roleName].(string)
+		if !ok {
+			fatalf("Unknown role '%s'", roleName)
+		}
+		if err := adminClient.AddGenericPermissionToRole(sysKey, roleId, name, perms); err != nil {
+			fatalf("Could not add user/device table permissions for %s, %s, %d\n", roleName, name, perms)
+		}
+		fmt.Printf("ADDED GENERIC PERMISSION FOR '%s': %s: %d\n", roleName, name, perms)
+	}
 }
 
 func warn(msg string) {

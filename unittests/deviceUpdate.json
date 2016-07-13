@@ -1,0 +1,15 @@
+{
+    "name": "Test if devices can connect and to novi and mqtt and do updates",
+    "scenarios": [ ["do it", 1], ["dont", 1] ],
+    "sequencing": "Serial",
+    "do it": [
+        ["deviceConnectNovi", "Noisy Hammer"],
+        ["updateDevice", "Noisy Hammer", {"state":"clueless"}],
+        ["updateDevice", "Quiet Hammer", {"state":"clueless"}]
+    ],
+    "dont": [
+        ["deviceConnectNovi", "Quiet Hammer"],
+        ["updateDevice", "Quiet Hammer", {"state":"clued in"}],
+        ["fail", ["updateDevice", "Noisy Hammer", {"state":"clued in"}]]
+    ]
+}

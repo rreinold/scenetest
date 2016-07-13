@@ -24,7 +24,7 @@ func init() {
 }
 
 func (c *createItemStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
-	userClient := context["userClient"].(*cb.UserClient)
+	userClient := context["userClient"].(cb.Client)
 	if err := argCheck(args, 2, "", map[string]interface{}{}); err != nil {
 		return nil, fmt.Errorf("Usage: [createItem, <colName>, <argMap>]")
 	}

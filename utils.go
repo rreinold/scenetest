@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	cb "github.com/clearblade/Go-SDK"
 	"io/ioutil"
 	"os"
 	"reflect"
@@ -227,4 +228,14 @@ func lookupVar(context map[string]interface{}, varName string) interface{} {
 		return val
 	}
 	return nil
+}
+
+func getCurrentClient(ctx map[string]interface{}) (cb.Client, error) {
+	list := []string{"userClient", "deviceClient", "adminClient"}
+	for _, clientName := range list {
+		if stuff, ok := ctx[clientName]; ok {
+			return stuff.(cb.Client), nil
+		}
+	}
+	return nil, fmt.Errorf("No clients have been created for this scenario yet")
 }

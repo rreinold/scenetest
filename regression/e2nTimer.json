@@ -1,0 +1,56 @@
+{
+    "name": "Simulate Devices Sending Location Coordinates",
+    "scenarios": [ ["TheHammer", "@NumberOfHammers"], ["TheNovi", 1], ["TimerGod", 1] ],
+    "sequencing": "Parallel",
+
+    "globals": {
+        "NumberOfHammers": 1,
+        "SleepMilliSeconds": 250,
+        "Iterations": 10
+    },
+
+    "locals": {
+        "payload": {
+            "deviceName": "Dorky Torque Wrench",
+            "state": 0
+        },
+        "Message History Timer": {
+            "name": "Dump Msg History Timer",
+            "description": "Get and delete msg history",
+            "start_time": "Now",
+            "repeats": 20,
+            "frequency": 1,
+            "service_name": "msgHistoryTimer"
+        }
+    },
+
+    "TimerGod": [
+        ["connectEdge", "Cutting Edge", "foo@bar.com"],
+        ["ignore", ["deleteTimer", "Dump Msg History Timer"]],
+        ["sync", "Wait for subscriber", ["+", "@NumberOfHammers", 2]],
+        ["createTimer", "@Message History Timer"]
+    ],
+
+    "TheHammer": [
+        ["connectEdge", "Cutting Edge", "foo@bar.com"],
+        ["set", "i", 0],
+        ["sync", "Wait for subscriber", ["+", "@NumberOfHammers", 2]],
+        ["repeat", "@Iterations", [
+            ["set", "i", ["+", "@i", 1]],
+            ["setElem", "payload", "state", "@i"],
+            ["publish", "device/updateForTimer", "@payload", 0],
+            ["sleep", "@SleepMilliSeconds"] 
+            ]
+        ]
+    ],
+
+    "TheNovi": [
+        ["connectNovi", "swm@clearblade.com"],
+        ["subscribeTriggers"],
+        ["sync", "Wait for subscriber", ["+", "@NumberOfHammers", 2]],
+        ["repeat", 3, [
+            ["waitTrigger", "Device", "DeviceUpdated", 60]
+            ]
+        ]
+    ]
+}

@@ -7,7 +7,7 @@
         "steps": [
             ["setUser", "foo@bar.com"],
             ["sync", "all subscribed", 5],
-            ["repeat", 5, 
+            ["repeat", 10000, 
                 [
                     ["publish", "/clearblade/test/spewer", "This is the spew", 1]
                 ]

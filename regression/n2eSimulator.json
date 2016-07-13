@@ -1,0 +1,48 @@
+{
+    "name": "Simulate Devices Sending Location Coordinates",
+    "scenarios": [ ["TheHammer", "@NumberOfHammers"], ["TheCuttingEdge", 1], ["TheDoubleEdgedSword", 1] ],
+    "sequencing": "Parallel",
+
+    "globals": {
+        "NumberOfHammers": 100,
+        "SleepMilliSeconds": 250,
+        "Iterations": 1
+    },
+    "locals": {
+        "payload": {
+            "deviceName": "Dorky Torque Wrench",
+            "state": 0
+        }
+    },
+
+    "TheHammer": [
+        ["connectNovi", "foo@bar.com"],
+        ["set", "i", 0],
+        ["sync", "Wait for subscriber", ["+", "@NumberOfHammers", 1]],
+        ["repeat", "@Iterations", [
+            ["set", "i", ["+", "@i", 1]],
+            ["setElem", "payload", "state", "@i"],
+            ["publish", "device/update", "@payload", 0],
+            ["sleep", "@SleepMilliSeconds"] 
+            ]
+        ]
+    ],
+    "TheCuttingEdge": [
+        ["connectEdge", "Cutting Edge", "swm@clearblade.com"],
+        ["subscribeTriggers"],
+        ["sync", "Wait for subscriber", ["+", "@NumberOfHammers", 1]],
+        ["repeat", ["*", "@NumberOfHammers", "@Iterations"], [
+            ["waitTrigger", "Device", "DeviceUpdated", 60]
+            ]
+        ]
+    ],
+    "TheDoubleEdgedSword": [
+        ["connectEdge", "Double-Edged Sword", "bar@bar.com"],
+        ["subscribeTriggers"],
+        ["sync", "Wait for subscriber", ["+", "@NumberOfHammers", 1]],
+        ["repeat", ["*", "@NumberOfHammers", "@Iterations"], [
+            ["waitTrigger", "Device", "DeviceUpdated", 60]
+            ]
+        ]
+    ]
+}
