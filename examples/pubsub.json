@@ -1,6 +1,6 @@
 {
     "name": "Let's do producers and consumers with mqtt",
-    "scenarios": [ ["producer", 3], ["consumer", 2] ],
+    "scenarios": [ ["producer", 5], ["consumer", 5] ],
     "sequencing": "Parallel",
     "producer": {
         "name": "Spewing out MQTT",
@@ -20,7 +20,7 @@
             ["setUser", "bar@bar.com"],
             ["subscribe", "/clearblade/test/spewer", 1],
             ["sync", "all subscribed", 5],
-            ["repeat", 30000, 
+            ["repeat", 50, 
                 [
                     ["waitMessage", "/clearblade/test/spewer", 300]
                 ]

@@ -39,6 +39,7 @@ var (
 	FileSearchPath []string
 	NoLogin        bool
 	ShutUp         bool
+	Csv            bool
 	EdgeInfo       string
 )
 
@@ -59,6 +60,7 @@ func init() {
 	flag.BoolVar(&GetSomeHelp, "help", false, "Print out a help string for all statements")
 	flag.BoolVar(&NoLogin, "nologin", false, "login to the clearblade system as specified by cmd line args to TestSystemInfo.json")
 	flag.BoolVar(&ShutUp, "silent", false, "Shut Up!")
+	flag.BoolVar(&Csv, "csv", false, "For CSV log file")
 	flag.StringVar(&EdgeInfo, "edge-info", "", "name|ip|httpport|mqttport,name|ip|httpport|mqttport -- edge config")
 
 	scriptVars["roles"] = map[string]interface{}{}
