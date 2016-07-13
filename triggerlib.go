@@ -11,6 +11,7 @@ import (
 type createTrigger struct{}
 type deleteTrigger struct{}
 type createTimer struct{}
+type deleteTimer struct{}
 type waitTrigger struct{}
 type subscribeTriggers struct{}
 
@@ -18,6 +19,7 @@ func init() {
 	funcMap["createTrigger"] = &createTrigger{}
 	funcMap["deleteTrigger"] = &deleteTrigger{}
 	funcMap["createTimer"] = &createTimer{}
+	funcMap["deleteTimer"] = &deleteTimer{}
 	funcMap["waitTrigger"] = &waitTrigger{}
 	funcMap["subscribeTriggers"] = &subscribeTriggers{}
 }
@@ -36,6 +38,10 @@ func (ct *createTrigger) run(ctx map[string]interface{}, args []interface{}) (in
 	return devClient.CreateEventHandler(sysKey, triggerName, triggerInput)
 }
 
+func (ct *createTrigger) help() string {
+	return "[\"createTrigger\", {<trigger meta>}]"
+}
+
 func (ct *deleteTrigger) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
 	if err := argCheck(args, 1, ""); err != nil {
 		return nil, err
@@ -50,10 +56,6 @@ func (ct *deleteTrigger) run(ctx map[string]interface{}, args []interface{}) (in
 
 func (ct *deleteTrigger) help() string {
 	return "[\"deleteTrigger\", \"triggerName\"]"
-}
-
-func (ct *createTrigger) help() string {
-	return "[\"createTrigger\", {<trigger meta>}]"
 }
 
 func (ct *createTimer) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
@@ -74,6 +76,22 @@ func (ct *createTimer) run(ctx map[string]interface{}, args []interface{}) (inte
 
 func (ct *createTimer) help() string {
 	return "[\"createTimer\", {<timer meta>}]"
+}
+
+func (ct *deleteTimer) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	if err := argCheck(args, 1, ""); err != nil {
+		return nil, err
+	}
+	timerName := args[0].(string)
+	scriptVarsLock.RLock()
+	defer scriptVarsLock.RUnlock()
+	sysKey := scriptVars["systemKey"].(string)
+	devClient := ctx["adminClient"].(*cb.DevClient)
+	return nil, devClient.DeleteTimer(sysKey, timerName)
+}
+
+func (ct *deleteTimer) help() string {
+	return "[\"deleteTimer\", \"timerName\"]"
 }
 
 func (st *subscribeTriggers) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {

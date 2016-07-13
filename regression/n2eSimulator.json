@@ -1,11 +1,11 @@
 {
     "name": "Simulate Devices Sending Location Coordinates",
-    "scenarios": [ ["TheHammer", "@NumberOfHammers"] ],
+    "scenarios": [ ["TheHammer", "@NumberOfHammers"], ["TheEdge", 1] ],
     "sequencing": "Parallel",
 
     "globals": {
         "NumberOfHammers": 100,
-        "SleepMilliSeconds": 100,
+        "SleepMilliSeconds": 250,
         "Iterations": 1
     },
     "locals": {
@@ -15,15 +15,24 @@
         }
     },
 
-    // This is the main worker.
     "TheHammer": [
-        ["setUser", "foo@bar.com"],
+        ["connectNovi", "foo@bar.com"],
         ["set", "i", 0],
+        ["sync", "Wait for subscriber", ["+", "@NumberOfHammers", 1]],
         ["repeat", "@Iterations", [
             ["set", "i", ["+", "@i", 1]],
             ["setElem", "payload", "state", "@i"],
             ["publish", "device/update", "@payload", 0],
             ["sleep", "@SleepMilliSeconds"] 
+            ]
+        ]
+    ],
+    "TheEdge": [
+        ["connectEdge", "Cutting Edge", "swm@clearblade.com"],
+        ["subscribeTriggers"],
+        ["sync", "Wait for subscriber", ["+", "@NumberOfHammers", 1]],
+        ["repeat", ["*", "@NumberOfHammers", "@Iterations"], [
+            ["waitTrigger", "Device", "DeviceUpdated", 60]
             ]
         ]
     ]
