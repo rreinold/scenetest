@@ -2,14 +2,39 @@
     "name": "Test if devices can connect and to novi and mqtt and do updates",
     "scenarios": [ ["do it", 1], ["dont", 1] ],
     "sequencing": "Serial",
+    "globals": {
+        "Circular Saw": {
+            "name": "Circular Saw",
+            "type": "Saw",
+            "state": "",
+            "description": "cool circular saw",
+            "enabled": true,
+            "allow_key_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "allow_certificate_auth": false,
+            "certificate": "I do not have one",
+            "location": "Initial Location",
+            "roles": ["a", "b"]
+        }
+    },
     "do it": [
+        // Noisy Hammer has a role which allows updates to
+        // any device in the device table. However it cannot
+        // delete devices...
         ["deviceConnectNovi", "Noisy Hammer"],
         ["updateDevice", "Noisy Hammer", {"state":"clueless"}],
-        ["updateDevice", "Quiet Hammer", {"state":"clueless"}]
+        ["updateDevice", "Quiet Hammer", {"state":"clueless"}],
+        ["createDevice", "Circular Saw", "@Circular Saw"],
+        ["fail", ["deleteDevice", "Circular Saw"]]
     ],
     "dont": [
+        // Quiet Hammer can only update it's own record in
+        // the device table, but is allowed to delete
+        // devices...
         ["deviceConnectNovi", "Quiet Hammer"],
         ["updateDevice", "Quiet Hammer", {"state":"clued in"}],
-        ["fail", ["updateDevice", "Noisy Hammer", {"state":"clued in"}]]
+        ["fail", ["updateDevice", "Noisy Hammer", {"state":"clued in"}]],
+        ["deleteDevice", "Circular Saw"]
     ]
 }

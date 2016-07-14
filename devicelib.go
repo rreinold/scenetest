@@ -27,8 +27,12 @@ func (gd *getDevice) run(ctx map[string]interface{}, args []interface{}) (interf
 	scriptVarsLock.RLock()
 	defer scriptVarsLock.RUnlock()
 	sysKey := scriptVars["systemKey"].(string)
-	devClient := ctx["adminClient"].(*cb.DevClient)
-	return devClient.GetDevice(sysKey, deviceName)
+	//devClient := ctx["adminClient"].(*cb.DevClient)
+	client, err := getCurrentClient(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return client.GetDevice(sysKey, deviceName)
 }
 
 func (ct *createDevice) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
@@ -40,8 +44,12 @@ func (ct *createDevice) run(ctx map[string]interface{}, args []interface{}) (int
 	scriptVarsLock.RLock()
 	defer scriptVarsLock.RUnlock()
 	sysKey := scriptVars["systemKey"].(string)
-	devClient := ctx["adminClient"].(*cb.DevClient)
-	return devClient.CreateDevice(sysKey, deviceName, deviceInput)
+	//devClient := ctx["adminClient"].(*cb.DevClient)
+	client, err := getCurrentClient(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return client.CreateDevice(sysKey, deviceName, deviceInput)
 }
 
 func (ct *updateDevice) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
@@ -68,8 +76,11 @@ func (ct *deleteDevice) run(ctx map[string]interface{}, args []interface{}) (int
 	scriptVarsLock.RLock()
 	defer scriptVarsLock.RUnlock()
 	sysKey := scriptVars["systemKey"].(string)
-	devClient := ctx["adminClient"].(*cb.DevClient)
-	return nil, devClient.DeleteDevice(sysKey, deviceName)
+	client, err := getCurrentClient(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return nil, client.DeleteDevice(sysKey, deviceName)
 }
 func (dcn *deviceConnectNovi) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
 	if err := argCheck(args, 1, ""); err != nil {

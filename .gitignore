@@ -6,3 +6,4 @@ Test*.json
 Local.json
 Cluster.json
 Staging.json
+Edge*.json
