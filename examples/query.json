@@ -1,30 +1,24 @@
 {
-    "name": "Create and Delete Items",
+    "name": "Simple Querying",
     "scenarios": [ ["setup", 1], ["scenario1", 10] ],
     "sequencing": "Parallel",
-    "setup": {
-        "name": "Just do stuff",
-        "steps": [
-            ["setUser", "foo@bar.com"],
-            ["repeat", 300,
-                [
-                    ["createItem", "YaddaYadda", {"yickety": "blabber", "yak": "blubber"}]
-                ]
-            ],
-            ["sync", "Done Creating", 11]
-        ]
-    },
-    "scenario1": {
-        "name": "Just do stuff",
-        "steps": [
-            ["setUser", "foo@bar.com"],
-            ["sync", "Done Creating", 11],
-            ["repeat", 300,
-                [
-                    ["query", "YaddaYadda", [], [[["yickety", "==", "blabber"]]]],
-                    ["query", "YaddaYadda", [], [[["yak", "==", "blubber"]]]]
-                ]
+    "setup": [
+        ["setUser", "foo@bar.com"],
+        ["repeat", 300,
+            [
+                ["createItem", "YaddaYadda", {"yickety": "blabber", "yak": "blubber"}]
+            ]
+        ],
+        ["sync", "Done Creating", 11]
+    ],
+    "scenario1": [
+        ["setUser", "foo@bar.com"],
+        ["sync", "Done Creating", 11],
+        ["repeat", 300,
+            [
+                ["query", "YaddaYadda", [], [[["yickety", "==", "blabber"]]]],
+                ["query", "YaddaYadda", [], [[["yak", "==", "blubber"]]]]
             ]
         ]
-    }
+    ]
 }

@@ -1,7 +1,0 @@
-#!/bin/bash
-
-#
-#  This is the main script for running scenetests intended for regression/nightly testing.
-#  The regression directory contains all the tests intended to run nightly. As we get
-#  better at testing, we'll add load, performance, you-name-it tests.
-#

@@ -1,10 +1,10 @@
 {
     "name": "Create and Delete Items",
-    "scenarios": [ ["scenario1", 10] ],
+    "scenarios": [ ["Just do stuff", 10] ],
     "sequencing": "Parallel",
     "Just do stuff": [
         ["setUser", "foo@bar.com"],
-        ["repeat", 500,
+        ["repeat", 50,
             [
                 ["createItem", "YaddaYadda", {"yickety": "blabber", "yak": "blubber"}],
                 ["set", "newItemId", "@returnValue"],

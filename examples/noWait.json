@@ -6,7 +6,7 @@
         "name": "Just do stuff",
         "steps": [
             ["setUser", "foo@bar.com"],
-            ["repeat", 10000, 
+            ["repeat", 1000, 
                 [
                     ["createItem", "DuhCollection", {"name":"Fred","address":"Homeless"}],
                     ["call", "example", {}]

@@ -10,7 +10,7 @@
         "steps": [
             ["setUser", "foo@bar.com"],
             ["sync", "Ready, Set, Go!", 2],
-            ["repeat", 10000, [
+            ["repeat", 10, [
                 ["updateService", "HorribleService", "@HorribleService1.js", ["paramXXX"]],
                 ["sync", "IChangedIt", 2],
                 ["updateService", "HorribleService", "@HorribleService2.js", ["paramYYY"]],
@@ -29,7 +29,7 @@
         "steps": [
             ["setUser", "foo@bar.com"],
             ["sync", "Ready, Set, Go!", 2],
-            ["repeat", 30000, [
+            ["repeat", 30, [
                 ["sync", "IChangedIt", 2],
                 ["call", "HorribleService", {}],
                 ["print", "@returnValue"] ]

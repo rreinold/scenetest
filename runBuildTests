@@ -1,0 +1,39 @@
+#!/bin/bash
+
+git pull
+go get
+go build
+
+./scenetest setup -info Regression.json \
+    -platform-url "https://rtp.clearblade.com" \
+    -messaging-url rtp.clearblade.com:1883 \
+    setup/novi.json
+
+if [ $? -eq 0 ]; then
+    echo "SETUP SUCCESS"
+else
+    echo "SETUP FAILURE"
+    exit 1
+fi
+
+while read TestFileName; do
+    echo "****************************** $TestFileName ******************************"
+    ./scenetest run -info Regression.json $TestFileName
+    if [ $? -eq 0 ]; then
+        echo "SUCCESS"
+    else
+        echo "FAIL"
+        exit 1
+    fi
+done < BuildTests
+
+./scenetest teardown -info Regression.json
+
+if [ $? -eq 0 ]; then
+    echo "TEARDOWN SUCCESS"
+else
+    echo "TEARDOWN FAILURE"
+    exit 1
+fi
+
+exit 0

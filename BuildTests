@@ -1,0 +1,9 @@
+examples/createItem.json
+examples/createUser.json
+examples/deleteUser.json
+examples/dorkWithCode.json
+examples/justCallCode.json
+examples/newTrigger.json
+examples/noWait.json
+examples/pubsub.json
+examples/query.json
