@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export SCENETEST_PATH=`pwd`
+
 git pull
 go get
 go build
