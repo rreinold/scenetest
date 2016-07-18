@@ -7,3 +7,6 @@ examples/newTrigger.json
 examples/noWait.json
 examples/pubsub.json
 examples/query.json
+examples/updateUser.json
+examples/userColumns.json
+unittests/deviceUpdate.json

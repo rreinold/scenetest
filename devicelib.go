@@ -27,7 +27,6 @@ func (gd *getDevice) run(ctx map[string]interface{}, args []interface{}) (interf
 	scriptVarsLock.RLock()
 	defer scriptVarsLock.RUnlock()
 	sysKey := scriptVars["systemKey"].(string)
-	//devClient := ctx["adminClient"].(*cb.DevClient)
 	client, err := getCurrentClient(ctx)
 	if err != nil {
 		return nil, err
@@ -44,7 +43,6 @@ func (ct *createDevice) run(ctx map[string]interface{}, args []interface{}) (int
 	scriptVarsLock.RLock()
 	defer scriptVarsLock.RUnlock()
 	sysKey := scriptVars["systemKey"].(string)
-	//devClient := ctx["adminClient"].(*cb.DevClient)
 	client, err := getCurrentClient(ctx)
 	if err != nil {
 		return nil, err

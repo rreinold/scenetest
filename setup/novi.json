@@ -354,7 +354,7 @@
         },
         {
             "name": "Updated A User",
-            "service_name": "updatedUserTrigger",
+            "service_name": "userUpdatedTrigger",
             "def_module": "User",
             "def_name": "UserUpdated",
             "key_value_pairs": { }
