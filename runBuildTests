@@ -38,4 +38,6 @@ else
     exit 1
 fi
 
+rm -f Regression.json
+
 exit 0
