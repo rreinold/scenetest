@@ -12,11 +12,12 @@ import (
 type AddRoleFunc func(string, string, []interface{})
 
 var (
-	devEmail    string
-	devPassword string
-	sysKey      string
-	sysSec      string
-	setupState  map[string]interface{}
+	devEmail        string
+	devPassword     string
+	sysKey          string
+	sysSec          string
+	setupState      map[string]interface{}
+	globalSetupInfo map[string]interface{}
 )
 
 func init() {
@@ -35,6 +36,8 @@ func init() {
 func performSetup(setupInfo interface{}) {
 	switch setupInfo.(type) {
 	case map[string]interface{}:
+		globalSetupInfo = setupInfo.(map[string]interface{})
+		setupState["edgeSync"] = makeEdgeSyncStructure()
 		setupSystem(setupInfo.(map[string]interface{}))
 	default:
 		myPrintf("Incorrect type of outer json object")
@@ -124,6 +127,7 @@ func setupSystem(system map[string]interface{}) {
 	} else {
 		warn("No devices found")
 	}
+	setupEdgeSyncInfo()
 }
 
 func setupDeveloper(dev map[string]interface{}) {
@@ -426,6 +430,7 @@ func mkSvcParams(params []interface{}) []string {
 }
 
 func setupCodeService(svc map[string]interface{}) {
+	processEdgeInfo("service", svc["name"].(string), svc)
 	svcName := getString(svc, "name")
 	svcEuid := getString(svc, "euid")
 	svcCode := getVarOrFile(svc, "code")
@@ -465,7 +470,8 @@ func setupCodeLibraries(libs []interface{}) {
 }
 
 func setupCodeLibrary(lib map[string]interface{}) {
-	myPrintf("Setting up code library %+v\n", lib["name"])
+	processEdgeInfo("library", lib["name"].(string), lib)
+	fmt.Printf("LIB AFTER PROCESS: %+v\n", lib)
 	libName := lib["name"].(string)
 	delete(lib, "name")
 	libCode := getVarOrFile(lib, "code")
@@ -487,6 +493,7 @@ func setupTriggers(triggers []interface{}) {
 }
 
 func setupTrigger(trigger map[string]interface{}) {
+	processEdgeInfo("trigger", trigger["name"].(string), trigger)
 	trigName := trigger["name"].(string)
 	delete(trigger, "name")
 	newTrig, err := adminClient.CreateEventHandler(sysKey, trigName, trigger)
@@ -615,4 +622,84 @@ func appendState(stateKey, value string) {
 	theList := setupState[stateKey].([]string)
 	theList = append(theList, value)
 	setupState[stateKey] = theList
+}
+
+func processEdgeInfo(resourceType, resourceName string, resource map[string]interface{}) {
+	fmt.Printf("WHOLE THING IS: %+v\n", setupState["edgeSync"])
+	edgeInfo, ok := resource["edges"]
+	if !ok {
+		return
+	}
+	delete(resource, "edges")
+	edgesToProcess := gatherAppropriateEdges(edgeInfo)
+	edgeSyncStuff := setupState["edgeSync"].(map[string]map[cb.ResourceType][]string) // mouthful
+	for _, edgeName := range edgesToProcess {
+		oneEdgeSync := edgeSyncStuff[edgeName]
+		fmt.Printf("ONE EDGE SYNC: %+v\n", oneEdgeSync)
+		resourceSlice := oneEdgeSync[cb.ResourceType(resourceType)]
+		resourceSlice = append(resourceSlice, resourceName)
+		oneEdgeSync[cb.ResourceType(resourceType)] = resourceSlice
+	}
+}
+
+func gatherAppropriateEdges(edgeInfo interface{}) []string {
+	switch edgeInfo.(type) {
+	case string:
+		edgeStr := edgeInfo.(string)
+		if edgeStr == "all" {
+			return getAllEdgesNames()
+		}
+		return []string{edgeStr}
+	case []interface{}:
+		edgeNameSlice := edgeInfo.([]interface{})
+		edgesToProcess := make([]string, len(edgeNameSlice))
+		for i, edgeIF := range edgeNameSlice {
+			edgesToProcess[i] = edgeIF.(string)
+		}
+		return edgesToProcess
+	case []string:
+		return edgeInfo.([]string)
+	default:
+		fatalf("Bad type for key 'edges': %T\n", edgeInfo)
+	}
+	return []string{} // Not reached -- just makes compiler happy
+}
+
+func getAllEdgesNames() []string {
+	edgeList, ok := globalSetupInfo["edges"].([]interface{})
+	if !ok {
+		return []string{}
+	}
+	rval := make([]string, len(edgeList))
+	for i, edgeIF := range edgeList {
+		edge := edgeIF.(map[string]interface{})
+		rval[i] = edge["name"].(string)
+	}
+	return rval
+}
+
+func makeEdgeSyncStructure() map[string]map[cb.ResourceType][]string {
+	theThing := map[string]map[cb.ResourceType][]string{}
+	allEdges := getAllEdgesNames()
+	for _, edge := range allEdges {
+		theThing[edge] = map[cb.ResourceType][]string{
+			cb.ServiceSync: []string{},
+			cb.LibrarySync: []string{},
+			cb.TriggerSync: []string{},
+		}
+	}
+	fmt.Printf("CREATION: %+v\n", theThing)
+	return theThing
+}
+
+func setupEdgeSyncInfo() {
+	theInfo := setupState["edgeSync"].(map[string]map[cb.ResourceType][]string)
+	for edgeName, edgeStuff := range theInfo {
+		stuff, err := adminClient.SyncResourceToEdge(sysKey, edgeName, edgeStuff, nil)
+		if err != nil {
+			fatalf("Call to SyncResourceToEdge failed: %s\n", err.Error())
+		}
+		fmt.Printf("YOWZA: %v\n", stuff)
+	}
+	fmt.Printf("IT ALL WORKED!!!!!!!!!!!!!!!!!!!!\n")
 }

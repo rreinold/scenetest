@@ -145,6 +145,7 @@
             "code": "@js/msgHistoryTimer.js",
             "dependencies": "clearblade,log",
             "parameters": [],
+            "edges": "all",
             "roles":{
                 "a": 1,
                 "Authenticated": 1,
@@ -156,6 +157,7 @@
             "code": "@js/amIAnEdge.js",
             "dependencies": "clearblade,log",
             "parameters": [],
+            "edges": "all",
             "roles":{
                 "a": 1,
                 "Authenticated": 1,
@@ -167,6 +169,7 @@
             "code": "@js/updateUser.js",
             "dependencies": "clearblade,log",
             "parameters": [],
+            "edges": "all",
             "roles":{
                 "a": 1,
                 "Authenticated": 1,
@@ -178,6 +181,7 @@
             "code": "@js/userUpdatedTrigger.js",
             "dependencies": "TriggerLib,log",
             "parameters": [],
+            "edges": "all",
             "roles":{
                 "a": 1,
                 "Authenticated": 1,
@@ -189,6 +193,7 @@
             "code": "@js/handleDeviceTrigger.js",
             "dependencies": "TriggerLib,log",
             "parameters": [],
+            "edges": "all",
             "roles":{
                 "a": 1,
                 "Authenticated": 1,
@@ -200,6 +205,7 @@
             "code": "@js/example.js",
             "dependencies": "TestLibrary,log",
             "parameters": ["badabada"],
+            "edges": "all",
             "roles":{
                 "a": 1,
                 "Authenticated": 1,
@@ -211,6 +217,7 @@
             "code": "@js/HorribleService1.js",
             "dependencies": "",
             "parameters": [],
+            "edges": "all",
             "roles":{
                 "a": 1,
                 "Authenticated": 1,
@@ -222,6 +229,7 @@
             "code": "@js/itemCreatedTrigger.js",
             "dependencies": "TriggerLib,log",
             "parameters": [],
+            "edges": "all",
             "roles":{
                 "a": 1,
                 "Authenticated": 1,
@@ -233,6 +241,7 @@
             "code": "@js/handlePublish.js",
             "dependencies": "JustPublish,TriggerLib,log",
             "parameters": [],
+            "edges": "all",
             "roles":{
                 "a": 1,
                 "Authenticated": 1,
@@ -244,6 +253,7 @@
             "code": "@js/userCreatedTrigger.js",
             "dependencies": "TriggerLib,log",
             "parameters": [],
+            "edges": "all",
             "roles":{
                 "a": 1,
                 "Authenticated": 1,
@@ -255,6 +265,7 @@
             "code": "@js/userDeletedTrigger.js",
             "dependencies": "TriggerLib,log",
             "parameters": [],
+            "edges": "all",
             "roles":{
                 "a": 1,
                 "Authenticated": 1,
@@ -266,6 +277,7 @@
             "code": "@js/collectionCreatedTrigger.js",
             "dependencies": "TriggerLib,log",
             "parameters": [],
+            "edges": "all",
             "roles":{
                 "a": 1,
                 "Authenticated": 1,
@@ -277,6 +289,7 @@
             "code": "@js/updateDeviceTrigger.js",
             "dependencies": "clearblade,log",
             "parameters": [],
+            "edges": "all",
             "roles": {
                 "a": 1,
                 "Authenticated": 1,
@@ -288,6 +301,7 @@
             "code": "@js/realUpdateDeviceTrigger.js",
             "dependencies": "clearblade,TriggerLib,log",
             "parameters": [],
+            "edges": "all",
             "roles": {
                 "a": 1,
                 "Authenticated": 1,
@@ -299,6 +313,7 @@
             "code": "@js/collectionDeletedTrigger.js",
             "dependencies": "TriggerLib,log",
             "parameters": [],
+            "edges": "all",
             "roles":{
                 "a": 1,
                 "Authenticated": 1,
@@ -311,18 +326,21 @@
             "name": "TestLibrary",
             "code": "@js/exampleLib.js",
             "description": "Kinda useless",
+            "edges": "all",
             "dependencies":"log"
         },
         {
             "name": "TriggerLib",
             "code": "@js/triggerLib.js",
             "description": "publishes trigger event over mqtt",
+            "edges": "all",
             "dependencies":"clearblade,log"
         },
         {
             "name": "JustPublish",
             "code": "@js/justPublish.js",
             "description": "publishes normal message over mqtt",
+            "edges": "all",
             "dependencies":"clearblade,log"
         }
     ],
@@ -332,6 +350,7 @@
             "service_name":"realUpdateDeviceTrigger",
             "def_module": "Device",
             "def_name": "DeviceUpdated",
+            "edges": "all",
             "key_value_pairs": {}
         },
         {
@@ -339,6 +358,7 @@
             "service_name":"updateDeviceTrigger",
             "def_module": "Messaging",
             "def_name": "Publish",
+            "edges": "all",
             "key_value_pairs": {
                 "topic": "/device/update"
             }
@@ -348,6 +368,7 @@
             "service_name":"example",
             "def_module": "Messaging",
             "def_name": "Publish",
+            "edges": "all",
             "key_value_pairs": {
                 "topic": "/foo/#"
             }
@@ -357,6 +378,7 @@
             "service_name": "userUpdatedTrigger",
             "def_module": "User",
             "def_name": "UserUpdated",
+            "edges": "all",
             "key_value_pairs": { }
         },
         {
@@ -364,6 +386,7 @@
             "service_name": "itemCreatedTrigger",
             "def_module": "Data",
             "def_name": "ItemCreated",
+            "edges": "all",
             "key_value_pairs": {
                 "collectionName":"DuhCollection"
             }
@@ -373,6 +396,7 @@
             "service_name": "userCreatedTrigger",
             "def_module": "User",
             "def_name": "UserCreated",
+            "edges": "all",
             "key_value_pairs": {}
         },
         {
@@ -380,6 +404,7 @@
             "service_name": "userDeletedTrigger",
             "def_module": "User",
             "def_name": "UserDeleted",
+            "edges": "all",
             "key_value_pairs": {}
         },
         {
@@ -387,6 +412,7 @@
             "service_name": "collectionCreatedTrigger",
             "def_module": "Data",
             "def_name": "CollectionCreated",
+            "edges": "all",
             "key_value_pairs": {}
         },
         {
@@ -394,6 +420,7 @@
             "service_name": "collectionDeletedTrigger",
             "def_module": "Data",
             "def_name": "CollectionDeleted",
+            "edges": "all",
             "key_value_pairs": {}
         }
     ],

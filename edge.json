@@ -5,9 +5,9 @@
             "code": "function justPublishOneMessage(req, resp, topic, payload) {\n    ClearBlade.init({request:req});\n    var messaging = ClearBlade.Messaging({}, function(){});\n    result = messaging.publish(topic, payload);\n}\n",
             "dependencies": "clearblade,log",
             "description": "publishes normal message over mqtt",
-            "library_key": "e4ccb4f80aeadca0afdef49fc760::JustPublish",
+            "library_key": "fee8fcf80adac9d49bc29edbefb101::JustPublish",
             "name": "JustPublish",
-            "system_key": "e4ccb4f80aeadca0afdef49fc760",
+            "system_key": "fee8fcf80adac9d49bc29edbefb101",
             "version": 1,
             "visibility": "system"
         },
@@ -16,9 +16,9 @@
             "code": "function freddy() {\n    return 1;\n}\n",
             "dependencies": "log",
             "description": "Kinda useless",
-            "library_key": "e4ccb4f80aeadca0afdef49fc760::TestLibrary",
+            "library_key": "fee8fcf80adac9d49bc29edbefb101::TestLibrary",
             "name": "TestLibrary",
-            "system_key": "e4ccb4f80aeadca0afdef49fc760",
+            "system_key": "fee8fcf80adac9d49bc29edbefb101",
             "version": 1,
             "visibility": "system"
         },
@@ -27,9 +27,9 @@
             "code": "function publishTrigger(req, resp, msgClass, msgType) {\n    var msgInfo = {\n        msgClass:msgClass,\n        msgType:msgType\n    };\n    ClearBlade.init({request:req});\n    var messaging = ClearBlade.Messaging({}, function(){});\n    messaging.publish(\"/clearblade/internal/trigger\", JSON.stringify(msgInfo));\n}\n",
             "dependencies": "clearblade,log",
             "description": "publishes trigger event over mqtt",
-            "library_key": "e4ccb4f80aeadca0afdef49fc760::TriggerLib",
+            "library_key": "fee8fcf80adac9d49bc29edbefb101::TriggerLib",
             "name": "TriggerLib",
-            "system_key": "e4ccb4f80aeadca0afdef49fc760",
+            "system_key": "fee8fcf80adac9d49bc29edbefb101",
             "version": 1,
             "visibility": "system"
         }
@@ -144,9 +144,9 @@
         }
     },
     "collections": {
-        "DaCollection": "e6ccb4f80ad0ddcededbd581b128",
-        "DuhCollection": "e8ccb4f80a849defdefc8b81d79501",
-        "YaddaYadda": "e8ccb4f80afaac9bd18eecaaf0ea01"
+        "DaCollection": "fee8fcf80a94a695b9e7bcb28f1d",
+        "DuhCollection": "fee8fcf80a8cc8d6af9180ebd534",
+        "YaddaYadda": "fee8fcf80ab4aaed85a7e5f3ba3e"
     },
     "developer": {
         "email": "theDev@developer.com",
@@ -155,99 +155,121 @@
     },
     "devices": {
         "Dorky Torque Wrench": {
-            "__HostId__": "8a87f807-bad3-4ac5-ac7c-77864478989f",
+            "__HostId__": "7bd64912-7a3b-4277-92a7-77ff9c39952d",
             "active_key": "I Be Active",
             "allow_certificate_auth": false,
             "allow_key_auth": true,
             "certificate": "I do not have one",
-            "created_date": "2016-07-13T19:15:07Z",
+            "created_date": "2016-07-20T10:35:28-05:00",
             "description": "How torqued am I?",
-            "device_key": "e4ccb4f80aeadca0afdef49fc760 :: Dorky Torque Wrench",
+            "device_key": "fee8fcf80adac9d49bc29edbefb101 :: Dorky Torque Wrench",
             "enabled": true,
             "keys": "I Be Active:I Am Not Active",
-            "last_active_date": "2016-07-13T19:15:07Z",
+            "last_active_date": "2016-07-20T10:35:28-05:00",
             "name": "Dorky Torque Wrench",
+            "roles": [
+                "a",
+                "e"
+            ],
             "state": "",
-            "system_key": "e4ccb4f80aeadca0afdef49fc760",
+            "system_key": "fee8fcf80adac9d49bc29edbefb101",
             "torque": 0,
             "type": "Torque Wrench"
         },
         "Noisy Hammer": {
-            "__HostId__": "922e3bc8-d2d9-408d-b94b-3f55e939209e",
+            "__HostId__": "7bd64912-7a3b-4277-92a7-77ff9c39952d",
             "active_key": "I Be Active",
             "allow_certificate_auth": false,
             "allow_key_auth": true,
             "certificate": "I do not have one",
-            "created_date": "2016-07-13T19:15:07Z",
+            "created_date": "2016-07-20T10:35:28-05:00",
             "description": "Shut up",
-            "device_key": "e4ccb4f80aeadca0afdef49fc760 :: Noisy Hammer",
+            "device_key": "fee8fcf80adac9d49bc29edbefb101 :: Noisy Hammer",
             "enabled": true,
             "keys": "I Be Active:I Am Not Active",
-            "last_active_date": "2016-07-13T19:15:07Z",
+            "last_active_date": "2016-07-20T10:35:28-05:00",
             "location": "Initial Location",
             "name": "Noisy Hammer",
+            "roles": [
+                "a",
+                "b"
+            ],
             "state": "",
-            "system_key": "e4ccb4f80aeadca0afdef49fc760",
+            "system_key": "fee8fcf80adac9d49bc29edbefb101",
             "type": "Hammer"
         },
         "Quiet Hammer": {
-            "__HostId__": "e254e6cc-80f6-4a07-8029-c6349bf688a1",
+            "__HostId__": "7bd64912-7a3b-4277-92a7-77ff9c39952d",
             "active_key": "I Be Active",
             "allow_certificate_auth": false,
             "allow_key_auth": true,
             "certificate": "I do not have one",
-            "created_date": "2016-07-13T19:15:07Z",
+            "created_date": "2016-07-20T10:35:28-05:00",
             "description": "Hello?",
-            "device_key": "e4ccb4f80aeadca0afdef49fc760 :: Quiet Hammer",
+            "device_key": "fee8fcf80adac9d49bc29edbefb101 :: Quiet Hammer",
             "enabled": true,
             "keys": "I Be Active:I Am Not Active",
-            "last_active_date": "2016-07-13T19:15:07Z",
+            "last_active_date": "2016-07-20T10:35:28-05:00",
             "location": "Initial Location",
             "name": "Quiet Hammer",
+            "roles": [
+                "c",
+                "d"
+            ],
             "state": "",
-            "system_key": "e4ccb4f80aeadca0afdef49fc760",
+            "system_key": "fee8fcf80adac9d49bc29edbefb101",
             "type": "Hammer"
         }
     },
     "edges": {
-        "CuttingEdge": {
+        "Cutting Edge": {
             "description": "Fake Description",
-            "edge_key": "e4ccb4f80aeadca0afdef49fc760:CuttingEdge",
-            "name": "CuttingEdge",
-            "novi_system_key": "e4ccb4f80aeadca0afdef49fc760",
-            "system_key": "f0a4fdf10af4a18dc68cd6acd273",
-            "system_secret": "F0A4FDF10AC0FE83FFCBACFFBD9D01",
+            "edge_key": "fee8fcf80adac9d49bc29edbefb101:Cutting Edge",
+            "name": "Cutting Edge",
+            "novi_system_key": "fee8fcf80adac9d49bc29edbefb101",
+            "system_key": "fee8fcf80adac9d49bc29edbefb101",
+            "system_secret": "FEE8FCF80AB4ADAAC1FDE4A7B2E101",
             "token": "FakeToken"
+        },
+        "Double-Edged Sword": {
+            "description": "Fake Description",
+            "edge_key": "fee8fcf80adac9d49bc29edbefb101:Double-Edged Sword",
+            "name": "Double-Edged Sword",
+            "novi_system_key": "fee8fcf80adac9d49bc29edbefb101",
+            "system_key": "fee8fcf80adac9d49bc29edbefb101",
+            "system_secret": "FEE8FCF80AB4ADAAC1FDE4A7B2E101",
+            "token": "ReallyFakeToken"
         }
     },
     "items": {},
-    "messagingUrl": "173.11.172.147:1883",
-    "platformUrl": "http://173.11.172.147:9000",
+    "messagingUrl": "127.0.0.1:1883",
+    "platformUrl": "http://127.0.0.1:9000",
     "roles": {
         "Admin": "Admin",
         "Anonymous": "Anonymous",
         "Authenticated": "Authenticated",
-        "a": "e6ccb4f80afee7bc82938cd3fa29",
-        "b": "e6ccb4f80adc98ad8ad28c829652",
-        "c": "e6ccb4f80a9699e8aca8cccdb2af01",
-        "d": "e6ccb4f80a8cbc85fac8c09de76a",
-        "e": "e6ccb4f80ac29594f2cacace927f"
+        "a": "fee8fcf80a9e9ac5f8f79cfa9601",
+        "b": "fee8fcf80a8696809597fc89c35d",
+        "c": "fee8fcf80ab8b5b4a2f2b8fbb3ca01",
+        "d": "fee8fcf80ac0b2c0f3f598989328",
+        "e": "fee8fcf80ae0879ceac1ebf6ac8a01",
+        "updater": "fee8fcf80ac4d7c1839e83c6e7a001"
     },
-    "systemKey": "e4ccb4f80aeadca0afdef49fc760",
-    "systemSecret": "E4CCB4F80AF2FBA9DAE0CDD2A14E",
+    "systemKey": "fee8fcf80adac9d49bc29edbefb101",
+    "systemSecret": "FEE8FCF80AB4ADAAC1FDE4A7B2E101",
     "teardown": {
         "adminClient": {
-            "DevToken": "DEXxfkdaSIQM8hLSzfvP-IyC5zzfRuTahB07E5MJ2wRP4CJSCKsa5YFMUKIitqtGbSWhN23Oacejdyk2",
+            "DevToken": "xy2aA_xQAR4msSHdqa25fMAmIc8LGBkPSo0zoQmTmL2OSDjh43sqYo_m3glCm7FKkuSx0Bn7u9z4pUxW",
             "MQTTClient": null,
             "Email": "theDev@developer.com",
             "Password": "IAmTheDev",
-            "HttpAddr": "https://platform.clearblade.com",
-            "MqttAddr": "platform.clearblade.com:1883"
+            "HttpAddr": "http://127.0.0.1:9000",
+            "MqttAddr": "127.0.0.1:1883"
         },
         "collections": [
-            "e6ccb4f80ad0ddcededbd581b128",
-            "e8ccb4f80a849defdefc8b81d79501",
-            "e8ccb4f80afaac9bd18eecaaf0ea01"
+            "fee8fcf80a94a695b9e7bcb28f1d",
+            "fee8fcf80a8cc8d6af9180ebd534",
+            "fee8fcf80ab4aaed85a7e5f3ba3e"
         ],
         "dev_email": "theDev@developer.com",
         "dev_password": "IAmTheDev",
@@ -258,21 +280,23 @@
             "Dorky Torque Wrench"
         ],
         "edges": [
-            "CuttingEdge"
+            "Cutting Edge",
+            "Double-Edged Sword"
         ],
         "libraries": [
             "TestLibrary",
             "TriggerLib",
             "JustPublish"
         ],
-        "messagingUrl": "173.11.172.147:1883",
-        "platformUrl": "http://173.11.172.147:9000",
+        "messagingUrl": "127.0.0.1:1883",
+        "platformUrl": "http://127.0.0.1:9000",
         "roles": [
-            "e6ccb4f80afee7bc82938cd3fa29",
-            "e6ccb4f80adc98ad8ad28c829652",
-            "e6ccb4f80a9699e8aca8cccdb2af01",
-            "e6ccb4f80a8cbc85fac8c09de76a",
-            "e6ccb4f80ac29594f2cacace927f"
+            "fee8fcf80a9e9ac5f8f79cfa9601",
+            "fee8fcf80a8696809597fc89c35d",
+            "fee8fcf80ab8b5b4a2f2b8fbb3ca01",
+            "fee8fcf80ac0b2c0f3f598989328",
+            "fee8fcf80ae0879ceac1ebf6ac8a01",
+            "fee8fcf80ac4d7c1839e83c6e7a001"
         ],
         "services": [
             "msgHistoryTimer",
@@ -291,8 +315,8 @@
             "realUpdateDeviceTrigger",
             "collectionDeletedTrigger"
         ],
-        "systemKey": "e4ccb4f80aeadca0afdef49fc760",
-        "systemSecret": "E4CCB4F80AF2FBA9DAE0CDD2A14E",
+        "systemKey": "fee8fcf80adac9d49bc29edbefb101",
+        "systemSecret": "FEE8FCF80AB4ADAAC1FDE4A7B2E101",
         "timers": [
             "DoSomething"
         ],
@@ -308,9 +332,9 @@
             "Deleted a collection"
         ],
         "users": [
-            "e6ccb4f80ad4a6f285c58deacba701",
-            "e6ccb4f80aa0c3b2f7eabbcdacc201",
-            "e6ccb4f80aa297f4c4ad9fd0823e"
+            "fee8fcf80aece7a38ee0a1bab5a701",
+            "fee8fcf80ab2cdeb929c9bbad857",
+            "fee8fcf80adc95819df7f5b8f57c"
         ]
     },
     "timers": {
@@ -320,12 +344,12 @@
             "name": "DoSomething",
             "repeats": 1,
             "service_name": "example",
-            "start_time": "2016-07-13T19:15:07.013240821Z",
-            "system_key": "e4ccb4f80aeadca0afdef49fc760",
-            "system_secret": "E4CCB4F80AF2FBA9DAE0CDD2A14E",
-            "timer_key": "e4ccb4f80aeadca0afdef49fc760::DoSomething",
-            "user_id": "9cfdbded0aeeb7b9af9bc5a8998301",
-            "user_token": "DEXxfkdaSIQM8hLSzfvP-IyC5zzfRuTahB07E5MJ2wRP4CJSCKsa5YFMUKIitqtGbSWhN23Oacejdyk2"
+            "start_time": "2016-07-20T10:35:28.415863091-05:00",
+            "system_key": "fee8fcf80adac9d49bc29edbefb101",
+            "system_secret": "FEE8FCF80AB4ADAAC1FDE4A7B2E101",
+            "timer_key": "fee8fcf80adac9d49bc29edbefb101::DoSomething",
+            "user_id": "a2abb3f80a9ec0d0fdf2d98489b501",
+            "user_token": "xy2aA_xQAR4msSHdqa25fMAmIc8LGBkPSo0zoQmTmL2OSDjh43sqYo_m3glCm7FKkuSx0Bn7u9z4pUxW"
         }
     },
     "triggers": {
@@ -344,8 +368,8 @@
             },
             "name": "Added A Row",
             "service_name": "itemCreatedTrigger",
-            "system_key": "e4ccb4f80aeadca0afdef49fc760",
-            "system_secret": "E4CCB4F80AF2FBA9DAE0CDD2A14E"
+            "system_key": "fee8fcf80adac9d49bc29edbefb101",
+            "system_secret": "FEE8FCF80AB4ADAAC1FDE4A7B2E101"
         },
         "Created a collection": {
             "event_definition": {
@@ -357,8 +381,8 @@
             "key_value_pairs": {},
             "name": "Created a collection",
             "service_name": "collectionCreatedTrigger",
-            "system_key": "e4ccb4f80aeadca0afdef49fc760",
-            "system_secret": "E4CCB4F80AF2FBA9DAE0CDD2A14E"
+            "system_key": "fee8fcf80adac9d49bc29edbefb101",
+            "system_secret": "FEE8FCF80AB4ADAAC1FDE4A7B2E101"
         },
         "Created a user": {
             "event_definition": {
@@ -370,8 +394,8 @@
             "key_value_pairs": {},
             "name": "Created a user",
             "service_name": "userCreatedTrigger",
-            "system_key": "e4ccb4f80aeadca0afdef49fc760",
-            "system_secret": "E4CCB4F80AF2FBA9DAE0CDD2A14E"
+            "system_key": "fee8fcf80adac9d49bc29edbefb101",
+            "system_secret": "FEE8FCF80AB4ADAAC1FDE4A7B2E101"
         },
         "Deleted a collection": {
             "event_definition": {
@@ -386,8 +410,8 @@
             "key_value_pairs": {},
             "name": "Deleted a collection",
             "service_name": "collectionDeletedTrigger",
-            "system_key": "e4ccb4f80aeadca0afdef49fc760",
-            "system_secret": "E4CCB4F80AF2FBA9DAE0CDD2A14E"
+            "system_key": "fee8fcf80adac9d49bc29edbefb101",
+            "system_secret": "FEE8FCF80AB4ADAAC1FDE4A7B2E101"
         },
         "Deleted a user": {
             "event_definition": {
@@ -401,8 +425,8 @@
             "key_value_pairs": {},
             "name": "Deleted a user",
             "service_name": "userDeletedTrigger",
-            "system_key": "e4ccb4f80aeadca0afdef49fc760",
-            "system_secret": "E4CCB4F80AF2FBA9DAE0CDD2A14E"
+            "system_key": "fee8fcf80adac9d49bc29edbefb101",
+            "system_secret": "FEE8FCF80AB4ADAAC1FDE4A7B2E101"
         },
         "DeviceUpdateHandler": {
             "event_definition": {
@@ -418,8 +442,8 @@
             },
             "name": "DeviceUpdateHandler",
             "service_name": "updateDeviceTrigger",
-            "system_key": "e4ccb4f80aeadca0afdef49fc760",
-            "system_secret": "E4CCB4F80AF2FBA9DAE0CDD2A14E"
+            "system_key": "fee8fcf80adac9d49bc29edbefb101",
+            "system_secret": "FEE8FCF80AB4ADAAC1FDE4A7B2E101"
         },
         "PublishHandler": {
             "event_definition": {
@@ -435,8 +459,8 @@
             },
             "name": "PublishHandler",
             "service_name": "example",
-            "system_key": "e4ccb4f80aeadca0afdef49fc760",
-            "system_secret": "E4CCB4F80AF2FBA9DAE0CDD2A14E"
+            "system_key": "fee8fcf80adac9d49bc29edbefb101",
+            "system_secret": "FEE8FCF80AB4ADAAC1FDE4A7B2E101"
         },
         "RealDeviceUpdateHandler": {
             "event_definition": {
@@ -450,8 +474,8 @@
             "key_value_pairs": {},
             "name": "RealDeviceUpdateHandler",
             "service_name": "realUpdateDeviceTrigger",
-            "system_key": "e4ccb4f80aeadca0afdef49fc760",
-            "system_secret": "E4CCB4F80AF2FBA9DAE0CDD2A14E"
+            "system_key": "fee8fcf80adac9d49bc29edbefb101",
+            "system_secret": "FEE8FCF80AB4ADAAC1FDE4A7B2E101"
         },
         "Updated A User": {
             "event_definition": {
@@ -464,38 +488,38 @@
             },
             "key_value_pairs": {},
             "name": "Updated A User",
-            "service_name": "updatedUserTrigger",
-            "system_key": "e4ccb4f80aeadca0afdef49fc760",
-            "system_secret": "E4CCB4F80AF2FBA9DAE0CDD2A14E"
+            "service_name": "userUpdatedTrigger",
+            "system_key": "fee8fcf80adac9d49bc29edbefb101",
+            "system_secret": "FEE8FCF80AB4ADAAC1FDE4A7B2E101"
         }
     },
     "users": {
         "bar@bar.com": {
-            "creation_date": "2016-07-13T19:14:59Z",
+            "creation_date": "2016-07-20T10:35:27-05:00",
             "dafizzle": null,
             "dasizzley": null,
             "email": "bar@bar.com",
             "password": "IAmBar",
-            "user_id": "e6ccb4f80aa0c3b2f7eabbcdacc201",
-            "user_token": "HHzp8NmqYCDM_xCxcCUUFG2k9fk7ETm4cryhcT-OWWaeLgwQSZ-2zOZulao5C1BOGLv2XpbK19z27mPc"
+            "user_id": "fee8fcf80ab2cdeb929c9bbad857",
+            "user_token": "qpXVwWM-XDI0UB2sFmH17J92EjO6aE3Q5dYmfoqwPBhuDT_p7GlHvxXYCvVQJc-DwxlHqIePRWpJ_5YO"
         },
         "foo@bar.com": {
-            "creation_date": "2016-07-13T19:14:59Z",
+            "creation_date": "2016-07-20T10:35:27-05:00",
             "dafizzle": null,
             "dasizzley": null,
             "email": "foo@bar.com",
             "password": "IAmFoo",
-            "user_id": "e6ccb4f80ad4a6f285c58deacba701",
-            "user_token": "_VZPOvBKnCPGPUU8rYdZxNs2MDlzvFwPinPRJLJOyi0gy7n0RkFthhnv2zOO_Wb1vCoN9-KHEiAqrsdM"
+            "user_id": "fee8fcf80aece7a38ee0a1bab5a701",
+            "user_token": "r-mehFE7vtCSCJP3IHpZXDIlLGIOqU33a5OkQ4phAma8ABhPLAfEnO6wzlSN6BThshMl33GY-YybLETB"
         },
         "swm@clearblade.com": {
-            "creation_date": "2016-07-13T19:14:59Z",
+            "creation_date": "2016-07-20T10:35:27-05:00",
             "dafizzle": null,
             "dasizzley": null,
             "email": "swm@clearblade.com",
             "password": "IAmSWM",
-            "user_id": "e6ccb4f80aa297f4c4ad9fd0823e",
-            "user_token": "5vS_8i0NeMUWT-1aA6SDXiVXbX2nxq5MhqvCGkUS_0o9lcAiwRKeYxlXEZ-V42Zq_5Un3TTCB1nPK5KU"
+            "user_id": "fee8fcf80adc95819df7f5b8f57c",
+            "user_token": "2HLqwmhEKaCQrN3uVMLevVvTTGdHJPK6O3glL4-pdiHr-x4kn0r6soi1G2yQXvKKvG8EBE7VgmeH1EAz"
         }
     }
 }
