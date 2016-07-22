@@ -44,6 +44,7 @@ func performSetup(setupInfo interface{}) {
 		os.Exit(1)
 	}
 	saveSetupState(setupInfo.(map[string]interface{}))
+	fmt.Printf("%s\n", sysKey)
 }
 
 func setupSystem(system map[string]interface{}) {
@@ -632,13 +633,13 @@ func processEdgeInfo(resourceType, resourceName string, resource map[string]inte
 	}
 	delete(resource, "edges")
 	edgesToProcess := gatherAppropriateEdges(edgeInfo)
-	edgeSyncStuff := setupState["edgeSync"].(map[string]map[cb.ResourceType][]string) // mouthful
+	edgeSyncStuff := setupState["edgeSync"].(map[string]map[string][]string) // mouthful
 	for _, edgeName := range edgesToProcess {
 		oneEdgeSync := edgeSyncStuff[edgeName]
 		fmt.Printf("ONE EDGE SYNC: %+v\n", oneEdgeSync)
-		resourceSlice := oneEdgeSync[cb.ResourceType(resourceType)]
+		resourceSlice := oneEdgeSync[string(resourceType)]
 		resourceSlice = append(resourceSlice, resourceName)
-		oneEdgeSync[cb.ResourceType(resourceType)] = resourceSlice
+		oneEdgeSync[string(resourceType)] = resourceSlice
 	}
 }
 
@@ -678,11 +679,11 @@ func getAllEdgesNames() []string {
 	return rval
 }
 
-func makeEdgeSyncStructure() map[string]map[cb.ResourceType][]string {
-	theThing := map[string]map[cb.ResourceType][]string{}
+func makeEdgeSyncStructure() map[string]map[string][]string {
+	theThing := map[string]map[string][]string{}
 	allEdges := getAllEdgesNames()
 	for _, edge := range allEdges {
-		theThing[edge] = map[cb.ResourceType][]string{
+		theThing[edge] = map[string][]string{
 			cb.ServiceSync: []string{},
 			cb.LibrarySync: []string{},
 			cb.TriggerSync: []string{},
@@ -693,7 +694,7 @@ func makeEdgeSyncStructure() map[string]map[cb.ResourceType][]string {
 }
 
 func setupEdgeSyncInfo() {
-	theInfo := setupState["edgeSync"].(map[string]map[cb.ResourceType][]string)
+	theInfo := setupState["edgeSync"].(map[string]map[string][]string)
 	for edgeName, edgeStuff := range theInfo {
 		stuff, err := adminClient.SyncResourceToEdge(sysKey, edgeName, edgeStuff, nil)
 		if err != nil {
