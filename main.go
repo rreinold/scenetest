@@ -10,6 +10,10 @@ import (
 	"sync"
 )
 
+type ScenetestCmd interface {
+	Run()
+}
+
 type Stmt interface {
 	run(ctx map[string]interface{}, args []interface{}) (interface{}, error)
 	help() string
@@ -41,6 +45,8 @@ var (
 	ShutUp         bool
 	Csv            bool
 	EdgeInfo       string
+	StartNovi      bool
+	StartEdges     bool
 )
 
 var (
@@ -62,6 +68,8 @@ func init() {
 	flag.BoolVar(&ShutUp, "silent", false, "Shut Up!")
 	flag.BoolVar(&Csv, "csv", false, "For CSV log file")
 	flag.StringVar(&EdgeInfo, "edge-info", "", "name|ip|httpport|mqttport,name|ip|httpport|mqttport -- edge config")
+	flag.BoolVar(&StartNovi, "start-novi", false, "Start novi before processing setup script")
+	flag.BoolVar(&StartEdges, "start-edges", false, "Start all edges after processing setup script")
 
 	scriptVars["roles"] = map[string]interface{}{}
 	scriptVars["users"] = map[string]interface{}{}
@@ -134,37 +142,40 @@ func main() {
 	setupFileSearchPath()
 	parseAndProcessEdgeInfo()
 
-	if theCommand == "setup" {
+	getCommand(theCommand).Run()
+	/*
+		if theCommand == "setup" {
 
-		mustHaveAll("platformUrl", PlatformAddr, "messagingUrl", MsgAddr, "info", InfoFile)
-		SetupFile = getFileOrDie()
-		performSetup(getJSON(SetupFile))
+			mustHaveAll("platformUrl", PlatformAddr, "messagingUrl", MsgAddr, "info", InfoFile)
+			SetupFile = getFileOrDie()
+			performSetup(getJSON(SetupFile))
 
-	} else if theCommand == "run" {
+		} else if theCommand == "run" {
 
-		mustHaveAll("info", InfoFile)
-		ScriptFile = getFileOrDie()
-		scriptVars = getJSON(InfoFile)
-		cb.CB_ADDR = scriptVars["platformUrl"].(string)
-		cb.CB_MSG_ADDR = scriptVars["messagingUrl"].(string)
-		executeTestScript(getJSON(ScriptFile))
+			mustHaveAll("info", InfoFile)
+			ScriptFile = getFileOrDie()
+			scriptVars = getJSON(InfoFile)
+			cb.CB_ADDR = scriptVars["platformUrl"].(string)
+			cb.CB_MSG_ADDR = scriptVars["messagingUrl"].(string)
+			executeTestScript(getJSON(ScriptFile))
 
-	} else if theCommand == "teardown" {
+		} else if theCommand == "teardown" {
 
-		mustHaveAll("info", InfoFile)
-		scriptVars = getJSON(InfoFile)
-		cb.CB_ADDR = scriptVars["platformUrl"].(string)
-		cb.CB_MSG_ADDR = scriptVars["messagingUrl"].(string)
-		performTeardown()
+			mustHaveAll("info", InfoFile)
+			scriptVars = getJSON(InfoFile)
+			cb.CB_ADDR = scriptVars["platformUrl"].(string)
+			cb.CB_MSG_ADDR = scriptVars["messagingUrl"].(string)
+			performTeardown()
 
-	} else if theCommand == "help" {
+		} else if theCommand == "help" {
 
-		showHelp(flag.Args())
+			showHelp(flag.Args())
 
-	} else {
-		fmt.Printf("Unknown Command '%s'\n", theCommand)
-		os.Exit(1)
-	}
+		} else {
+			fmt.Printf("Unknown Command '%s'\n", theCommand)
+			os.Exit(1)
+		}
+	*/
 }
 
 func getJSON(filename string) map[string]interface{} {

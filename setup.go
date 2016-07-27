@@ -627,11 +627,11 @@ func appendState(stateKey, value string) {
 
 func processEdgeInfo(resourceType, resourceName string, resource map[string]interface{}) {
 	fmt.Printf("WHOLE THING IS: %+v\n", setupState["edgeSync"])
-	edgeInfo, ok := resource["edges"]
+	edgeInfo, ok := resource["deployToEdges"]
 	if !ok {
 		return
 	}
-	delete(resource, "edges")
+	delete(resource, "deployToEdges")
 	edgesToProcess := gatherAppropriateEdges(edgeInfo)
 	edgeSyncStuff := setupState["edgeSync"].(map[string]map[string][]string) // mouthful
 	for _, edgeName := range edgesToProcess {
@@ -696,11 +696,9 @@ func makeEdgeSyncStructure() map[string]map[string][]string {
 func setupEdgeSyncInfo() {
 	theInfo := setupState["edgeSync"].(map[string]map[string][]string)
 	for edgeName, edgeStuff := range theInfo {
-		stuff, err := adminClient.SyncResourceToEdge(sysKey, edgeName, edgeStuff, nil)
+		_, err := adminClient.SyncResourceToEdge(sysKey, edgeName, edgeStuff, nil)
 		if err != nil {
 			fatalf("Call to SyncResourceToEdge failed: %s\n", err.Error())
 		}
-		fmt.Printf("YOWZA: %v\n", stuff)
 	}
-	fmt.Printf("IT ALL WORKED!!!!!!!!!!!!!!!!!!!!\n")
 }
