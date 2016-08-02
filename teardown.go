@@ -3,6 +3,10 @@ package main
 import (
 	"fmt"
 	cb "github.com/clearblade/Go-SDK"
+	procs "github.com/clearblade/scenetest/processes"
+	"log"
+	"os"
+	"strconv"
 )
 
 var adm *cb.DevClient
@@ -18,11 +22,7 @@ func authTheDevGod(system map[string]interface{}) {
 	}
 }
 
-func setUrlValues(system map[string]interface{}) {
-}
-
 func teardownSystem(system map[string]interface{}) {
-	setUrlValues(system)
 	sysKey = system["systemKey"].(string)
 	authTheDevGod(system)
 
@@ -37,7 +37,8 @@ func teardownSystem(system map[string]interface{}) {
 	deleteRoles(system)
 	deleteSystem(system)
 	deleteDeveloper(system)
-
+	stopEdges(system)
+	stopNovi(system)
 }
 
 func deleteEdges(system map[string]interface{}) {
@@ -140,4 +141,22 @@ func deleteSystem(system map[string]interface{}) {
 
 func deleteDeveloper(system map[string]interface{}) {
 	myPrintf("Developer %s is trying to commit suicide, but the platform won't let him\n", system["dev_email"].(string))
+}
+
+func stopEdges(system map[string]interface{}) {
+}
+
+func stopNovi(system map[string]interface{}) {
+	noviPidStr, ok := system["noviPid"].(string)
+	if !ok {
+		return
+	}
+	noviPid, _ := strconv.Atoi(noviPidStr)
+	platformUrl := system["platformUrl"].(string)
+	mgr := procs.GetProcessManagerWithPid(platformUrl, "clearblade", noviPid)
+	if mgr == nil {
+		log.Fatal("Could not find process manager for address '%s'\n", platformUrl)
+		os.Exit(1)
+	}
+	mgr.Stop()
 }

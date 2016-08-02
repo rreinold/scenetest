@@ -47,6 +47,7 @@ var (
 	EdgeInfo       string
 	StartNovi      bool
 	StartEdges     bool
+	StartFile      string
 )
 
 var (
@@ -143,39 +144,6 @@ func main() {
 	parseAndProcessEdgeInfo()
 
 	getCommand(theCommand).Run()
-	/*
-		if theCommand == "setup" {
-
-			mustHaveAll("platformUrl", PlatformAddr, "messagingUrl", MsgAddr, "info", InfoFile)
-			SetupFile = getFileOrDie()
-			performSetup(getJSON(SetupFile))
-
-		} else if theCommand == "run" {
-
-			mustHaveAll("info", InfoFile)
-			ScriptFile = getFileOrDie()
-			scriptVars = getJSON(InfoFile)
-			cb.CB_ADDR = scriptVars["platformUrl"].(string)
-			cb.CB_MSG_ADDR = scriptVars["messagingUrl"].(string)
-			executeTestScript(getJSON(ScriptFile))
-
-		} else if theCommand == "teardown" {
-
-			mustHaveAll("info", InfoFile)
-			scriptVars = getJSON(InfoFile)
-			cb.CB_ADDR = scriptVars["platformUrl"].(string)
-			cb.CB_MSG_ADDR = scriptVars["messagingUrl"].(string)
-			performTeardown()
-
-		} else if theCommand == "help" {
-
-			showHelp(flag.Args())
-
-		} else {
-			fmt.Printf("Unknown Command '%s'\n", theCommand)
-			os.Exit(1)
-		}
-	*/
 }
 
 func getJSON(filename string) map[string]interface{} {

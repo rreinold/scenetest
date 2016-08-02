@@ -3,6 +3,8 @@ scenetest
 Test*.json
 *.etcd
 *out
+*.err
+*err
 Local.json
 Cluster.json
 Staging.json

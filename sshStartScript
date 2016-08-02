@@ -1,0 +1,5 @@
+#!/bin/bash
+
+
+nohup $@ > clearblade.out 2> clearblade.err &
+echo $!

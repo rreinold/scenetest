@@ -689,7 +689,6 @@ func makeEdgeSyncStructure() map[string]map[string][]string {
 			cb.TriggerSync: []string{},
 		}
 	}
-	fmt.Printf("CREATION: %+v\n", theThing)
 	return theThing
 }
 
