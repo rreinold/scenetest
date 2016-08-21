@@ -1,0 +1,368 @@
+{
+    //
+    //  Here's our setup file that we have to run prior
+    //  to running any tests. This is just an example. Copy
+    //  this file and change it to meet your testing needs.
+    //
+    "name": "W2MacFab Clock Management",
+    "description": "NFC Clock Management for W2MacFab",
+    "startup": { // This is stuff used for starting the main clearblade novi process
+        "outputFile": "novi.out",
+        "args": "-tkey=`cat dev_key`"
+    },
+    "userAuth": true,
+    "developer": {
+        "email": "dev@clearblade.com",
+        "password": "IAmTheDev",
+        "firstname": "Fred",
+        "lastname": "Flintstone",
+        "org": "Clearblade"
+    },
+    "roles": [
+        "Owner",
+        "Employee",
+        "User Table Updater"
+    ],
+    "userColumns": [
+        {
+            "column_name":"state",
+            "type":"string" // "Clocked In", "Clocked Out"
+        },
+        {
+            "column_name":"job",
+            "type":"string"
+        },
+        {
+            "column_name": "tag_id",
+            "type": "string"
+        }
+
+    ],
+    "users": [
+        {
+            "email": "userTableUpdater@w2macfab.com",
+            "password": "password",
+            "roles": ["User Table Updater"],
+            "state": "Clocked Out",
+            "tag_id": "",
+            "job": "None"
+        },
+        {
+            "email": "swm@w2macfab.com",
+            "password": "password",
+            "roles": ["Employee"],
+            "state": "Clocked Out",
+            "tag_id": "047229EAFC3880",
+            "job": "None"
+        },
+        {
+            "email": "ray@w2macfab.com",
+            "password": "password",
+            "roles": ["Employee"],
+            "state": "Clocked Out",
+            "tag_id": "041C19EAFC3881",
+            "job": "None"
+        },
+        {
+            "email": "robert@w2macfab.com",
+            "password": "password",
+            "roles": ["Owner"],
+            "state": "Clocked Out",
+            "tag_id": "048C25EAFC3880",
+            "job": "None"
+        },
+        {
+            "email": "zack@w2macfab.com",
+            "password": "password",
+            "roles": ["Employee"],
+            "state": "Clocked Out",
+            "tag_id": "0421430AF04981",
+            "job": "None"
+        },
+        {
+            "email": "carlos@w2macfab.com",
+            "password": "password",
+            "state": "Clocked Out",
+            "job": "None",
+            "tag_id": "04C9440AF04980",
+            "roles": ["Employee"]
+        },
+        {
+            "email": "billy@w2macfab.com",
+            "password": "password",
+            "state": "Clocked Out",
+            "job": "None",
+            "tag_id": "047C400AF04980",
+            "roles": ["Employee"]
+        },
+        {
+            "email": "bob@w2macfab.com",
+            "password": "password",
+            "state": "Clocked Out",
+            "job": "None",
+            "tag_id": "04EE420AF04980",
+            "roles": ["Employee"]
+        },
+        {
+            "email": "johnny@w2macfab.com",
+            "password": "password",
+            "state": "Clocked Out",
+            "job": "None",
+            "tag_id": "04BB400AF04980",
+            "roles": ["Employee"]
+        }
+    ],
+    "userTableRoles": {
+        "Authenticated": 0,
+        "Anonymous": 0,
+        "User Table Updater": 15
+    },
+    "deviceTableRoles": {
+        "Authenticated": 0,
+        "Anonymous": 0,
+        "User Table Updater": 15
+    },
+
+    "collections": [
+        {
+            "name": "JobHistory",
+            "count": 5,
+            "columns": {
+                "job_name":"string",
+                "employee":"string",
+                "hours":"int"
+            },
+            "roles":{
+                "Authenticated": 15,
+                "Anonymous": 0
+            },
+            "items": [
+            ]
+        }
+    ],
+    "codeServices": [
+        {
+            "name": "tagFoundTrigger",
+            "code": "@js/tagFoundTrigger.js",
+            "dependencies": "clearblade,log",
+            "parameters": [],
+            "deployToEdges": "all",
+            "roles": {
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        }
+    ],
+    "codeLibraries": [
+        {
+            "name": "TriggerLib",
+            "code": "@js/triggerLib.js",
+            "description": "publishes trigger event over mqtt",
+            "deployToEdges": "all",
+            "dependencies":"clearblade,log"
+        },
+        {
+            "name": "JustPublish",
+            "code": "@js/justPublish.js",
+            "description": "publishes normal message over mqtt",
+            "deployToEdges": "all",
+            "dependencies":"clearblade,log"
+        }
+    ],
+    "triggers": [
+        {
+            "name": "TagFoundHandler",
+            "service_name":"tagFoundTrigger",
+            "def_module": "Messaging",
+            "def_name": "Publish",
+            "deployToEdges": "all",
+            "key_value_pairs": {
+                "topic": "/tag/found"
+            }
+        }
+    ],
+    "timers": [
+    ],
+    "edges": [
+        {
+            "name": "Main Entry",
+            "token": "Main Entry Token",
+            "description": "The entrance right off of the office"
+        },
+        {
+            "name": "Side Entry",
+            "token": "Side Entry Token",
+            "description": "The entrance to the left of the office"
+        },
+        {
+            "name": "Rear Entry",
+            "token": "Rear Entry Token",
+            "description": "The entrance in the back of the building"
+        }
+    ],
+    "devices": [
+        {
+            "name": "NFC Reader 1",
+            "type": "Tag Reader",
+            "state": "Lost",
+            "description": "located at main office entry",
+            "enabled": true,
+            "allow_key_auth": true,
+            "allow_certificate_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "roles": []
+        },
+        {
+            "name": "NFC Reader 2",
+            "type": "Tag Reader",
+            "state": "Lost",
+            "description": "Located at side entry",
+            "enabled": true,
+            "allow_key_auth": true,
+            "allow_certificate_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "roles": []
+        },
+        {
+            "name": "NFC Reader 3",
+            "type": "Tag Reader",
+            "state": "Lost",
+            "description": "Located at back entry",
+            "enabled": true,
+            "allow_key_auth": true,
+            "allow_certificate_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "roles": []
+        },
+
+        // The tags -- either cards or stickers
+        {
+            "name": "047229EAFC3880",
+            "type": "Tag Card",
+            "state": "Lost",
+            "job": "",
+            "description": "Shut up",
+            "enabled": true,
+            "allow_key_auth": true,
+            "allow_certificate_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "roles": []
+        },
+        {
+            "name": "041C19EAFC3881",
+            "type": "Tag Card",
+            "state": "Lost",
+            "job": "",
+            "description": "Shut up",
+            "enabled": true,
+            "allow_certificate_auth": true,
+            "allow_key_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "allow_certificate_auth": false,
+            "certificate": "I do not have one",
+            "location": "Initial Location",
+            "roles": []
+        },
+        {
+            "name": "048C25EAFC3880",
+            "type": "Tag Card",
+            "state": "Lost",
+            "job": "",
+            "description": "Shut up",
+            "enabled": true,
+            "allow_key_auth": true,
+            "allow_certificate_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "allow_certificate_auth": false,
+            "certificate": "I do not have one",
+            "location": "Initial Location",
+            "roles": []
+        },
+        {
+            "name": "0421430AF04981",
+            "type": "Tag Sticker",
+            "state": "Lost",
+            "job": "",
+            "description": "Shut up",
+            "enabled": true,
+            "allow_key_auth": true,
+            "allow_certificate_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "allow_certificate_auth": false,
+            "certificate": "I do not have one",
+            "location": "Initial Location",
+            "roles": []
+        },
+        {
+            "name": "04C9440AF04980",
+            "type": "Tag Sticker",
+            "state": "Lost",
+            "job": "",
+            "description": "Shut up",
+            "enabled": true,
+            "allow_key_auth": true,
+            "allow_certificate_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "allow_certificate_auth": false,
+            "certificate": "I do not have one",
+            "location": "Initial Location",
+            "roles": []
+        },
+        {
+            "name": "047C400AF04980",
+            "type": "Tag Sticker",
+            "state": "Lost",
+            "job": "",
+            "description": "Shut up",
+            "enabled": true,
+            "allow_key_auth": true,
+            "allow_certificate_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "allow_certificate_auth": false,
+            "certificate": "I do not have one",
+            "location": "Initial Location",
+            "roles": []
+        },
+        {
+            "name": "04EE420AF04980",
+            "type": "Tag Sticker",
+            "state": "Lost",
+            "job": "",
+            "description": "Shut up",
+            "enabled": true,
+            "allow_key_auth": true,
+            "allow_certificate_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "allow_certificate_auth": false,
+            "certificate": "I do not have one",
+            "location": "Initial Location",
+            "roles": []
+        },
+        {
+            "name": "04BB400AF04980",
+            "type": "Tag Sticker",
+            "state": "Lost",
+            "job": "",
+            "description": "Shut up",
+            "enabled": true,
+            "allow_key_auth": true,
+            "allow_certificate_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "allow_certificate_auth": false,
+            "certificate": "I do not have one",
+            "location": "Initial Location",
+            "roles": []
+        }
+    ]
+}

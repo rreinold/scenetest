@@ -34,9 +34,76 @@
         {
             "column_name":"dasizzley",
             "type":"int"
+        },
+
+        {
+            "column_name":"state",
+            "type":"string"
+        },
+        {
+            "column_name":"job",
+            "type":"string"
         }
+
     ],
     "users": [
+        {
+            "email": "swm@w2macfab.com",
+            "password": "IAmFoo",
+            "roles": ["a", "b", "c"],
+            "state": "Clocked Out",
+            "job": "None"
+        },
+        {
+            "email": "ray@w2macfab.com",
+            "password": "IAmFoo",
+            "roles": ["a", "b", "c"],
+            "state": "Clocked Out",
+            "job": "None"
+        },
+        {
+            "email": "robert@w2macfab.com",
+            "password": "IAmFoo",
+            "roles": ["a", "b", "c"],
+            "state": "Clocked Out",
+            "job": "None"
+        },
+        {
+            "email": "zack@w2macfab.com",
+            "password": "IAmFoo",
+            "roles": ["a", "b", "c"],
+            "state": "Clocked Out",
+            "job": "None"
+        },
+        {
+            "email": "carlos@w2macfab.com",
+            "password": "IAmFoo",
+            "state": "Clocked Out",
+            "job": "None",
+            "roles": ["a", "b", "c"]
+        },
+        {
+            "email": "billy@w2macfab.com",
+            "password": "IAmFoo",
+            "state": "Clocked Out",
+            "job": "None",
+            "roles": ["a", "b", "c"]
+        },
+        {
+            "email": "bob@w2macfab.com",
+            "password": "IAmFoo",
+            "state": "Clocked Out",
+            "job": "None",
+            "roles": ["a", "b", "c"]
+        },
+        {
+            "email": "johnny@w2macfab.com",
+            "password": "IAmFoo",
+            "state": "Clocked Out",
+            "job": "None",
+            "roles": ["a", "b", "c"]
+        },
+
         {
             "email": "foo@bar.com",
             "password": "IAmFoo",
@@ -301,6 +368,18 @@
             }
         },
         {
+            "name": "tagFoundTrigger",
+            "code": "@js/tagFoundTrigger.js",
+            "dependencies": "clearblade,log",
+            "parameters": [],
+            "deployToEdges": "all",
+            "roles": {
+                "a": 1,
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        },
+        {
             "name": "realUpdateDeviceTrigger",
             "code": "@js/realUpdateDeviceTrigger.js",
             "dependencies": "clearblade,TriggerLib,log",
@@ -365,6 +444,16 @@
             "deployToEdges": "all",
             "key_value_pairs": {
                 "topic": "/device/update"
+            }
+        },
+        {
+            "name": "TagFoundHandler",
+            "service_name":"tagFoundTrigger",
+            "def_module": "Messaging",
+            "def_name": "Publish",
+            "deployToEdges": "all",
+            "key_value_pairs": {
+                "topic": "/tag/found"
             }
         },
         {
@@ -451,6 +540,135 @@
         }
     ],
     "devices": [
+        {
+            "name": "047229EAFC3880",
+            "type": "Tag Card",
+            "state": "Lost",
+            "userId": "swm@w2macfab.com",
+            "job": "",
+            "description": "Shut up",
+            "enabled": true,
+            "allow_key_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "allow_certificate_auth": false,
+            "certificate": "I do not have one",
+            "location": "Initial Location",
+            "roles": ["a", "b"]
+        },
+        {
+            "name": "041C19EAFC3881",
+            "type": "Tag Card",
+            "state": "Lost",
+            "userId": "ray@w2macfab.com",
+            "job": "",
+            "description": "Shut up",
+            "enabled": true,
+            "allow_key_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "allow_certificate_auth": false,
+            "certificate": "I do not have one",
+            "location": "Initial Location",
+            "roles": ["a", "b"]
+        },
+        {
+            "name": "048C25EAFC3880",
+            "type": "Tag Card",
+            "state": "Lost",
+            "userId": "robert@w2macfab.com",
+            "job": "",
+            "description": "Shut up",
+            "enabled": true,
+            "allow_key_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "allow_certificate_auth": false,
+            "certificate": "I do not have one",
+            "location": "Initial Location",
+            "roles": ["a", "b"]
+        },
+        {
+            "name": "0421430AF04981",
+            "type": "Tag Sticker",
+            "state": "Lost",
+            "userId": "zack@w2macfab.com",
+            "job": "",
+            "description": "Shut up",
+            "enabled": true,
+            "allow_key_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "allow_certificate_auth": false,
+            "certificate": "I do not have one",
+            "location": "Initial Location",
+            "roles": ["a", "b"]
+        },
+        {
+            "name": "04C9440AF04980",
+            "type": "Tag Sticker",
+            "state": "Lost",
+            "userId": "carlos@w2macfab.com",
+            "job": "",
+            "description": "Shut up",
+            "enabled": true,
+            "allow_key_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "allow_certificate_auth": false,
+            "certificate": "I do not have one",
+            "location": "Initial Location",
+            "roles": ["a", "b"]
+        },
+        {
+            "name": "047C400AF04980",
+            "type": "Tag Sticker",
+            "state": "Lost",
+            "userId": "billy@w2macfab.com",
+            "job": "",
+            "description": "Shut up",
+            "enabled": true,
+            "allow_key_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "allow_certificate_auth": false,
+            "certificate": "I do not have one",
+            "location": "Initial Location",
+            "roles": ["a", "b"]
+        },
+        {
+            "name": "04EE420AF04980",
+            "type": "Tag Sticker",
+            "state": "Lost",
+            "userId": "bob@w2macfab.com",
+            "job": "",
+            "description": "Shut up",
+            "enabled": true,
+            "allow_key_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "allow_certificate_auth": false,
+            "certificate": "I do not have one",
+            "location": "Initial Location",
+            "roles": ["a", "b"]
+        },
+        {
+            "name": "04BB400AF04980",
+            "type": "Tag Sticker",
+            "state": "Lost",
+            "userId": "johnny@w2macfab.com",
+            "job": "",
+            "description": "Shut up",
+            "enabled": true,
+            "allow_key_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "allow_certificate_auth": false,
+            "certificate": "I do not have one",
+            "location": "Initial Location",
+            "roles": ["a", "b"]
+        },
+
         {
             "name": "Noisy Hammer",
             "type": "Hammer",
