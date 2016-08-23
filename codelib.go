@@ -123,7 +123,7 @@ func (u *updateServiceStmt) run(context map[string]interface{}, args []interface
 	scriptVarsLock.RLock()
 	defer scriptVarsLock.RUnlock()
 	sysKey := scriptVars["systemKey"].(string)
-	if err := adminClient.UpdateService(sysKey, svcName, code, params); err != nil {
+	if err, _ := adminClient.UpdateService(sysKey, svcName, code, params); err != nil {
 		return nil, err
 	}
 	return nil, nil

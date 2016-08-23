@@ -238,12 +238,37 @@ func setupUser(user map[string]interface{}) {
 		fatal(err.Error())
 	}
 
-	addUserToRoles(user, newUser["user_id"].(string))
+	newId := newUser["user_id"].(string)
+	addUserToRoles(user, newId)
 
 	usersMap := scriptVars["users"].(map[string]interface{})
 	newUser["password"] = password
 	usersMap[email] = newUser
-	appendState("users", newUser["user_id"].(string))
+	appendState("users", newId)
+
+	// If there are custom fields, must call updateUser
+	// for those...
+	custFields := getCustomFields(user)
+	if len(custFields) == 0 {
+		return
+	}
+
+	if err = adminClient.UpdateUser(sysKey, newId, custFields); err != nil {
+		fatal(err.Error())
+	}
+}
+
+func getCustomFields(user map[string]interface{}) map[string]interface{} {
+	rval := map[string]interface{}{}
+	for key, val := range user {
+		switch key {
+		case "user_id", "email", "password", "creation_date", "roles":
+		default:
+			rval[key] = val
+		}
+	}
+	myPrintf("FOUND CUSTOM FIELDS: %+v\n", rval)
+	return rval
 }
 
 func addUserToRoles(user map[string]interface{}, userId string) {
