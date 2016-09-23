@@ -1,0 +1,73 @@
+{
+    //
+    //  Here's our setup file that we have to run prior
+    //  to running any tests. This is just an example. Copy
+    //  this file and change it to meet your testing needs.
+    //
+    "name": "Empty System",
+    "description": "Just a skeleton system",
+    "userAuth": true,
+    "developer": {
+        "email": "theDev@developer.com",
+        "password": "IAmTheDev",
+        "firstname": "Dev",
+        "lastname": "Eloper",
+        "org": "Clearblade"
+    },
+    "roles": [
+        "mundane device",
+        "god"
+    ],
+    "userColumns": [
+    ],
+    "users": [
+        {
+            "email": "swm@clearblade.com",
+            "password": "IAmSWM",
+            "roles": ["god"]
+        },
+        {
+            "email": "subscriber@clearblade.com",
+            "password": "IAmSubscriber",
+            "roles": ["god"]
+        }
+    ],
+    "userTableRoles": {
+        "Authenticated": 0,
+        "Anonymous": 0,
+        "god": 15
+    },
+    "deviceTableRoles": {
+        "Authenticated": 15,
+        "Anonymous": 0,
+        "god": 15
+    },
+
+    "collections": [
+    ],
+    "codeServices": [
+    ],
+    "codeLibraries": [
+    ],
+    "triggers": [
+    ],
+    "timers": [
+    ],
+    "edges": [
+    ],
+    "devices": [
+        {
+            "name": "Mundane Device",
+            "type": "TestingDevice",
+            "state": "a-ok",
+            "description": "Not very descriptive",
+            "enabled": true,
+            "allow_key_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "allow_certificate_auth": false,
+            "certificate": "I do not have one",
+            "roles": ["mundane device"]
+        }
+    ]
+}

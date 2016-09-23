@@ -74,7 +74,9 @@ func init() {
 
 	scriptVars["roles"] = map[string]interface{}{}
 	scriptVars["users"] = map[string]interface{}{}
+	scriptVars["developers"] = map[string]interface{}{}
 	scriptVars["collections"] = map[string]interface{}{}
+	scriptVars["connectCollections"] = map[string]interface{}{}
 	scriptVars["items"] = map[string]interface{}{}
 	scriptVars["codeServices"] = map[string]interface{}{}
 	scriptVars["codeLibraries"] = map[string]interface{}{}
@@ -82,6 +84,7 @@ func init() {
 	scriptVars["timers"] = map[string]interface{}{}
 	scriptVars["devices"] = map[string]interface{}{}
 	scriptVars["edges"] = map[string]interface{}{}
+	scriptVars["systems"] = map[string]interface{}{}
 }
 
 func extractCommand() (string, error) {

@@ -1,0 +1,9 @@
+{
+    "name": "create a new developer",
+    "scenarios": [ ["do it", 1] ],
+    "sequencing": "Parallel",
+    "do it": [
+        ["createDeveloper", "wilma@bedrock.com", "ohFred", "wilma", "flintstone", "bedrock"],
+        ["print", "@returnValue"]
+    ]
+}

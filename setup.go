@@ -23,14 +23,17 @@ var (
 func init() {
 	setupState = map[string]interface{}{}
 	setupState["collections"] = []string{}
+	setupState["connectCollections"] = []string{}
 	setupState["services"] = []string{}
 	setupState["libraries"] = []string{}
 	setupState["triggers"] = []string{}
 	setupState["timers"] = []string{}
 	setupState["roles"] = []string{}
 	setupState["users"] = []string{}
+	setupState["developers"] = []string{}
 	setupState["devices"] = []string{}
 	setupState["edges"] = []string{}
+	setupState["systems"] = []string{}
 }
 
 func performSetup(setupInfo interface{}) {
@@ -49,7 +52,7 @@ func performSetup(setupInfo interface{}) {
 
 func setupSystem(system map[string]interface{}) {
 	if dev, ok := system["developer"]; ok {
-		setupDeveloper(dev.(map[string]interface{}))
+		setupMainDeveloper(dev.(map[string]interface{}))
 	} else {
 		myPrintf("Must provide a developer for system setup\n")
 		os.Exit(1)
@@ -75,6 +78,12 @@ func setupSystem(system map[string]interface{}) {
 		warn("No users found")
 	}
 
+	if developers, ok := system["developers"]; ok {
+		setupDevelopers(developers.([]interface{}))
+	} else {
+		warn("No users found")
+	}
+
 	if userTablePerms, ok := system["userTableRoles"]; ok {
 		setupUserDeviceTablePerms("users", userTablePerms.(map[string]interface{}))
 	} else {
@@ -89,6 +98,12 @@ func setupSystem(system map[string]interface{}) {
 
 	if collections, ok := system["collections"]; ok {
 		setupCollections(collections.([]interface{}))
+	} else {
+		warn("No collections found")
+	}
+
+	if connectCollections, ok := system["connectCollections"]; ok {
+		setupConnectCollections(connectCollections.([]interface{}))
 	} else {
 		warn("No collections found")
 	}
@@ -131,7 +146,7 @@ func setupSystem(system map[string]interface{}) {
 	setupEdgeSyncInfo()
 }
 
-func setupDeveloper(dev map[string]interface{}) {
+func setupMainDeveloper(dev map[string]interface{}) {
 	if _, ok := dev["email"]; !ok {
 		fatal("Missing developer email field")
 	}
@@ -154,7 +169,6 @@ func setupDeveloper(dev map[string]interface{}) {
 			fatal(err.Error())
 		}
 	}
-	fmt.Printf("THE DEV IS: %+v\n", theDev)
 	if authErr := adminClient.Authenticate(); authErr != nil {
 		fatal(authErr.Error())
 	}
@@ -219,6 +233,42 @@ func setupUserColumn(userColumn map[string]interface{}) {
 		fatal(err.Error())
 	}
 	myPrintf("Added column to user table: %s\n", userColumn["column_name"].(string))
+}
+
+func setupDevelopers(developers []interface{}) {
+	for _, developer := range developers {
+		setupDeveloper(developer.(map[string]interface{}))
+	}
+}
+
+func setupDeveloper(developer map[string]interface{}) {
+	email := developer["email"].(string)
+	pass := developer["password"].(string)
+	fname := developer["fname"].(string)
+	lname := developer["lname"].(string)
+	org := developer["org"].(string)
+	newDev, err := adminClient.RegisterDevUser(email, pass, fname, lname, org)
+	if err != nil {
+		if !strings.Contains(err.Error(), "That user already exists") {
+			fatal(err.Error())
+		}
+		//  just fake the dev id and token for now. Our apis are lacking.
+		newDev = map[string]interface{}{}
+		newDev["user_id"] = fmt.Sprintf("<unknownId:%s>", email)
+		newDev["dev_token"] = fmt.Sprintf("<unknownToken:%s>", email)
+	}
+	fmt.Printf("NEW DEV IS %+v\n", newDev)
+	newId := newDev["user_id"].(string)
+
+	devMap := scriptVars["developers"].(map[string]interface{})
+	newDev["password"] = pass
+	newDev["email"] = email
+	newDev["fname"] = fname
+	newDev["lname"] = lname
+	newDev["org"] = org
+	devMap[email] = newDev
+	appendState("developers", newId)
+	fmt.Printf("SETUP DEVELOPER %s\n", email)
 }
 
 func setupUsers(users []interface{}) {
@@ -327,26 +377,6 @@ func setupCollections(cols []interface{}) {
 	}
 }
 
-func addThingToRoles(id string, roleNames []interface{}) {
-	roleIds := []string{}
-	roleMap := scriptVars["roles"].(map[string]interface{})
-	for i, _ := range roleNames {
-		roleName := roleNames[i].(string)
-		if roleId, ok := roleMap[roleName]; ok {
-			roleIds = append(roleIds, roleId.(string))
-		} else {
-			fatal(fmt.Sprintf("Undefined role: %s\n", roleName))
-		}
-	}
-	if len(roleIds) == 0 {
-		return
-	}
-	err := adminClient.AddUserToRoles(sysKey, id, roleIds)
-	if err != nil {
-		fatal(err.Error())
-	}
-}
-
 func setupCollection(col map[string]interface{}) {
 	myPrintf("Setting up collection %+v\n", col["name"])
 	//  Create the collection
@@ -384,6 +414,63 @@ func setupCollection(col map[string]interface{}) {
 		}
 	}
 	setupItem(allData, colId)
+}
+
+func setupConnectCollections(cols []interface{}) {
+	for _, col := range cols {
+		setupConnectCollection(col.(map[string]interface{}))
+	}
+}
+
+func setupConnectCollection(col map[string]interface{}) {
+	myPrintf("Setting up connect collection %+v\n", col)
+	//  Create the collection
+	config := col["config"].(map[string]interface{})
+	dbType := config["dbtype"].(string)
+	if dbType != "MySQL" {
+		fatal("scenetest currently only supports MySQL databases for connect collections\n")
+	}
+	// XXXSWM -- Fix this here and rework the go sdk. This is silly.
+	my := &cb.MySqlConfig{
+		Name:      config["name"].(string),
+		User:      config["user"].(string),
+		Password:  config["password"].(string),
+		Host:      config["address"].(string),
+		Port:      "3306",
+		DBName:    config["dbname"].(string),
+		Tablename: config["tablename"].(string),
+	}
+	//config["appID"] = setupState["systemKey"].(string)
+	colId, err := adminClient.NewConnectCollection(sysKey, my)
+	if err != nil {
+		fatal(err.Error())
+	}
+	fmt.Printf("CONNECT COLLECTION: RVAL IS %+v\n", colId)
+	colsMap := scriptVars["connectCollections"].(map[string]interface{})
+	colsMap[config["name"].(string)] = colId
+	appendState("connectCollections", colId)
+
+	setupCollectionRoles(colId, col)
+}
+
+func addThingToRoles(id string, roleNames []interface{}) {
+	roleIds := []string{}
+	roleMap := scriptVars["roles"].(map[string]interface{})
+	for i, _ := range roleNames {
+		roleName := roleNames[i].(string)
+		if roleId, ok := roleMap[roleName]; ok {
+			roleIds = append(roleIds, roleId.(string))
+		} else {
+			fatal(fmt.Sprintf("Undefined role: %s\n", roleName))
+		}
+	}
+	if len(roleIds) == 0 {
+		return
+	}
+	err := adminClient.AddUserToRoles(sysKey, id, roleIds)
+	if err != nil {
+		fatal(err.Error())
+	}
 }
 
 func setupCollectionRoles(colId string, col map[string]interface{}) {
@@ -674,6 +761,9 @@ func gatherAppropriateEdges(edgeInfo interface{}) []string {
 		edgeStr := edgeInfo.(string)
 		if edgeStr == "all" {
 			return getAllEdgesNames()
+		}
+		if edgeStr == "none" {
+			return []string{}
 		}
 		return []string{edgeStr}
 	case []interface{}:

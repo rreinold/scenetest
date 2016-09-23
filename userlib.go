@@ -6,8 +6,10 @@ import (
 )
 
 type setUserStmt struct{}
+type setDeveloperStmt struct{}
 type setUserEdgeStmt struct{}
 type createUserStmt struct{}
+type createDeveloperStmt struct{}
 type updateUserStmt struct{}
 type deleteUserStmt struct{}
 type createUserColumnStmt struct{}
@@ -15,9 +17,11 @@ type getUserColumnsStmt struct{}
 
 func init() {
 	funcMap["setUser"] = &setUserStmt{}
+	funcMap["setDeveloper"] = &setDeveloperStmt{}
 	funcMap["connectNovi"] = &setUserStmt{}
 	funcMap["connectEdge"] = &setUserEdgeStmt{}
 	funcMap["createUser"] = &createUserStmt{}
+	funcMap["createDeveloper"] = &createDeveloperStmt{}
 	funcMap["updateUser"] = &updateUserStmt{}
 	funcMap["deleteUser"] = &deleteUserStmt{}
 	funcMap["createUserColumn"] = &createUserColumnStmt{}
@@ -33,7 +37,6 @@ func (s *setUserStmt) run(ctx map[string]interface{}, args []interface{}) (inter
 	userInfo := scriptVars["users"].(map[string]interface{})[email].(map[string]interface{})
 	password := userInfo["password"].(string)
 	userClient := cb.NewUserClient(sysKey, sysSec, email, password)
-	fmt.Printf("SET USER: AUTHENTICATE: %+#v\n", userClient)
 	if err := userClient.Authenticate(); err != nil {
 		return nil, err
 	}
@@ -52,13 +55,33 @@ func (s *setUserStmt) run(ctx map[string]interface{}, args []interface{}) (inter
 		return nil, err
 	}
 	ctx["email"] = email
-	//ctx["triggerChannel"] = triggerChan
 
 	return userClient, nil
 }
 
 func (s *setUserStmt) help() string {
-	return "[\"userConnectNovi\", \"email\"]"
+	return "[\"setUser\", \"email\"]"
+}
+
+func (s *setDeveloperStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	scriptVarsLock.RLock()
+	defer scriptVarsLock.RUnlock()
+	email := getArg(args, 0).(string)
+	developerInfo := scriptVars["developers"].(map[string]interface{})[email].(map[string]interface{})
+	password := developerInfo["password"].(string)
+	devClient := cb.NewDevClient(email, password)
+	if err := devClient.Authenticate(); err != nil {
+		return nil, err
+	}
+
+	ctx["developerClient"] = devClient
+	ctx["email"] = email
+
+	return devClient, nil
+}
+
+func (s *setDeveloperStmt) help() string {
+	return "[\"setDeveloper\", \"email\"]"
 }
 
 func (s *setUserEdgeStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
@@ -134,6 +157,28 @@ func (c *createUserStmt) run(ctx map[string]interface{}, args []interface{}) (in
 
 func (c *createUserStmt) help() string {
 	return "createUser help not yet implemented"
+}
+
+func (c *createDeveloperStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	devCli := ctx["adminClient"].(*cb.DevClient)
+	if err := argCheck(args, 5, "", "", "", "", ""); err != nil {
+		return nil, err
+	}
+	email := args[0].(string)
+	pass := args[0].(string)
+	fname := args[0].(string)
+	lname := args[0].(string)
+	org := args[0].(string)
+	resp, err := devCli.RegisterDevUser(email, pass, fname, lname, org)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Printf("createDeveloper returned %+v\n", resp)
+	return resp, nil
+}
+
+func (c *createDeveloperStmt) help() string {
+	return "[\"createDeveloper\", <email>, <pass>, <fname>, <lname>, <org> ]"
 }
 
 func (u *updateUserStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {

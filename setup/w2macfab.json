@@ -1,32 +1,28 @@
 {
-    //
-    //  Here's our setup file that we have to run prior
-    //  to running any tests. This is just an example. Copy
-    //  this file and change it to meet your testing needs.
-    //
     "name": "W2MacFab Clock Management",
     "description": "NFC Clock Management for W2MacFab",
-    "startup": { // This is stuff used for starting the main clearblade novi process
+    "startup": {
         "outputFile": "novi.out",
         "args": "-tkey=`cat dev_key`"
     },
     "userAuth": true,
     "developer": {
-        "email": "dev@clearblade.com",
+        "email": "dev@w2macfab.com",
         "password": "IAmTheDev",
         "firstname": "Fred",
         "lastname": "Flintstone",
-        "org": "Clearblade"
+        "org": "W2MacFab"
     },
     "roles": [
         "Owner",
         "Employee",
-        "User Table Updater"
+        "User Table Updater",
+        "Uber Device/User Table Updater"
     ],
     "userColumns": [
         {
             "column_name":"state",
-            "type":"string" // "Clocked In", "Clocked Out"
+            "type":"string"
         },
         {
             "column_name":"job",
@@ -39,6 +35,14 @@
 
     ],
     "users": [
+        {
+            "email": "uberPortalPerson@w2macfab.com",
+            "password": "password",
+            "roles": ["Uber Device/User Table Updater"],
+            "state": "Never Clocks In or Out",
+            "tag_id": "",
+            "job": "Keeps an eye on everybody else"
+        },
         {
             "email": "userTableUpdater@w2macfab.com",
             "password": "password",
@@ -112,15 +116,26 @@
             "roles": ["Employee"]
         }
     ],
+    //
+    //  Roles are defined in core_users/internal_api/types/types.go as follows:
+    //  READ: 1
+    //  CREATE: 2
+    //  UPDATE: 4
+    //  DELETE: 8
+    //
+    //  The values specified below are bitwise OR'd from the values above.
+    //
     "userTableRoles": {
-        "Authenticated": 0,
+        "Authenticated": 1,
         "Anonymous": 0,
-        "User Table Updater": 15
+        "User Table Updater": 15,
+        "Uber Device/User Table Updater": 15
     },
     "deviceTableRoles": {
-        "Authenticated": 0,
+        "Authenticated": 1,
         "Anonymous": 0,
-        "User Table Updater": 15
+        "User Table Updater": 5,
+        "Uber Device/User Table Updater": 15
     },
 
     "collections": [
@@ -140,6 +155,40 @@
             ]
         }
     ],
+    "connectCollections": [
+        {
+            "config": {
+                "name": "MacFab Timer",
+                "address": "www.macfabaustin.com",
+                "dbname": "macfab",
+                "dbtype": "MySQL",
+                "encryption": "false",
+                "user": "clearblade",
+                "password": "novi_iot!",
+                "tablename": "timer"
+            },
+            "roles": {
+                "Authenticated": 15,
+                "Anonymous": 0
+            }
+        },
+        {
+            "config": {
+                "name": "MacFab Task",
+                "address": "www.macfabaustin.com",
+                "dbname": "macfab",
+                "dbtype": "MySQL",
+                "encryption": "false",
+                "user": "clearblade",
+                "password": "novi_iot!",
+                "tablename": "task"
+            },
+            "roles": {
+                "Authenticated": 15,
+                "Anonymous": 0
+            }
+        }
+    ],
     "codeServices": [
         {
             "name": "tagFoundTrigger",
@@ -147,6 +196,17 @@
             "dependencies": "clearblade,log",
             "parameters": [],
             "deployToEdges": "all",
+            "roles": {
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        },
+        {
+            "name": "tagUserUpdatedTrigger",
+            "code": "@js/tagUserUpdatedTrigger.js",
+            "dependencies": "clearblade,log,http",
+            "parameters": [],
+            "deployToEdges": "none",
             "roles": {
                 "Authenticated": 1,
                 "Anonymous": 0
@@ -178,6 +238,15 @@
             "deployToEdges": "all",
             "key_value_pairs": {
                 "topic": "/tag/found"
+            }
+        },
+        {
+            "name": "tagUserUpdatedHandler",
+            "service_name":"tagUserUpdatedTrigger",
+            "def_module": "User",
+            "def_name": "UserUpdated",
+            "deployToEdges": "none",
+            "key_value_pairs": {
             }
         }
     ],
@@ -211,7 +280,7 @@
             "allow_certificate_auth": true,
             "active_key": "I Be Active",
             "keys": "I Be Active:I Am Not Active",
-            "roles": []
+            "roles": ["User Table Updater"]
         },
         {
             "name": "NFC Reader 2",
@@ -223,7 +292,7 @@
             "allow_certificate_auth": true,
             "active_key": "I Be Active",
             "keys": "I Be Active:I Am Not Active",
-            "roles": []
+            "roles": ["User Table Updater"]
         },
         {
             "name": "NFC Reader 3",
@@ -235,7 +304,7 @@
             "allow_certificate_auth": true,
             "active_key": "I Be Active",
             "keys": "I Be Active:I Am Not Active",
-            "roles": []
+            "roles": ["User Table Updater"]
         },
 
         // The tags -- either cards or stickers

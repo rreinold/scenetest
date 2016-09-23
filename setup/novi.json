@@ -130,7 +130,7 @@
         "e": 0
     },
     "deviceTableRoles": {
-        "Authenticated": 0,
+        "Authenticated": 15,
         "Anonymous": 0,
         "a": 7, // everything but delete
         "b": 0,

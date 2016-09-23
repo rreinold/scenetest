@@ -1,0 +1,38 @@
+{
+    "name": "mess around with multidev",
+    "scenarios": [ ["do it", 1] ],
+    "sequencing": "Parallel",
+    "globals": {
+        "systemKeys": {
+        },
+        "addToBetty": { "add": [
+                "wilma@flintstone.com",
+                "fred@flintstone.com"
+            ]
+        },
+        "addToBarney": { "add": [
+                "wilma@flintstone.com"
+            ]
+        }
+    },
+    "do it": [
+        ["setDeveloper", "fred@flintstone.com"],
+        ["createSystem", "Rock Piling", "Pile up a bunch of rocks"],
+        ["setElem", "systemKeys", "fred@flintstone.com", "@returnValue"],
+        ["setDeveloper", "wilma@flintstone.com"],
+        ["createSystem", "Rock Smashing", "Smashing up a bunch of rocks"],
+        ["setElem", "systemKeys", "wilma@flintstone.com", "@returnValue"],
+        ["setDeveloper", "barney@flintstone.com"],
+        ["createSystem", "Dinosaur taming", "Taming all the dinosaurs"],
+        ["setElem", "systemKeys", "barney@flintstone.com", "@returnValue"],
+        ["setDeveloper", "betty@flintstone.com"],
+        ["createSystem", "Babysit Pebbles and BamBam", "Take care of rugrats"],
+        ["setElem", "systemKeys", "betty@flintstone.com", "@returnValue"],
+        ["updateDevelopersForSystem", ["elemOf", "@systemKeys", "betty@flintstone.com"], "@addToBetty"],
+        ["setDeveloper", "barney@flintstone.com"],
+        ["updateDevelopersForSystem", ["elemOf", "@systemKeys", "barney@flintstone.com"], "@addToBarney"],
+        ["setDeveloper", "wilma@flintstone.com"],
+        ["getSystemsForDeveloper", "wilma@flintstone.com"],
+        ["print", "@returnValue"]
+    ]
+}

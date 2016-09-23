@@ -1,0 +1,38 @@
+{
+    "name": "w2MacFab -- simulate employees clocking in and out",
+    "scenarios": [ ["Main Entry", 1]/* , ["Side Entry", 1], ["Rear Entry", 1] */ ],
+    "sequencing": "Parallel",
+
+    "globals": {
+        "SleepMilliSeconds": 0,
+        "Iterations": 1,
+        "NumberOfTags": 8
+    },
+    "locals": {
+        "payload": {
+            "tagId": ""
+        },
+        "tags": [
+            "047229EAFC3880",
+            "041C19EAFC3881",
+            "048C25EAFC3880",
+            "0421430AF04981",
+            "04C9440AF04980",
+            "047C400AF04980",
+            "04EE420AF04980",
+            "04BB400AF04980"
+        ]
+    },
+
+    "Main Entry": [
+        ["deviceConnectNovi", "NFC Reader 1"],
+        ["set", "i", 0],
+        ["repeat", "@Iterations", [
+            ["set", "i", ["%", ["+", "@i", 1], "@NumberOfTags"]],
+            ["setElem", "payload", "tagId", ["elemOf", "@tags", "@i"]],
+            ["publish", "/tag/found", "@payload", 0],
+            ["sleep", "@SleepMilliSeconds"] 
+            ]
+        ]
+    ]
+}

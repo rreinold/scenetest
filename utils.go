@@ -231,7 +231,7 @@ func lookupVar(context map[string]interface{}, varName string) interface{} {
 }
 
 func getCurrentClient(ctx map[string]interface{}) (cb.Client, error) {
-	list := []string{"userClient", "deviceClient", "adminClient"}
+	list := []string{"userClient", "deviceClient", "developerClient", "adminClient"}
 	for _, clientName := range list {
 		if stuff, ok := ctx[clientName]; ok {
 			return stuff.(cb.Client), nil

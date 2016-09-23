@@ -1,0 +1,88 @@
+{
+    //
+    //  Here's our setup file that we have to run prior
+    //  to running any tests. This is just an example. Copy
+    //  this file and change it to meet your testing needs.
+    //
+    "name": "Empty System",
+    "description": "Just a skeleton system",
+    "startup": { // This is stuff used for starting the main clearblade novi process
+        "outputFile": "novi.out",
+        "args": "-tkey=`cat dev_key`"
+    },
+    "userAuth": true,
+    "developer": {
+        "email": "theDev@developer.com",
+        "password": "IAmTheDev",
+        "firstname": "Dev",
+        "lastname": "Eloper",
+        "org": "Clearblade"
+    },
+    "roles": [
+        "god"
+    ],
+    "userColumns": [
+    ],
+    "users": [
+        {
+            "email": "swm@clearblade.com",
+            "password": "IAmSWM",
+            "roles": ["god"]
+        }
+    ],
+    "developers": [
+        {
+            "email": "fred@flintstone.com",
+            "password": "yabba_dabba_do",
+            "fname": "Fred",
+            "lname": "Flintstone",
+            "org": "Bedrock"
+        },
+        {
+            "email": "wilma@flintstone.com",
+            "password": "fred_is_stupid",
+            "fname": "Wilma",
+            "lname": "Flintstone",
+            "org": "Bedrock"
+        },
+        {
+            "email": "barney@flintstone.com",
+            "password": "hey_fred",
+            "fname": "Barney",
+            "lname": "Rubble",
+            "org": "Bedrock"
+        },
+        {
+            "email": "betty@flintstone.com",
+            "password": "Barney_is_stupid",
+            "fname": "Betty",
+            "lname": "Rubble",
+            "org": "Bedrock"
+        }
+    ],
+    "userTableRoles": {
+        "Authenticated": 0,
+        "Anonymous": 0,
+        "god": 15
+    },
+    "deviceTableRoles": {
+        "Authenticated": 15,
+        "Anonymous": 0,
+        "god": 15
+    },
+
+    "collections": [
+    ],
+    "codeServices": [
+    ],
+    "codeLibraries": [
+    ],
+    "triggers": [
+    ],
+    "timers": [
+    ],
+    "edges": [
+    ],
+    "devices": [
+    ]
+}

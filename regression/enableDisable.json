@@ -1,0 +1,39 @@
+{
+    "name": "Test out enabling and disabling a device",
+    "scenarios": [ ["Mundane Device", 1], ["Enabler-Disabler", 1 ], ["Publish Verifier", 1]],
+    "sequencing": "Parallel",
+
+    "globals": {
+    },
+    "locals": {
+        "payload": {
+            "RandomMessage": "I am here!!!!!"
+        }
+    },
+
+    "Mundane Device": [
+        ["deviceConnectNovi", "Mundane Device"],
+        ["sync", "Subscriber Ready", 2],
+        ["publish", "/mundane/device", "@payload", 0],
+        ["sync", "Some Publishes Completed", 2],
+        ["sync", "Device Has Been Disabled", 3],
+        ["fail", ["publish", "/mundane/device", "@payload", 0]],
+        ["fail", ["updateDevice", "Mundane Device", {"state": "Nothing Works!"}]]
+    ],
+
+    "Enabler-Disabler": [
+        ["setUser", "swm@clearblade.com"],
+        ["sync", "Some Publishes Completed", 2],
+        ["updateDevice", "Mundane Device", {"enabled": false}],
+        ["sync", "Device Has Been Disabled", 3]
+    ],
+
+    "Publish Verifier": [
+        ["setUser", "subscriber@clearblade.com"],
+        ["subscribe", "/mundane/device", 0],
+        ["sync", "Subscriber Ready", 2],
+        ["waitMessage", "/mundane/device", 10],
+        ["sync", "Device Has Been Disabled", 3],
+        ["fail", ["waitMessage", "/mundane/device", 10]]
+    ]
+}

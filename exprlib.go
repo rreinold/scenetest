@@ -408,6 +408,7 @@ func numberTypeOrFail(arg interface{}) (float64, error) {
 }
 
 func findTheTruth(arg interface{}) bool {
+	fmt.Printf("FINDING THE TRUTH: %+v\n", arg)
 	switch arg.(type) {
 	case bool:
 		return arg.(bool)
