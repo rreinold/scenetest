@@ -85,15 +85,21 @@ func setupSystem(system map[string]interface{}) {
 	}
 
 	if userTablePerms, ok := system["userTableRoles"]; ok {
-		setupUserDeviceTablePerms("users", userTablePerms.(map[string]interface{}))
+		setupGenericPermissions("users", userTablePerms.(map[string]interface{}))
 	} else {
 		warn("No user table permissions ('userTableRoles') found")
 	}
 
 	if deviceTablePerms, ok := system["deviceTableRoles"]; ok {
-		setupUserDeviceTablePerms("devices", deviceTablePerms.(map[string]interface{}))
+		setupGenericPermissions("devices", deviceTablePerms.(map[string]interface{}))
 	} else {
 		warn("No device table permissions ('deviceTableRoles') found")
+	}
+
+	if messageHistoryPerms, ok := system["messageHistoryRoles"]; ok {
+		setupGenericPermissions("msgHistory", messageHistoryPerms.(map[string]interface{}))
+	} else {
+		warn("No message history permissions ('messageHistoryRoles') found")
 	}
 
 	if collections, ok := system["collections"]; ok {
@@ -738,7 +744,22 @@ func setupEdge(edge map[string]interface{}) {
 	myPrintf("Set up edge %+v\n", newEdge)
 }
 
-func setupUserDeviceTablePerms(name string, theGoods map[string]interface{}) {
+func setupMessageHistoryPerms(name string, theGoods map[string]interface{}) {
+	roleMap := scriptVars["roles"].(map[string]interface{})
+	for roleName, permsIF := range theGoods {
+		perms := int(permsIF.(float64))
+		roleId, ok := roleMap[roleName].(string)
+		if !ok {
+			fatalf("Unknown role '%s'", roleName)
+		}
+		if err := adminClient.AddGenericPermissionToRole(sysKey, roleId, name, perms); err != nil {
+			fatalf("Could not add user/device table permissions for %s, %s, %d\n", roleName, name, perms)
+		}
+		fmt.Printf("ADDED GENERIC PERMISSION FOR '%s': %s: %d\n", roleName, name, perms)
+	}
+}
+
+func setupGenericPermissions(name string, theGoods map[string]interface{}) {
 	roleMap := scriptVars["roles"].(map[string]interface{})
 	for roleName, permsIF := range theGoods {
 		perms := int(permsIF.(float64))

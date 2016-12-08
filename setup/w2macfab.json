@@ -139,6 +139,11 @@
         "Uber Device": 15
     },
 
+    "messageHistoryRoles": {
+        "Portal Accessor": 15
+    },
+
+
     "collections": [
         {
             "name": "JobHistory",
@@ -502,7 +507,10 @@
                 "version": 1
             },
             "description": "Displays currently clocked in employees as well as employees going through the clock in process.",
-            "name": "Clocked In"
+            "name": "Clocked In",
+            "roles": {
+                "Portal Accessor": 15
+            }
         }
     ],
     "devices": [
