@@ -1,0 +1,111 @@
+{
+    "codeLibraries": {},
+    "codeServices": {},
+    "collections": {},
+    "developer": {
+        "email": "theDev@developer.com",
+        "password": "IAmTheDev",
+        "userId": null
+    },
+    "developers": {
+        "barney@flintstone.com": {
+            "dev_token": "mfOau4RiNXWLz0OVDG6YKKL_xgr5qVBjsvPHPmEoGFejSzoPjlYIYknm_LO9PGoEcjwkqZfEW7YuYWZTFQ==",
+            "email": "barney@flintstone.com",
+            "fname": "Barney",
+            "lname": "Rubble",
+            "org": "Bedrock",
+            "password": "hey_fred",
+            "user_id": "c0bd81fe0aaaadb0b0e4dfdcb4ce01"
+        },
+        "betty@flintstone.com": {
+            "dev_token": "LhbT9eXv6h3uNtDpuh02UpwG0rLTOv0YABfg7FfGI0jTNACJYdhF4L3WISRQaXdN8RwbfMQokWYujWZeow==",
+            "email": "betty@flintstone.com",
+            "fname": "Betty",
+            "lname": "Rubble",
+            "org": "Bedrock",
+            "password": "Barney_is_stupid",
+            "user_id": "c0bd81fe0ae499eaa4bfffeac59801"
+        },
+        "fred@flintstone.com": {
+            "dev_token": "nB2K6eTRmt1IJn-w_NWdQiQjVgiBQ7sXs0k9u4-6_b0iBU2ifri5jCEijqdmer-Eqv0Fw_w0w_dfFvegsg==",
+            "email": "fred@flintstone.com",
+            "fname": "Fred",
+            "lname": "Flintstone",
+            "org": "Bedrock",
+            "password": "yabba_dabba_do",
+            "user_id": "c0bd81fe0aa4ff98ef99a29fb8ec01"
+        },
+        "wilma@flintstone.com": {
+            "dev_token": "wCUNSKCkrx1M7PnUrZhoEqf3E3b7R_TVfw31uNvDxFH-C5Gb3pBxv6QhevElpsECJ21U5__khXJRoBER7g==",
+            "email": "wilma@flintstone.com",
+            "fname": "Wilma",
+            "lname": "Flintstone",
+            "org": "Bedrock",
+            "password": "fred_is_stupid",
+            "user_id": "c0bd81fe0abcb799b3c38da0b28a01"
+        }
+    },
+    "devices": {},
+    "edges": {},
+    "items": {},
+    "messagingUrl": "staging.clearblade.com:1883",
+    "platformUrl": "https://staging.clearblade.com",
+    "roles": {
+        "Admin": "Admin",
+        "Anonymous": "Anonymous",
+        "Authenticated": "Authenticated",
+        "god": "bebd81fe0af8dc8794f79b98f921"
+    },
+    "systemKey": "bebd81fe0ac48ddd93bded8b8aa801",
+    "systemSecret": "BEBD81FE0AAEFEEAE5C4C6E2DC9401",
+    "systems": {},
+    "teardown": {
+        "adminClient": {
+            "DevToken": "15U2DdTgbrVyUw-vbeYmYWGDUqW1Dnm2JxwJulytupiSM1-sNO1gnweODvGCoKWotvLKqRr8rA-EFn6izA==",
+            "MQTTClient": null,
+            "Email": "theDev@developer.com",
+            "Password": "IAmTheDev",
+            "HttpAddr": "https://staging.clearblade.com",
+            "MqttAddr": "staging.clearblade.com:1883"
+        },
+        "collections": [],
+        "dev_email": "theDev@developer.com",
+        "dev_password": "IAmTheDev",
+        "developer": null,
+        "developers": [
+            "c0bd81fe0aa4ff98ef99a29fb8ec01",
+            "c0bd81fe0abcb799b3c38da0b28a01",
+            "c0bd81fe0aaaadb0b0e4dfdcb4ce01",
+            "c0bd81fe0ae499eaa4bfffeac59801"
+        ],
+        "devices": [],
+        "edgeSync": {},
+        "edges": [],
+        "libraries": [],
+        "messagingUrl": "staging.clearblade.com:1883",
+        "platformUrl": "https://staging.clearblade.com",
+        "roles": [
+            "bebd81fe0af8dc8794f79b98f921"
+        ],
+        "services": [],
+        "systemKey": "bebd81fe0ac48ddd93bded8b8aa801",
+        "systemSecret": "BEBD81FE0AAEFEEAE5C4C6E2DC9401",
+        "systems": [],
+        "timers": [],
+        "triggers": [],
+        "users": [
+            "c0bd81fe0aa08b90aa99d7d4a360"
+        ]
+    },
+    "timers": {},
+    "triggers": {},
+    "users": {
+        "swm@clearblade.com": {
+            "creation_date": "2016-09-19T18:33:04Z",
+            "email": "swm@clearblade.com",
+            "password": "IAmSWM",
+            "user_id": "c0bd81fe0aa08b90aa99d7d4a360",
+            "user_token": "yWvBJWiZevee7chIw3xpUUkNpd6KRIOeCywCgk1BY0dRR1G1x8iLYAU9SkNDk7mWmFapmvWKRu5Taj8obg=="
+        }
+    }
+}

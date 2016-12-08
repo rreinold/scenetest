@@ -1,0 +1,560 @@
+{
+    "codeLibraries": {
+        "JustPublish": {
+            "api": "",
+            "code": "function justPublishOneMessage(req, resp, topic, payload) {\n    ClearBlade.init({request:req});\n    var messaging = ClearBlade.Messaging({}, function(){});\n    result = messaging.publish(topic, payload);\n}\n",
+            "dependencies": "clearblade,log",
+            "description": "publishes normal message over mqtt",
+            "library_key": "fa8f81fd0a9290f9eec6a0e5e7aa01::JustPublish",
+            "name": "JustPublish",
+            "system_key": "fa8f81fd0a9290f9eec6a0e5e7aa01",
+            "version": 1,
+            "visibility": "system"
+        },
+        "TriggerLib": {
+            "api": "",
+            "code": "function publishTrigger(req, resp, msgClass, msgType) {\n    var msgInfo = {\n        msgClass:msgClass,\n        msgType:msgType\n    };\n    ClearBlade.init({request:req});\n    var messaging = ClearBlade.Messaging({}, function(){});\n    messaging.publish(\"/clearblade/internal/trigger\", JSON.stringify(msgInfo));\n}\n",
+            "dependencies": "clearblade,log",
+            "description": "publishes trigger event over mqtt",
+            "library_key": "fa8f81fd0a9290f9eec6a0e5e7aa01::TriggerLib",
+            "name": "TriggerLib",
+            "system_key": "fa8f81fd0a9290f9eec6a0e5e7aa01",
+            "version": 1,
+            "visibility": "system"
+        }
+    },
+    "codeServices": {
+        "tagFoundTrigger": {
+            "code": "var getUserCallback = function(err, getResults) {\n    if (err === true) {\n        logStdErr(\"Query Failed\");\n        resp.failure(getResults);\n    }\n    logStdErr(\"getUser results: \" + JSON.stringify(getResults));\n    // Need to modify the user object\n    var user = getResults[\"Data\"][0];\n    var state = user[\"state\"];\n    var email = user[\"email\"];\n    if (state == \"Clocked Out\") {\n        state = \"Clocked In\";\n    } else {\n        state = \"Clocked Out\";\n    }\n    var uq = ClearBlade.Query();\n    uq.equalTo(\"email\", email);\n    ClearBlade.User().setUsers(uq, {\"state\": state});\n    logStdErr(\"DONE SETTING USERS\");\n};\n\nfunction tagFoundTrigger(req, resp) {\n    logStdErr(\"In Tag Found Trigger: \" + req.params.body )\n    ClearBlade.init({request:req});\n\n    if (ClearBlade.isEdge() == false) {\n        resp.success(\"Ignoring, I'm not an edge\");\n    }\n    var edgeName = ClearBlade.edgeId();\n    logStdErr(\"My edge name is: \" + edgeName);\n    var body = JSON.parse(req.params.body);\n\n    var q = ClearBlade.Query();\n    q.equalTo(\"tag_id\", body[\"tagId\"]);\n\n    ClearBlade.User().allUsers(q, getUserCallback);\n    logStdErr(\"GONNA DO RESP.SUCCESS NOW\");\n    resp.success(\"Hmmm\");\n}\n",
+            "dependencies": "clearblade,log",
+            "euid": "",
+            "name": "tagFoundTrigger",
+            "params": []
+        },
+        "tagUserUpdatedTrigger": {
+            "code": "\nfunction tagUserUpdatedTrigger(req, resp) {\n    sysKey = req.systemKey;\n    var sysSec = req.systemSecret;\n    var userToken = req.userToken;\n    logStdErr(\"tagUserUpdatedTrigger: \" + JSON.stringify(req));\n    resp.success(\"We win! Request object: \" + JSON.stringify(req));\n}\n",
+            "dependencies": "clearblade,log",
+            "euid": "",
+            "name": "tagUserUpdatedTrigger",
+            "params": []
+        }
+    },
+    "collections": {
+        "JobHistory": "fa8f81fd0ae280cee7b6fb9bc3cd01"
+    },
+    "developer": {
+        "email": "dev@w2macfab.com",
+        "password": "IAmTheDev",
+        "userId": "fa8f81fd0af09dfd9eb7ade3ae0e"
+    },
+    "devices": {
+        "041C19EAFC3881": {
+            "__HostId__": "be085f9d-50f6-41e7-9a58-f0d0c6a3ecc9",
+            "active_key": "I Be Active",
+            "allow_certificate_auth": false,
+            "allow_key_auth": true,
+            "certificate": "I do not have one",
+            "created_date": "2016-09-07T09:28:13-05:00",
+            "description": "Shut up",
+            "device_key": "fa8f81fd0a9290f9eec6a0e5e7aa01 :: 041C19EAFC3881",
+            "enabled": true,
+            "job": "",
+            "keys": "I Be Active:I Am Not Active",
+            "last_active_date": "2016-09-07T09:28:13-05:00",
+            "location": "Initial Location",
+            "name": "041C19EAFC3881",
+            "roles": [],
+            "state": "Lost",
+            "system_key": "fa8f81fd0a9290f9eec6a0e5e7aa01",
+            "type": "Tag Card"
+        },
+        "0421430AF04981": {
+            "__HostId__": "be085f9d-50f6-41e7-9a58-f0d0c6a3ecc9",
+            "active_key": "I Be Active",
+            "allow_certificate_auth": false,
+            "allow_key_auth": true,
+            "certificate": "I do not have one",
+            "created_date": "2016-09-07T09:28:13-05:00",
+            "description": "Shut up",
+            "device_key": "fa8f81fd0a9290f9eec6a0e5e7aa01 :: 0421430AF04981",
+            "enabled": true,
+            "job": "",
+            "keys": "I Be Active:I Am Not Active",
+            "last_active_date": "2016-09-07T09:28:13-05:00",
+            "location": "Initial Location",
+            "name": "0421430AF04981",
+            "roles": [],
+            "state": "Lost",
+            "system_key": "fa8f81fd0a9290f9eec6a0e5e7aa01",
+            "type": "Tag Sticker"
+        },
+        "047229EAFC3880": {
+            "__HostId__": "be085f9d-50f6-41e7-9a58-f0d0c6a3ecc9",
+            "active_key": "I Be Active",
+            "allow_certificate_auth": true,
+            "allow_key_auth": true,
+            "created_date": "2016-09-07T09:28:13-05:00",
+            "description": "Shut up",
+            "device_key": "fa8f81fd0a9290f9eec6a0e5e7aa01 :: 047229EAFC3880",
+            "enabled": true,
+            "job": "",
+            "keys": "I Be Active:I Am Not Active",
+            "last_active_date": "2016-09-07T09:28:13-05:00",
+            "name": "047229EAFC3880",
+            "roles": [],
+            "state": "Lost",
+            "system_key": "fa8f81fd0a9290f9eec6a0e5e7aa01",
+            "type": "Tag Card"
+        },
+        "047C400AF04980": {
+            "__HostId__": "be085f9d-50f6-41e7-9a58-f0d0c6a3ecc9",
+            "active_key": "I Be Active",
+            "allow_certificate_auth": false,
+            "allow_key_auth": true,
+            "certificate": "I do not have one",
+            "created_date": "2016-09-07T09:28:13-05:00",
+            "description": "Shut up",
+            "device_key": "fa8f81fd0a9290f9eec6a0e5e7aa01 :: 047C400AF04980",
+            "enabled": true,
+            "job": "",
+            "keys": "I Be Active:I Am Not Active",
+            "last_active_date": "2016-09-07T09:28:13-05:00",
+            "location": "Initial Location",
+            "name": "047C400AF04980",
+            "roles": [],
+            "state": "Lost",
+            "system_key": "fa8f81fd0a9290f9eec6a0e5e7aa01",
+            "type": "Tag Sticker"
+        },
+        "048C25EAFC3880": {
+            "__HostId__": "be085f9d-50f6-41e7-9a58-f0d0c6a3ecc9",
+            "active_key": "I Be Active",
+            "allow_certificate_auth": false,
+            "allow_key_auth": true,
+            "certificate": "I do not have one",
+            "created_date": "2016-09-07T09:28:13-05:00",
+            "description": "Shut up",
+            "device_key": "fa8f81fd0a9290f9eec6a0e5e7aa01 :: 048C25EAFC3880",
+            "enabled": true,
+            "job": "",
+            "keys": "I Be Active:I Am Not Active",
+            "last_active_date": "2016-09-07T09:28:13-05:00",
+            "location": "Initial Location",
+            "name": "048C25EAFC3880",
+            "roles": [],
+            "state": "Lost",
+            "system_key": "fa8f81fd0a9290f9eec6a0e5e7aa01",
+            "type": "Tag Card"
+        },
+        "04BB400AF04980": {
+            "__HostId__": "be085f9d-50f6-41e7-9a58-f0d0c6a3ecc9",
+            "active_key": "I Be Active",
+            "allow_certificate_auth": false,
+            "allow_key_auth": true,
+            "certificate": "I do not have one",
+            "created_date": "2016-09-07T09:28:13-05:00",
+            "description": "Shut up",
+            "device_key": "fa8f81fd0a9290f9eec6a0e5e7aa01 :: 04BB400AF04980",
+            "enabled": true,
+            "job": "",
+            "keys": "I Be Active:I Am Not Active",
+            "last_active_date": "2016-09-07T09:28:13-05:00",
+            "location": "Initial Location",
+            "name": "04BB400AF04980",
+            "roles": [],
+            "state": "Lost",
+            "system_key": "fa8f81fd0a9290f9eec6a0e5e7aa01",
+            "type": "Tag Sticker"
+        },
+        "04C9440AF04980": {
+            "__HostId__": "be085f9d-50f6-41e7-9a58-f0d0c6a3ecc9",
+            "active_key": "I Be Active",
+            "allow_certificate_auth": false,
+            "allow_key_auth": true,
+            "certificate": "I do not have one",
+            "created_date": "2016-09-07T09:28:13-05:00",
+            "description": "Shut up",
+            "device_key": "fa8f81fd0a9290f9eec6a0e5e7aa01 :: 04C9440AF04980",
+            "enabled": true,
+            "job": "",
+            "keys": "I Be Active:I Am Not Active",
+            "last_active_date": "2016-09-07T09:28:13-05:00",
+            "location": "Initial Location",
+            "name": "04C9440AF04980",
+            "roles": [],
+            "state": "Lost",
+            "system_key": "fa8f81fd0a9290f9eec6a0e5e7aa01",
+            "type": "Tag Sticker"
+        },
+        "04EE420AF04980": {
+            "__HostId__": "be085f9d-50f6-41e7-9a58-f0d0c6a3ecc9",
+            "active_key": "I Be Active",
+            "allow_certificate_auth": false,
+            "allow_key_auth": true,
+            "certificate": "I do not have one",
+            "created_date": "2016-09-07T09:28:13-05:00",
+            "description": "Shut up",
+            "device_key": "fa8f81fd0a9290f9eec6a0e5e7aa01 :: 04EE420AF04980",
+            "enabled": true,
+            "job": "",
+            "keys": "I Be Active:I Am Not Active",
+            "last_active_date": "2016-09-07T09:28:13-05:00",
+            "location": "Initial Location",
+            "name": "04EE420AF04980",
+            "roles": [],
+            "state": "Lost",
+            "system_key": "fa8f81fd0a9290f9eec6a0e5e7aa01",
+            "type": "Tag Sticker"
+        },
+        "NFC Reader 1": {
+            "__HostId__": "be085f9d-50f6-41e7-9a58-f0d0c6a3ecc9",
+            "active_key": "I Be Active",
+            "allow_certificate_auth": true,
+            "allow_key_auth": true,
+            "created_date": "2016-09-07T09:28:13-05:00",
+            "description": "located at main office entry",
+            "device_key": "fa8f81fd0a9290f9eec6a0e5e7aa01 :: NFC Reader 1",
+            "enabled": true,
+            "keys": "I Be Active:I Am Not Active",
+            "last_active_date": "2016-09-07T09:28:13-05:00",
+            "name": "NFC Reader 1",
+            "roles": [
+                "User Table Updater"
+            ],
+            "state": "Lost",
+            "system_key": "fa8f81fd0a9290f9eec6a0e5e7aa01",
+            "type": "Tag Reader"
+        },
+        "NFC Reader 2": {
+            "__HostId__": "be085f9d-50f6-41e7-9a58-f0d0c6a3ecc9",
+            "active_key": "I Be Active",
+            "allow_certificate_auth": true,
+            "allow_key_auth": true,
+            "created_date": "2016-09-07T09:28:13-05:00",
+            "description": "Located at side entry",
+            "device_key": "fa8f81fd0a9290f9eec6a0e5e7aa01 :: NFC Reader 2",
+            "enabled": true,
+            "keys": "I Be Active:I Am Not Active",
+            "last_active_date": "2016-09-07T09:28:13-05:00",
+            "name": "NFC Reader 2",
+            "roles": [
+                "User Table Updater"
+            ],
+            "state": "Lost",
+            "system_key": "fa8f81fd0a9290f9eec6a0e5e7aa01",
+            "type": "Tag Reader"
+        },
+        "NFC Reader 3": {
+            "__HostId__": "be085f9d-50f6-41e7-9a58-f0d0c6a3ecc9",
+            "active_key": "I Be Active",
+            "allow_certificate_auth": true,
+            "allow_key_auth": true,
+            "created_date": "2016-09-07T09:28:13-05:00",
+            "description": "Located at back entry",
+            "device_key": "fa8f81fd0a9290f9eec6a0e5e7aa01 :: NFC Reader 3",
+            "enabled": true,
+            "keys": "I Be Active:I Am Not Active",
+            "last_active_date": "2016-09-07T09:28:13-05:00",
+            "name": "NFC Reader 3",
+            "roles": [
+                "User Table Updater"
+            ],
+            "state": "Lost",
+            "system_key": "fa8f81fd0a9290f9eec6a0e5e7aa01",
+            "type": "Tag Reader"
+        }
+    },
+    "edges": {
+        "Main Entry": {
+            "description": "The entrance right off of the office",
+            "edge_key": "fa8f81fd0a9290f9eec6a0e5e7aa01:Main Entry",
+            "name": "Main Entry",
+            "novi_system_key": "fa8f81fd0a9290f9eec6a0e5e7aa01",
+            "system_key": "fa8f81fd0a9290f9eec6a0e5e7aa01",
+            "system_secret": "FA8F81FD0A8CC09FEDB8E8CDB93F",
+            "token": "Main Entry Token"
+        },
+        "Rear Entry": {
+            "description": "The entrance in the back of the building",
+            "edge_key": "fa8f81fd0a9290f9eec6a0e5e7aa01:Rear Entry",
+            "name": "Rear Entry",
+            "novi_system_key": "fa8f81fd0a9290f9eec6a0e5e7aa01",
+            "system_key": "fa8f81fd0a9290f9eec6a0e5e7aa01",
+            "system_secret": "FA8F81FD0A8CC09FEDB8E8CDB93F",
+            "token": "Rear Entry Token"
+        },
+        "Side Entry": {
+            "description": "The entrance to the left of the office",
+            "edge_key": "fa8f81fd0a9290f9eec6a0e5e7aa01:Side Entry",
+            "name": "Side Entry",
+            "novi_system_key": "fa8f81fd0a9290f9eec6a0e5e7aa01",
+            "system_key": "fa8f81fd0a9290f9eec6a0e5e7aa01",
+            "system_secret": "FA8F81FD0A8CC09FEDB8E8CDB93F",
+            "token": "Side Entry Token"
+        }
+    },
+    "items": {},
+    "messagingUrl": "127.0.0.1:1885",
+    "platformUrl": "http://127.0.0.1:9001",
+    "roles": {
+        "Admin": "Admin",
+        "Anonymous": "Anonymous",
+        "Authenticated": "Authenticated",
+        "Employee": "fa8f81fd0ae0c1ffb4caa8cf8e42",
+        "Owner": "fa8f81fd0abec4bb87cc85caec74",
+        "Uber Device/User Table Updater": "fa8f81fd0aca91d2d592e582c0cb01",
+        "User Table Updater": "fa8f81fd0a9ec4f38bdcdefa8762"
+    },
+    "systemKey": "fa8f81fd0a9290f9eec6a0e5e7aa01",
+    "systemSecret": "FA8F81FD0A8CC09FEDB8E8CDB93F",
+    "teardown": {
+        "adminClient": {
+            "DevToken": "YVW6kLmfXfLjcQ7ZQtJjbRCdtRDBMLJ0P4ndth5yTV-RQ4Z4n2CQqce63ZU3XK0ZID-diAakSjkneckl",
+            "MQTTClient": null,
+            "Email": "dev@w2macfab.com",
+            "Password": "IAmTheDev",
+            "HttpAddr": "http://127.0.0.1:9000",
+            "MqttAddr": "127.0.0.1:1883"
+        },
+        "collections": [
+            "fa8f81fd0ae280cee7b6fb9bc3cd01"
+        ],
+        "dev_email": "dev@w2macfab.com",
+        "dev_password": "IAmTheDev",
+        "developer": "fa8f81fd0af09dfd9eb7ade3ae0e",
+        "devices": [
+            "NFC Reader 1",
+            "NFC Reader 2",
+            "NFC Reader 3",
+            "047229EAFC3880",
+            "041C19EAFC3881",
+            "048C25EAFC3880",
+            "0421430AF04981",
+            "04C9440AF04980",
+            "047C400AF04980",
+            "04EE420AF04980",
+            "04BB400AF04980"
+        ],
+        "edgeSync": {
+            "Main Entry": {
+                "library": [
+                    "TriggerLib",
+                    "JustPublish"
+                ],
+                "service": [
+                    "tagFoundTrigger",
+                    "tagUserUpdatedTrigger"
+                ],
+                "trigger": [
+                    "TagFoundHandler",
+                    "tagUserUpdatedHandler"
+                ]
+            },
+            "Rear Entry": {
+                "library": [
+                    "TriggerLib",
+                    "JustPublish"
+                ],
+                "service": [
+                    "tagFoundTrigger",
+                    "tagUserUpdatedTrigger"
+                ],
+                "trigger": [
+                    "TagFoundHandler",
+                    "tagUserUpdatedHandler"
+                ]
+            },
+            "Side Entry": {
+                "library": [
+                    "TriggerLib",
+                    "JustPublish"
+                ],
+                "service": [
+                    "tagFoundTrigger",
+                    "tagUserUpdatedTrigger"
+                ],
+                "trigger": [
+                    "TagFoundHandler",
+                    "tagUserUpdatedHandler"
+                ]
+            }
+        },
+        "edges": [
+            "Main Entry",
+            "Side Entry",
+            "Rear Entry"
+        ],
+        "libraries": [
+            "TriggerLib",
+            "JustPublish"
+        ],
+        "messagingUrl": "127.0.0.1:1883",
+        "platformUrl": "http://127.0.0.1:9000",
+        "roles": [
+            "fa8f81fd0abec4bb87cc85caec74",
+            "fa8f81fd0ae0c1ffb4caa8cf8e42",
+            "fa8f81fd0a9ec4f38bdcdefa8762",
+            "fa8f81fd0aca91d2d592e582c0cb01"
+        ],
+        "services": [
+            "tagFoundTrigger",
+            "tagUserUpdatedTrigger"
+        ],
+        "systemKey": "fa8f81fd0a9290f9eec6a0e5e7aa01",
+        "systemSecret": "FA8F81FD0A8CC09FEDB8E8CDB93F",
+        "timers": [],
+        "triggers": [
+            "TagFoundHandler",
+            "tagUserUpdatedHandler"
+        ],
+        "users": [
+            "fa8f81fd0adca1f782bbacbeb7fd01",
+            "fa8f81fd0a8882b19ff58ee5ad59",
+            "fa8f81fd0af29ff0acd2bdb3b2a501",
+            "fa8f81fd0af68be49faff2feccd601",
+            "fa8f81fd0abcdbb59adfd5f9d59801",
+            "fa8f81fd0aa8dec2f489a2c4f571",
+            "fa8f81fd0afce6dbaaa9fea3e247",
+            "fa8f81fd0afc9bb0afc999d7dd25",
+            "fa8f81fd0aac8c84fccfebf3f7be01",
+            "fa8f81fd0adc8ab9d082f582beb001"
+        ]
+    },
+    "timers": {},
+    "triggers": {
+        "TagFoundHandler": {
+            "event_definition": {
+                "def_keys": [
+                    "topic"
+                ],
+                "def_module": "Messaging",
+                "def_name": "Publish",
+                "visibility": true
+            },
+            "key_value_pairs": {
+                "topic": "/tag/found"
+            },
+            "name": "TagFoundHandler",
+            "service_name": "tagFoundTrigger",
+            "system_key": "fa8f81fd0a9290f9eec6a0e5e7aa01",
+            "system_secret": "FA8F81FD0A8CC09FEDB8E8CDB93F"
+        },
+        "tagUserUpdatedHandler": {
+            "event_definition": {
+                "def_keys": [
+                    "userId"
+                ],
+                "def_module": "User",
+                "def_name": "UserUpdated",
+                "visibility": true
+            },
+            "key_value_pairs": {},
+            "name": "tagUserUpdatedHandler",
+            "service_name": "tagUserUpdatedTrigger",
+            "system_key": "fa8f81fd0a9290f9eec6a0e5e7aa01",
+            "system_secret": "FA8F81FD0A8CC09FEDB8E8CDB93F"
+        }
+    },
+    "users": {
+        "billy@w2macfab.com": {
+            "creation_date": "2016-09-07T09:28:13-05:00",
+            "email": "billy@w2macfab.com",
+            "job": null,
+            "password": "password",
+            "state": null,
+            "tag_id": null,
+            "user_id": "fa8f81fd0afc9bb0afc999d7dd25",
+            "user_token": "f0hZdj7l1Tp3-7ckpNn3UamV1G1o2xhu_7ZtUsd9WL6OXROZzVP1KiccubxP55m0LevbS3kx6EXIKRMY"
+        },
+        "bob@w2macfab.com": {
+            "creation_date": "2016-09-07T09:28:13-05:00",
+            "email": "bob@w2macfab.com",
+            "job": null,
+            "password": "password",
+            "state": null,
+            "tag_id": null,
+            "user_id": "fa8f81fd0aac8c84fccfebf3f7be01",
+            "user_token": "__5FhHaFsLptnDoHeSK5hHIDJ0NQ7A-1GA_Jcz1l5kxYWcApa9IlD6KvYfkl76T9UAXBxU2kR1271c0b"
+        },
+        "carlos@w2macfab.com": {
+            "creation_date": "2016-09-07T09:28:13-05:00",
+            "email": "carlos@w2macfab.com",
+            "job": null,
+            "password": "password",
+            "state": null,
+            "tag_id": null,
+            "user_id": "fa8f81fd0afce6dbaaa9fea3e247",
+            "user_token": "eNm6BK7H4XdSbBXphwa5KN1cetlM-Qd36R5AEsugZ7AX1VBplnwTd6MgFis1QlSpUnYZUVAzVHDM7RzC"
+        },
+        "johnny@w2macfab.com": {
+            "creation_date": "2016-09-07T09:28:13-05:00",
+            "email": "johnny@w2macfab.com",
+            "job": null,
+            "password": "password",
+            "state": null,
+            "tag_id": null,
+            "user_id": "fa8f81fd0adc8ab9d082f582beb001",
+            "user_token": "IaqqTeoeSE6ggt8WhuBmTfFSoYaKmT-s4x1dmYpupza44btDioNFXklfln1Le2eTNvwneuV1bbza1T2A"
+        },
+        "ray@w2macfab.com": {
+            "creation_date": "2016-09-07T09:28:13-05:00",
+            "email": "ray@w2macfab.com",
+            "job": null,
+            "password": "password",
+            "state": null,
+            "tag_id": null,
+            "user_id": "fa8f81fd0af68be49faff2feccd601",
+            "user_token": "aF7VnmjT1g-_zCXlN4Mw6A_dxgVs-fJ4s2VhtntTEkshnKKPf7cXVGvtNFgaE6yrdYjoTw5jEevwMhdQ"
+        },
+        "robert@w2macfab.com": {
+            "creation_date": "2016-09-07T09:28:13-05:00",
+            "email": "robert@w2macfab.com",
+            "job": null,
+            "password": "password",
+            "state": null,
+            "tag_id": null,
+            "user_id": "fa8f81fd0abcdbb59adfd5f9d59801",
+            "user_token": "Hvf7cnBKFaOgy4yiXewBGMOHUrga8jW6w7SyAL-4LOdkYGDktDhV02WFoY8c2PDuM4XFeKwImWV8nIqa"
+        },
+        "swm@w2macfab.com": {
+            "creation_date": "2016-09-07T09:28:13-05:00",
+            "email": "swm@w2macfab.com",
+            "job": null,
+            "password": "password",
+            "state": null,
+            "tag_id": null,
+            "user_id": "fa8f81fd0af29ff0acd2bdb3b2a501",
+            "user_token": "d2wL6LhHUQnSVoWaAhtrEGENYRiw3x0K6aOC-b6sDmM2Sp4IMPxD-0RnhlOMMa8AL1gaXHtPQuTdwS8Q"
+        },
+        "uberPortalPerson@w2macfab.com": {
+            "creation_date": "2016-09-07T09:28:13-05:00",
+            "email": "uberPortalPerson@w2macfab.com",
+            "job": null,
+            "password": "password",
+            "state": null,
+            "tag_id": null,
+            "user_id": "fa8f81fd0adca1f782bbacbeb7fd01",
+            "user_token": "lIsc_Hr_7kzTSGaK2ar0qq9qU59cochY6TCq1h9LpRUaAvBAz0fmWxU4M2tNWWvskMK3qn4mlwQEEx5b"
+        },
+        "userTableUpdater@w2macfab.com": {
+            "creation_date": "2016-09-07T09:28:13-05:00",
+            "email": "userTableUpdater@w2macfab.com",
+            "job": null,
+            "password": "password",
+            "state": null,
+            "tag_id": null,
+            "user_id": "fa8f81fd0a8882b19ff58ee5ad59",
+            "user_token": "UIEiFHMQeuIbMPe6mRIknFHYeLSTy2vYpnwMgLt_kHHWtYUKvdykkJiDX9TbJO5EfP2BFQSPLPlosNx2"
+        },
+        "zack@w2macfab.com": {
+            "creation_date": "2016-09-07T09:28:13-05:00",
+            "email": "zack@w2macfab.com",
+            "job": null,
+            "password": "password",
+            "state": null,
+            "tag_id": null,
+            "user_id": "fa8f81fd0aa8dec2f489a2c4f571",
+            "user_token": "qBS6H_HXHg-YwBY4KZlmtjhlm_AUIScAKdDszqdS6JYrLVsRuaWCMaSeQSoHrXx4-0oSiWtAD5YAXiOd"
+        }
+    }
+}

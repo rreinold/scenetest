@@ -1,0 +1,104 @@
+{
+    "codeLibraries": {},
+    "codeServices": {},
+    "collections": {},
+    "connectCollections": {},
+    "developer": {
+        "email": "theDev@developer.com",
+        "password": "IAmTheDev",
+        "userId": "94da95fe0aa8efe59c80b1e1ac5e"
+    },
+    "developers": {},
+    "devices": {
+        "Mundane Device": {
+            "__HostId__": "542a1f84-4b4c-4e2c-b868-849ff723373d",
+            "active_key": "I Be Active",
+            "allow_certificate_auth": false,
+            "allow_key_auth": true,
+            "certificate": "I do not have one",
+            "created_date": "2016-09-21T11:34:19-05:00",
+            "description": "Not very descriptive",
+            "device_key": "94da95fe0af08389a4cf839ef79801 :: Mundane Device",
+            "enabled": true,
+            "keys": "I Be Active:I Am Not Active",
+            "last_active_date": "2016-09-21T11:34:19-05:00",
+            "name": "Mundane Device",
+            "roles": [
+                "mundane device"
+            ],
+            "state": "a-ok",
+            "system_key": "94da95fe0af08389a4cf839ef79801",
+            "type": "TestingDevice"
+        }
+    },
+    "edges": {},
+    "items": {},
+    "messagingUrl": "127.0.0.1:1883",
+    "platformUrl": "http://127.0.0.1:9000",
+    "roles": {
+        "Admin": "Admin",
+        "Anonymous": "Anonymous",
+        "Authenticated": "Authenticated",
+        "god": "94da95fe0abc96b0f1fba6d4e722",
+        "mundane device": "94da95fe0a868f8b8f89a8c2cb74"
+    },
+    "systemKey": "94da95fe0af08389a4cf839ef79801",
+    "systemSecret": "94DA95FE0A96B2B79FFE86D59D22",
+    "systems": {},
+    "teardown": {
+        "adminClient": {
+            "DevToken": "5LD6TV2uEBJmowOnsT9x5ITFW3F9YLrgLMR1pd4VsIreEtX0H-FVD3sqjGfkufFVGyT-fYj-ljBoBUPRrw==",
+            "MQTTClient": null,
+            "Email": "theDev@developer.com",
+            "Password": "IAmTheDev",
+            "HttpAddr": "http://127.0.0.1:9000",
+            "MqttAddr": "127.0.0.1:1883"
+        },
+        "collections": [],
+        "connectCollections": [],
+        "dev_email": "theDev@developer.com",
+        "dev_password": "IAmTheDev",
+        "developer": "94da95fe0aa8efe59c80b1e1ac5e",
+        "developers": [],
+        "devices": [
+            "Mundane Device"
+        ],
+        "edgeSync": {},
+        "edges": [],
+        "libraries": [],
+        "messagingUrl": "127.0.0.1:1883",
+        "platformUrl": "http://127.0.0.1:9000",
+        "roles": [
+            "94da95fe0a868f8b8f89a8c2cb74",
+            "94da95fe0abc96b0f1fba6d4e722"
+        ],
+        "services": [],
+        "systemKey": "94da95fe0af08389a4cf839ef79801",
+        "systemSecret": "94DA95FE0A96B2B79FFE86D59D22",
+        "systems": [],
+        "timers": [],
+        "triggers": [],
+        "users": [
+            "94da95fe0ab4cec9e6b09bae888201",
+            "94da95fe0aca92dbc9f2a7b394ef01"
+        ]
+    },
+    "timers": {},
+    "triggers": {},
+    "users": {
+        "subscriber@clearblade.com": {
+            "creation_date": "2016-09-21T11:34:18-05:00",
+            "email": "subscriber@clearblade.com",
+            "password": "IAmSubscriber",
+            "user_id": "94da95fe0aca92dbc9f2a7b394ef01",
+            "user_token": "wdlwD30XSc0N5EyO8bKqFsW_VbepllxTDXHh3_Ehxzke1PBKjNvT7mkJWGs6F4fxmAal0Pdr4jczARAaNg=="
+        },
+        "swm@clearblade.com": {
+            "creation_date": "2016-09-21T11:34:18-05:00",
+            "email": "swm@clearblade.com",
+            "password": "IAmSWM",
+            "user_id": "94da95fe0ab4cec9e6b09bae888201",
+            "user_token": "qIsuM6Sof0brf1S44ueGfIT1X28dx-YV_k_zk39dZVvpLWgjwhJQJT0cLJlQe7RK3QhPPWq0F6RBe27RuQ=="
+        }
+    }
+}
