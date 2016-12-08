@@ -47,7 +47,7 @@ func performSetup(setupInfo interface{}) {
 		os.Exit(1)
 	}
 	saveSetupState(setupInfo.(map[string]interface{}))
-	fmt.Printf("%s\n", sysKey)
+	fmt.Printf("New System Key is: %s\n", sysKey)
 }
 
 func setupSystem(system map[string]interface{}) {
@@ -81,7 +81,7 @@ func setupSystem(system map[string]interface{}) {
 	if developers, ok := system["developers"]; ok {
 		setupDevelopers(developers.([]interface{}))
 	} else {
-		warn("No users found")
+		warn("No \"extra\" developers found")
 	}
 
 	if userTablePerms, ok := system["userTableRoles"]; ok {
@@ -199,7 +199,6 @@ func createSystem(system map[string]interface{}) {
 	descr := system["description"].(string)
 
 	sysStr, sysErr := adminClient.NewSystem(name, descr, userAuth)
-	myPrintf("NEW SYS: %+v\n", sysStr)
 	if sysErr != nil {
 		fatal(sysErr.Error())
 	}
@@ -226,7 +225,7 @@ func setupRoles(roles []interface{}) {
 		if err != nil {
 			fatal(err.Error())
 		}
-		myPrintf("Created Role: %+v\n", res)
+		myPrintf("Created Role: %s\n", role.(string))
 		rolesMap[role.(string)] = res.(map[string]interface{})["role_id"]
 		appendState("roles", rolesMap[role.(string)].(string))
 	}
@@ -269,7 +268,6 @@ func setupDeveloper(developer map[string]interface{}) {
 		newDev["user_id"] = fmt.Sprintf("<unknownId:%s>", email)
 		newDev["dev_token"] = fmt.Sprintf("<unknownToken:%s>", email)
 	}
-	fmt.Printf("NEW DEV IS %+v\n", newDev)
 	newId := newDev["user_id"].(string)
 
 	devMap := scriptVars["developers"].(map[string]interface{})
@@ -280,7 +278,7 @@ func setupDeveloper(developer map[string]interface{}) {
 	newDev["org"] = org
 	devMap[email] = newDev
 	appendState("developers", newId)
-	fmt.Printf("SETUP DEVELOPER %s\n", email)
+	fmt.Printf("Set up developer: %s\n", email)
 }
 
 func setupUsers(users []interface{}) {
@@ -329,7 +327,6 @@ func getCustomFields(user map[string]interface{}) map[string]interface{} {
 			rval[key] = val
 		}
 	}
-	myPrintf("FOUND CUSTOM FIELDS: %+v\n", rval)
 	return rval
 }
 
@@ -390,7 +387,6 @@ func setupCollections(cols []interface{}) {
 }
 
 func setupCollection(col map[string]interface{}) {
-	myPrintf("Setting up collection %+v\n", col["name"])
 	//  Create the collection
 	colId, err := adminClient.NewCollection(sysKey, col["name"].(string))
 	if err != nil {
@@ -426,6 +422,7 @@ func setupCollection(col map[string]interface{}) {
 		}
 	}
 	setupItem(allData, colId)
+	myPrintf("Set up collection %+v\n", col["name"])
 }
 
 func setupConnectCollections(cols []interface{}) {
@@ -435,7 +432,6 @@ func setupConnectCollections(cols []interface{}) {
 }
 
 func setupConnectCollection(col map[string]interface{}) {
-	myPrintf("Setting up connect collection %+v\n", col)
 	//  Create the collection
 	config := col["config"].(map[string]interface{})
 	dbType := config["dbtype"].(string)
@@ -443,7 +439,6 @@ func setupConnectCollection(col map[string]interface{}) {
 		fatal("scenetest currently only supports MySQL databases for connect collections\n")
 	}
 	// XXXSWM -- Fix this here and rework the go sdk. This is silly.
-	fmt.Printf("CONNECT COLLECTION CONFIG IS %+v\n", config)
 	my := &cb.MySqlConfig{
 		Name:      config["name"].(string),
 		User:      config["user"].(string),
@@ -458,12 +453,12 @@ func setupConnectCollection(col map[string]interface{}) {
 	if err != nil {
 		fatal(err.Error())
 	}
-	fmt.Printf("CONNECT COLLECTION: RVAL IS %+v\n", colId)
 	colsMap := scriptVars["connectCollections"].(map[string]interface{})
 	colsMap[config["name"].(string)] = colId
 	appendState("connectCollections", colId)
 
 	setupCollectionRoles(colId, col)
+	myPrintf("Set up connect collection %s\n", config["name"].(string))
 }
 
 func addThingToRoles(id string, roleNames []interface{}) {
@@ -541,18 +536,18 @@ func setupPortalRoles(portal, portalRoles map[string]interface{}) {
 }
 
 func setupColumn(collectionId, columnName, columnType string) {
-	myPrintf("Adding column %s(%s)\n", columnName, columnType)
+	myPrintf("Set up column %s(%s)\n", columnName, columnType)
 	if err := adminClient.AddColumn(collectionId, strings.ToLower(columnName), columnType); err != nil {
 		fatal(err.Error())
 	}
 }
 
 func setupItem(items []map[string]interface{}, colId string) {
-	newItems, err := adminClient.CreateData(colId, items)
+	_, err := adminClient.CreateData(colId, items)
 	if err != nil {
 		fatal(fmt.Sprintf("Error creating item: %s\n", err.Error()))
 	}
-	myPrintf("Created item(s): %+v\n", newItems)
+	myPrintf("Created items for collection %s\n", colId)
 }
 
 func setupCodeServices(svcs []interface{}) {
@@ -600,7 +595,7 @@ func setupCodeService(svc map[string]interface{}) {
 		"dependencies": svcDeps,
 	}
 	appendState("services", svcName)
-	myPrintf("Set up code service %+v\n", svcMap[svcName])
+	myPrintf("Set up code service %s\n", svcName)
 }
 
 func setupCodeLibraries(libs []interface{}) {
@@ -611,7 +606,6 @@ func setupCodeLibraries(libs []interface{}) {
 
 func setupCodeLibrary(lib map[string]interface{}) {
 	processEdgeInfo("library", lib["name"].(string), lib)
-	fmt.Printf("LIB AFTER PROCESS: %+v\n", lib)
 	libName := lib["name"].(string)
 	delete(lib, "name")
 	libCode := getVarOrFile(lib, "code")
@@ -623,7 +617,7 @@ func setupCodeLibrary(lib map[string]interface{}) {
 	libMap := scriptVars["codeLibraries"].(map[string]interface{})
 	libMap[libName] = newLib
 	appendState("libraries", libName)
-	myPrintf("Set up code library %+v\n", newLib)
+	myPrintf("Set up code library %s\n", libName)
 }
 
 func setupTriggers(triggers []interface{}) {
@@ -643,7 +637,7 @@ func setupTrigger(trigger map[string]interface{}) {
 	trigMap := scriptVars["triggers"].(map[string]interface{})
 	trigMap[trigName] = newTrig
 	appendState("triggers", trigName)
-	myPrintf("Set up trigger %+v\n", newTrig)
+	myPrintf("Set up trigger %s\n", trigName)
 }
 
 func setupTimers(timers []interface{}) {
@@ -669,7 +663,7 @@ func setupTimer(timer map[string]interface{}) {
 	timerMap := scriptVars["timers"].(map[string]interface{})
 	timerMap[timerName] = newTimer
 	appendState("timers", timerName)
-	myPrintf("Set up timer %+v\n", newTimer)
+	myPrintf("Set up timer %s\n", timerName)
 }
 
 func setupDevices(devices []interface{}) {
@@ -689,7 +683,7 @@ func setupDevice(device map[string]interface{}) {
 	deviceMap := scriptVars["devices"].(map[string]interface{})
 	deviceMap[deviceName] = newDevice
 	appendState("devices", deviceName)
-	myPrintf("Set up device %+v\n", newDevice)
+	myPrintf("Set up device %s\n", deviceName)
 }
 
 func setupPortals(portals []interface{}) {
@@ -720,7 +714,7 @@ func setupPortal(portal map[string]interface{}) {
 	portalMap := scriptVars["portals"].(map[string]interface{})
 	portalMap[portalName] = newPortal
 	appendState("portals", portalName)
-	myPrintf("Set up portal %+v\n", portalName)
+	myPrintf("Set up portal %s\n", portalName)
 }
 
 func setupEdges(edges []interface{}) {
@@ -741,7 +735,7 @@ func setupEdge(edge map[string]interface{}) {
 	edgeMap := scriptVars["edges"].(map[string]interface{})
 	edgeMap[edgeName] = newEdge
 	appendState("edges", edgeName)
-	myPrintf("Set up edge %+v\n", newEdge)
+	myPrintf("Set up edge %s\n", edgeName)
 }
 
 func setupMessageHistoryPerms(name string, theGoods map[string]interface{}) {
@@ -755,7 +749,7 @@ func setupMessageHistoryPerms(name string, theGoods map[string]interface{}) {
 		if err := adminClient.AddGenericPermissionToRole(sysKey, roleId, name, perms); err != nil {
 			fatalf("Could not add user/device table permissions for %s, %s, %d\n", roleName, name, perms)
 		}
-		fmt.Printf("ADDED GENERIC PERMISSION FOR '%s': %s: %d\n", roleName, name, perms)
+		fmt.Printf("Set up message history permissions\n")
 	}
 }
 
@@ -770,7 +764,6 @@ func setupGenericPermissions(name string, theGoods map[string]interface{}) {
 		if err := adminClient.AddGenericPermissionToRole(sysKey, roleId, name, perms); err != nil {
 			fatalf("Could not add user/device table permissions for %s, %s, %d\n", roleName, name, perms)
 		}
-		fmt.Printf("ADDED GENERIC PERMISSION FOR '%s': %s: %d\n", roleName, name, perms)
 	}
 }
 
@@ -792,8 +785,7 @@ func getCount(stuff map[string]interface{}) int {
 
 func getString(stuff map[string]interface{}, theThing string) string {
 	if _, ok := stuff[theThing]; !ok {
-		// fatal(fmt.Sprintf("The value for %s does not exist\n", theThing))
-		warn(fmt.Sprintf("The value for %s does not exist\n", theThing))
+		//warn(fmt.Sprintf("The value for %s does not exist\n", theThing))
 		return ""
 	}
 	switch stuff[theThing].(type) {
@@ -811,7 +803,6 @@ func appendState(stateKey, value string) {
 }
 
 func processEdgeInfo(resourceType, resourceName string, resource map[string]interface{}) {
-	fmt.Printf("WHOLE THING IS: %+v\n", setupState["edgeSync"])
 	edgeInfo, ok := resource["deployToEdges"]
 	if !ok {
 		return
@@ -821,7 +812,6 @@ func processEdgeInfo(resourceType, resourceName string, resource map[string]inte
 	edgeSyncStuff := setupState["edgeSync"].(map[string]map[string][]string) // mouthful
 	for _, edgeName := range edgesToProcess {
 		oneEdgeSync := edgeSyncStuff[edgeName]
-		fmt.Printf("ONE EDGE SYNC: %+v\n", oneEdgeSync)
 		resourceSlice := oneEdgeSync[string(resourceType)]
 		resourceSlice = append(resourceSlice, resourceName)
 		oneEdgeSync[string(resourceType)] = resourceSlice
