@@ -1,5 +1,5 @@
 {
-    "name": "W2MacFab Clock Management",
+    "name": "W2MacFab Clock In-Out Management With Barcode Scanning",
     "description": "NFC Clock Management for W2MacFab",
     "startup": {
         "outputFile": "novi.out",
@@ -17,7 +17,8 @@
         "Owner",
         "Employee",
         "User Table Updater",
-        "Uber Device/User Table Updater"
+        "Uber Device",
+        "Portal Accessor"
     ],
     "userColumns": [
         {
@@ -38,7 +39,7 @@
         {
             "email": "uberPortalPerson@w2macfab.com",
             "password": "password",
-            "roles": ["Uber Device/User Table Updater"],
+            "roles": ["Uber Device", "User Table Updater", "Portal Accessor"],
             "state": "Never Clocks In or Out",
             "tag_id": "",
             "job": "Keeps an eye on everybody else"
@@ -54,7 +55,7 @@
         {
             "email": "swm@w2macfab.com",
             "password": "password",
-            "roles": ["Employee"],
+            "roles": ["Employee", "Portal Accessor"],
             "state": "Clocked Out",
             "tag_id": "047229EAFC3880",
             "job": "None"
@@ -62,7 +63,7 @@
         {
             "email": "ray@w2macfab.com",
             "password": "password",
-            "roles": ["Employee"],
+            "roles": ["Employee", "Portal Accessor"],
             "state": "Clocked Out",
             "tag_id": "041C19EAFC3881",
             "job": "None"
@@ -70,7 +71,7 @@
         {
             "email": "robert@w2macfab.com",
             "password": "password",
-            "roles": ["Owner"],
+            "roles": ["Owner", "Portal Accessor"],
             "state": "Clocked Out",
             "tag_id": "048C25EAFC3880",
             "job": "None"
@@ -78,7 +79,7 @@
         {
             "email": "zack@w2macfab.com",
             "password": "password",
-            "roles": ["Employee"],
+            "roles": ["Employee", "Portal Accessor"],
             "state": "Clocked Out",
             "tag_id": "0421430AF04981",
             "job": "None"
@@ -89,7 +90,7 @@
             "state": "Clocked Out",
             "job": "None",
             "tag_id": "04C9440AF04980",
-            "roles": ["Employee"]
+            "roles": ["Employee", "Portal Accessor"]
         },
         {
             "email": "billy@w2macfab.com",
@@ -97,7 +98,7 @@
             "state": "Clocked Out",
             "job": "None",
             "tag_id": "047C400AF04980",
-            "roles": ["Employee"]
+            "roles": ["Employee", "Portal Accessor"]
         },
         {
             "email": "bob@w2macfab.com",
@@ -105,7 +106,7 @@
             "state": "Clocked Out",
             "job": "None",
             "tag_id": "04EE420AF04980",
-            "roles": ["Employee"]
+            "roles": ["Employee", "Portal Accessor"]
         },
         {
             "email": "johnny@w2macfab.com",
@@ -113,7 +114,7 @@
             "state": "Clocked Out",
             "job": "None",
             "tag_id": "04BB400AF04980",
-            "roles": ["Employee"]
+            "roles": ["Employee", "Portal Accessor"]
         }
     ],
     //
@@ -129,13 +130,13 @@
         "Authenticated": 1,
         "Anonymous": 0,
         "User Table Updater": 15,
-        "Uber Device/User Table Updater": 15
+        "Uber Device": 15
     },
     "deviceTableRoles": {
         "Authenticated": 1,
         "Anonymous": 0,
         "User Table Updater": 5,
-        "Uber Device/User Table Updater": 15
+        "Uber Device": 15
     },
 
     "collections": [
@@ -156,6 +157,22 @@
         }
     ],
     "connectCollections": [
+        {
+            "config": {
+                "name": "MacFab Project",
+                "address": "www.macfabaustin.com",
+                "dbname": "macfab",
+                "dbtype": "MySQL",
+                "encryption": "false",
+                "user": "clearblade",
+                "password": "novi_iot!",
+                "tablename": "project"
+            },
+            "roles": {
+                "Authenticated": 15,
+                "Anonymous": 0
+            }
+        },
         {
             "config": {
                 "name": "MacFab Timer",
@@ -191,6 +208,68 @@
     ],
     "codeServices": [
         {
+            "name": "processBarcodeScan",
+            "code": "@js/processBarcodeScan.js",
+            "dependencies": "clearblade,log,W2MacFab",
+            "parameters": [],
+            "deployToEdges": "none",
+            "roles": {
+                "Authenticated": 1
+            }
+        },
+        {
+            "name": "barcodeScanned",
+            "code": "@js/barcodeScanned.js",
+            "dependencies": "clearblade,log",
+            "parameters": [],
+            "deployToEdges": "all",
+            "roles": {
+                "Authenticated": 1
+            }
+        },
+        {
+            "name": "getTryingToClockIn",
+            "code": "@js/getTryingToClockin.js",
+            "dependencies": "clearblade,log,W2MacFab",
+            "parameters": [],
+            "deployToEdges": ["Main Entry", "Side Entry"],
+            "roles": {
+                "Authenticated": 1
+            }
+        },
+        {
+            "name": "finishClockin",
+            "code": "@js/finishClockin.js",
+            "dependencies": "clearblade,log,W2MacFab",
+            "parameters": ["taskId", "projectId"],
+            "deployToEdges": ["Main Entry", "Side Entry"],
+            "roles": {
+                "Authenticated": 1
+            }
+        },
+        {
+            "name": "getClockedInEmployees",
+            "code": "@js/getClockedInEmployees.js",
+            "dependencies": "clearblade,log,W2MacFab",
+            "parameters": [],
+            "deployToEdges": "all",
+            "roles": {
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        },
+        {
+            "name": "cleanUpAbandonedClockIns",
+            "code": "@js/cleanUpAbandonedClockIns.js",
+            "dependencies": "clearblade,log,W2MacFab",
+            "parameters": [],
+            "deployToEdges": "none",
+            "roles": {
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        },
+        {
             "name": "tagFoundTrigger",
             "code": "@js/tagFoundTrigger.js",
             "dependencies": "clearblade,log",
@@ -204,7 +283,18 @@
         {
             "name": "tagUserUpdatedTrigger",
             "code": "@js/tagUserUpdatedTrigger.js",
-            "dependencies": "clearblade,log,http",
+            "dependencies": "clearblade,log,http,W2MacFab",
+            "parameters": [],
+            "deployToEdges": "none",
+            "roles": {
+                "Authenticated": 1,
+                "Anonymous": 0
+            }
+        },
+        {
+            "name": "updateClockedInPortal",
+            "code": "@js/updateClockedInPortal.js",
+            "dependencies": "clearblade,log,http,W2MacFab",
             "parameters": [],
             "deployToEdges": "none",
             "roles": {
@@ -215,21 +305,33 @@
     ],
     "codeLibraries": [
         {
-            "name": "TriggerLib",
-            "code": "@js/triggerLib.js",
-            "description": "publishes trigger event over mqtt",
-            "deployToEdges": "all",
-            "dependencies":"clearblade,log"
-        },
-        {
-            "name": "JustPublish",
-            "code": "@js/justPublish.js",
-            "description": "publishes normal message over mqtt",
+            "name": "W2MacFab",
+            "code": "@js/w2macfab.js",
+            "description": "Convenience functions for accessing and integrating with macfab",
             "deployToEdges": "all",
             "dependencies":"clearblade,log"
         }
     ],
     "triggers": [
+        {
+            "name": "processBarcodeScanTrigger",
+            "service_name":"processBarcodeScan",
+            "def_module": "Device",
+            "def_name": "DeviceUpdated",
+            "deployToEdges": "none",
+            "key_value_pairs": {
+            }
+        },
+        {
+            "name": "barcodeScannedTrigger",
+            "service_name":"barcodeScanned",
+            "def_module": "Messaging",
+            "def_name": "Publish",
+            "deployToEdges": "all",
+            "key_value_pairs": {
+                "topic": "/w2macfab/barcode"
+            }
+        },
         {
             "name": "TagFoundHandler",
             "service_name":"tagFoundTrigger",
@@ -251,6 +353,14 @@
         }
     ],
     "timers": [
+        {
+            "name": "Clean up abandoned clock in attempts",
+            "description": "Sometimes employees don't finish the clock in process",
+            "start_time": "Now",
+            "repeats": -1,
+            "frequency": 300,
+            "service_name": "cleanUpAbandonedClockIns"
+        }
     ],
     "edges": [
         {
@@ -264,12 +374,150 @@
             "description": "The entrance to the left of the office"
         },
         {
-            "name": "Rear Entry",
-            "token": "Rear Entry Token",
-            "description": "The entrance in the back of the building"
+            "name": "Tag Registration",
+            "token": "Tag Registration Token",
+            "description": "Raspberry Pi used for registering and assigning RFID tags"
+        }
+    ],
+    "portals": [
+		{
+			"config": {
+				"allow_edit": true,
+				"columns": 5,
+				"datasources": [
+					{
+						"name": "Fetch Clocked In Employees",
+						"settings": {
+							"code_name": "getClockedInEmployees",
+							"default_payload": "{}",
+							"refresh_interval": 0
+						},
+						"type": "clearblade_execute_code"
+					},
+					{
+						"name": "Employees Trying To Clock In",
+						"settings": {
+							"code_name": "getTryingToClockIn",
+							"default_payload": "{}",
+							"refresh_interval": 0
+						},
+						"type": "clearblade_execute_code"
+					},
+					{
+						"name": "Somebody is trying to clock in",
+						"settings": {
+							"topic_name": "/w2macfab/clock/tryclockin"
+						},
+						"type": "messageTopic"
+					},
+					{
+						"name": "Somebody clocked in or out",
+						"settings": {
+							"topic_name": "/w2macfab/clock/clockinout"
+						},
+						"type": "messageTopic"
+					},
+					{
+						"name": "finishClockIn",
+						"settings": {
+							"code_name": "finishClockIn",
+							"default_payload": "{\"taskId\":0,\"projectId\":0}",
+							"name": "finishClockIn",
+							"refresh_interval": 0
+						},
+						"type": "clearblade_execute_code"
+					}
+				],
+				"panes": [
+					{
+						"col": {
+							"3": 1,
+							"4": 1,
+							"5": 1,
+							"6": 1
+						},
+						"col_width": "10",
+						"display_header": false,
+						"header_theme": "primary",
+						"row": {
+							"3": 1,
+							"4": 1,
+							"5": 1,
+							"6": 1
+						},
+						"title": "Currently Clocked In Employees",
+						"widgets": [
+							{
+								"settings": {
+									"_datatype": "static",
+									"height": 1,
+									"widgetContent": "\u003ch1 style=color:green\u003e\u003ccenter\u003eCurrently Clocked In Employees\u003c/center\u003e\u003c/h1\u003e"
+								},
+								"type": "html"
+							},
+							{
+								"settings": {
+									"_datatype": "dynamic",
+									"height": 8,
+									"widgetContent": [
+										{
+											"dsName": "Somebody clocked in or out",
+											"incoming_parser": "var beginTable = \"\u003cdiv style=\\\"height:500px;width:100%;overflow:scroll\\\"\u003e\u003ctable style=\\\"width:100%\\\"\u003e\";\nvar tableHeader = \"\u003cthead\u003e\u003ctr style=\\\"font-size:150%;color:yellow;font-family:helvetica\\\"\u003e\u003cth\u003eEmployee Name\u003c/th\u003e\u003cth\u003eProject Name\u003c/th\u003e\u003cth\u003eProject ID\u003c/th\u003e\u003cth\u003eClocked In Time\u003c/th\u003e\u003cth\u003eNotes\u003c/th\u003e\u003c/tr\u003e\u003c/thead\u003e\"\nvar endTable = \"\u003c/table\u003e\u003c/div\u003e\";\nvar msgString = this.datasource;\nvar all = JSON.parse(msgString);\nvar tableBody = \"\";\nfor (var i = 0; i \u003c all.length; i ++) {\n    var cur = all[i];\n    tableBody = tableBody.concat(\"\u003ctr\u003e\u003ctd\u003e\" + cur.Name + \"\u003c/td\u003e\u003ctd\u003e\" + cur.Project + \"\u003c/td\u003e\u003ctd\u003e\" + cur.ProjectID + \"\u003c/td\u003e\u003ctd\u003e\" + cur.ClockedIn + \"\u003c/td\u003e\u003ctd\u003e\" + cur.Notes + \"\u003c/td\u003e\u003c/tr\u003e\");\n}\n\nreturn beginTable + tableHeader + tableBody + endTable;"
+										}
+									]
+								},
+								"type": "html"
+							},
+							{
+								"settings": {
+									"_datatype": "static",
+									"height": 1,
+									"widgetContent": "\u003ch1 style=color:green\u003e\u003ccenter\u003eEmployees Trying To Clock In\u003c/center\u003e\u003c/h1\u003e"
+								},
+								"type": "html"
+							},
+							{
+								"settings": {
+									"_datatype": "dynamic",
+									"height": 4,
+									"widgetContent": [
+                                {
+                                    "dsName": "Somebody is trying to clock in",
+                                    "incoming_parser": "// default - return the value for the datasource \nconsole.log(\"starting\");\n/*\n\tvar pendingUsers = [\n\t\t{\"name\":\"Aaron\"},\n\t\t{\"name\":\"Clark\"},\n\t\t{\"name\":\"Rob\"}\n\t];\n    */\n\n\tvar openOrders = [\n\t\t{\"id\":\"68027\",\"label\":\"Administration\"},\n\t\t{\"id\":\"87411\",\"label\":\"W2 Clean\"}\n\t];\n\n\tvar createCombo = function(index) {\n\t\tvar select = document.createElement('select');\n\t\tselect.id = \"select\"+index;\n\t\tfor (var i=0; i \u003c openOrders.length; i ++){\n\t\t\tvar option = document.createElement( 'option' );\n\n\t        option.value = openOrders[i].id;\n\t        option.textContent = openOrders[i].id + \"  -  \"+openOrders[i].label;\n\n\t        select.appendChild( option );\n\t\t}\n\t\treturn select;\n\t\t\n\t}\n\n\tvar buttonClickString = \"var buttonClick =  function(index){\" +\n        \"console.log('hello:'+index); \"+\n       \"datasources['finishClockIn'].sendData({'taskId':5, 'projectId':5});\"+\n\t   \"var selectedInx = document.getElementById(\\\"selectkey\\\"+index); \"+\n        \"console.log(JSON.stringify(selectedInx));\"+ \n    // \"\t\talert(\\\"you have picked job: \\\"+openOrders[selectedInx].id); };\";\n    \"};\";\n\tvar createButton = function(index) {\n\t\t// var button = document.createElement('button');\n\t\t// button.onClick = buttonClick;\n\t\tbutton = document.createElement('input');\n        button.type = 'button';\n        button.value = \"Start\";//buttonsToCreate[i];\n        button.id = \"button_\"+index;//buttonsToCreate[i];\n        button.setAttribute(\"selectkey\",\"select\"+index);\n        button.setAttribute(\"onclick\",\"buttonClick(\"+index+\")\");\n        //button.onclick = function(){\n       //     // alert(\"i happened at \"+this.id);\n       //     var selectedInx = document.getElementById(this.getAttribute(\"selectkey\")).selectedIndex;\n        //    alert(\"you have picked job: \"+openOrders[selectedInx].id);\n        //};\n\t\treturn button;\n\t};\n\tvar renderTable= function(that){\n     \n        var divy = document.createElement(\"div\");\n        var tbl     = document.createElement(\"table\");\n        tbl.style.width = \"100%\";\n        var tblBody = document.createElement(\"tbody\");\n        console.log(\"FFF\");\n\t\tvar hrow = tblBody.insertRow(0);\n        hrow.style.color = \"yellow\";\n        hrow.style.fontSize = \"150%\";\n        var hCell1 = document.createElement(\"th\");\n        var hCell2 = document.createElement(\"th\");\n        var hCell3 = document.createElement(\"th\");\n        var hCell4 = document.createElement(\"th\");\n        var hCell5 = document.createElement(\"th\");\n        var hCell6 = document.createElement(\"th\");\n        var hCell7 = document.createElement(\"th\");\n       \n        \n        //var hCell1 = row.insertHeader(0);\n        //var hCell2 = row.insertHeader(1);\n        //var hCell3 = row.insertHeader(2);\n        \n        hCell1.innerHTML = \"Name\";\n        hCell2.innerHTML = \"Task\";\n        hCell3.innerHTML = \"Clock In Began\";\n        hCell4.innerHTML = \"Edge Name\";\n        hCell5.innerHTML = \"Tag ID\";\n        hCell6.innerHTML = \"Project\";\n        hCell7.innerHTML = \"Clock In\";\n        hrow.appendChild(hCell1);\n        hrow.appendChild(hCell2);\n        hrow.appendChild(hCell3);\n            hrow.appendChild(hCell4);\n             hrow.appendChild(hCell5);\n             hrow.appendChild(hCell6);\n             hrow.appendChild(hCell7);\n            \n       \n        var msgString = that.datasource;\n        console.log(\"checking out my datasource: \"+msgString);\n        var pendingUsers = JSON.parse(msgString);\n        console.log(\"parsed the users\");\n      \n\t\tfor (var i=0; i\u003cpendingUsers.length; i++){\n            \n\t\t\t// Create an empty \u003ctr\u003e element and add it to the 1st position of the table:\n            \n\t\t\tvar row = tblBody.insertRow(i+1);\n\n\t\t\t// Insert new cells (\u003ctd\u003e elements) at the 1st and 2nd position of the \"new\" \u003ctr\u003e element:\n    \n\t\t\tvar cell1 = row.insertCell(0);\n\t\t\tvar cell2 = row.insertCell(1);\n\t\t\tvar cell3 = row.insertCell(2);\n            var cell4 = row.insertCell(3);\n          \n            var cell5 = row.insertCell(4);\n            var cell6 = row.insertCell(5);\n            var cell7 = row.insertCell(6);\n   \n\t\t\t// Add some text to the new cells:\n            \n\t\t\tcell1.innerHTML = pendingUsers[i].Name;\n            \t\t\tcell2.innerHTML = pendingUsers[i].Task;\n            \t\t\tcell3.innerHTML = pendingUsers[i].ClockInStarted;\n            \t\t\tcell4.innerHTML = pendingUsers[i].Edge;\n            \t\t\tcell5.innerHTML = pendingUsers[i].TagID;\n            \n\t\t\tcell6.appendChild( createCombo(i) );\n\t\t\tcell7.appendChild(createButton(i) );\n          \n\t\t}\n        \n        tbl.appendChild(tblBody);\n        divy.appendChild(tbl);\n        \n        var clickScript = document.createElement(\"script\");\n        clickScript.text = buttonClickString;\n        divy.appendChild(clickScript);\n        return divy;\n\t}\n    console.log(\"gonna try it now: \"+ JSON.stringify(datasources));\n\nvar temp = renderTable(this);\nconsole.log(\"I rendered the table: \"+temp.innerHTML);\nreturn temp.innerHTML;    \n//var beginTable = \"\u003cdiv style=\\\"height:200px;width:100%;overflow:scroll\\\"\u003e\u003ctable style=\\\"width:100%\\\"\u003e\";\n//var tableHeader = \"\u003cthead\u003e\u003ctr style=\\\"font-size:150%;color:yellow;font-family:helvetica\\\"\u003e\u003cth\u003eEmployee Name\u003c/th\u003e\u003cth\u003eTask\u003c/th\u003e\u003cth\u003eClock In Began\u003c/th\u003e\u003cth\u003eEdge Name\u003c/th\u003e\u003cth\u003eTag ID\u003c/th\u003e\u003cth\u003eProject\u003c/th\u003e\u003cth\u003eClock In\u003c/th\u003e\u003c/tr\u003e\u003c/thead\u003e\"\n//var endTable = \"\u003c/table\u003e\u003c/div\u003e\";\n//var msgString = this.datasource;\n//var all = JSON.parse(msgString);\n//var tableBody = \"\";\n//for (var i = 0; i \u003c all.length; i ++) {\n//    var cur = all[i];\n//    tableBody = tableBody.concat(\"\u003ctr\u003e\u003ctd\u003e\" + cur.Name + \"\u003c/td\u003e\u003ctd\u003e\" + cur.Task + \"\u003c/td\u003e\u003ctd\u003e\" + cur.ClockInStarted + \"\u003c/td\u003e\u003ctd\u003e\" + cur.Edge + \"\u003c/td\u003e\u003ctd\u003e\" + cur.TagID + \"\u003c/td\u003e\u003ctd\u003e\u003c/td\u003e\u003ctd\u003e\u003c/td\u003e\u003c/tr\u003e\");\n//}\n\n//return beginTable + tableHeader + tableBody + endTable;"
+                                        },
+                                        {
+                                            "dsName": "finishClockIn",
+                                            "incoming_parser": "// default - return the value for the datasource \nreturn this.datasource;"
+                                        }
+                                    ]
+                                },
+                                "type": "html"
+                            }
+                        ],
+                        "width": 1
+                    }
+                ],
+                "plugins": [],
+                "style": "{\"portal\":{\"background\":\"#1F3845\",\"fontFamily\":\"\\\"Lucida Sans Unicode\\\", \\\"Lucida Grande\\\", sans-serif\"},\"panes\":{\"backgroundColor\":\"#2a2a2a\",\"border\":\"thin solid #2a2a2a\",\"headingHeight\":\"30px\",\"primaryHeadingBackgroundColor\":\"rgba(110,6,33,1)\",\"primaryHeadingFontSize\":\"24px\",\"primaryHeadingTextColor\":\"#FFFFFF\",\"secondaryHeadingBackgroundColor\":\"#263238\",\"secondaryHeadingFontSize\":\"16px\",\"secondaryHeadingTextColor\":\"#FFFFFF\"},\"widgets\":{\"background\":\"transparent\",\"bodyFontSize\":\"18px\",\"bodyTextColor\":\"rgba(250,50,1,1)\",\"border\":\"thin solid\",\"headingFontSize\":\"24px\",\"headingFontWeight\":\"400\",\"headingTextColor\":\"rgba(187,10,56,1)\"},\"forms\":{\"numberInputBackgroundColor\":\"#272727\",\"numberInputTextColor\":\"#d3d4d4\",\"textInputBackgroundColor\":\"#272727\",\"textInputTextColor\":\"#d3d4d4\"}}",
+                "version": 1
+            },
+            "description": "Displays currently clocked in employees as well as employees going through the clock in process.",
+            "name": "Clocked In"
         }
     ],
     "devices": [
+        {
+            "name": "Metrologic Barcode Reader",
+            "type": "Barcode Reader",
+            "state": "Where dem barcodes?",
+            "description": "Barcode reading for clocking in and clocking out",
+            "enabled": true,
+            "allow_key_auth": true,
+            "allow_certificate_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "roles": ["User Table Updater"]
+        },
         {
             "name": "NFC Reader 1",
             "type": "Tag Reader",

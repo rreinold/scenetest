@@ -84,6 +84,7 @@ func init() {
 	scriptVars["timers"] = map[string]interface{}{}
 	scriptVars["devices"] = map[string]interface{}{}
 	scriptVars["edges"] = map[string]interface{}{}
+	scriptVars["portals"] = map[string]interface{}{}
 	scriptVars["systems"] = map[string]interface{}{}
 }
 

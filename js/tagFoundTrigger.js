@@ -17,10 +17,10 @@ var getUserCallback = function(err, getResults) {
 };
 
 function tagFoundTrigger(req, resp) {
-    logStdErr("In Tag Found Trigger: " + req.params.body )
+    logStdErr("In Tag Found Trigger: " + req.params.body );
     ClearBlade.init({request:req});
 
-    if (ClearBlade.isEdge() == false) {
+    if (ClearBlade.isEdge() === false) {
         resp.success("Ignoring, I'm not an edge");
     }
     var edgeName = ClearBlade.edgeId();
@@ -28,8 +28,8 @@ function tagFoundTrigger(req, resp) {
     var body = JSON.parse(req.params.body);
 
     var q = ClearBlade.Query();
-    q.equalTo("tag_id", body["tagId"]);
-    gTagId = body["tagId"];
+    q.equalTo("tag_id", body.tagId);
+    gTagId = body.tagId;
 
     ClearBlade.User().allUsers(q, getUserCallback);
     logStdErr("GONNA DO RESP.SUCCESS NOW");

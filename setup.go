@@ -1,12 +1,11 @@
 package main
 
 import (
-	//"encoding/json"
+	"encoding/json"
 	"fmt"
 	cb "github.com/clearblade/Go-SDK"
 	"os"
 	"strings"
-	//"time"
 )
 
 type AddRoleFunc func(string, string, []interface{})
@@ -33,6 +32,7 @@ func init() {
 	setupState["developers"] = []string{}
 	setupState["devices"] = []string{}
 	setupState["edges"] = []string{}
+	setupState["portals"] = []string{}
 	setupState["systems"] = []string{}
 }
 
@@ -136,6 +136,12 @@ func setupSystem(system map[string]interface{}) {
 		setupDevices(devices.([]interface{}))
 	} else {
 		warn("No devices found")
+	}
+
+	if portals, ok := system["portals"]; ok {
+		setupPortals(portals.([]interface{}))
+	} else {
+		warn("No portals found")
 	}
 
 	if edges, ok := system["edges"]; ok {
@@ -431,6 +437,7 @@ func setupConnectCollection(col map[string]interface{}) {
 		fatal("scenetest currently only supports MySQL databases for connect collections\n")
 	}
 	// XXXSWM -- Fix this here and rework the go sdk. This is silly.
+	fmt.Printf("CONNECT COLLECTION CONFIG IS %+v\n", config)
 	my := &cb.MySqlConfig{
 		Name:      config["name"].(string),
 		User:      config["user"].(string),
@@ -509,6 +516,20 @@ func setupCodeServiceRoles(svc map[string]interface{}) {
 		err := adminClient.AddServiceToRole(sysKey, svc["name"].(string), roleId.(string), int(level.(float64)))
 		if err != nil {
 			fatal(fmt.Sprintf("Could not add collection to role: %s\n", err.Error()))
+		}
+	}
+}
+
+func setupPortalRoles(portal, portalRoles map[string]interface{}) {
+	roleDict := scriptVars["roles"].(map[string]interface{})
+	for roleName, level := range portalRoles {
+		roleId, ok := roleDict[roleName]
+		if !ok {
+			fatal(fmt.Sprintf("Unknown role: %s\n", roleName))
+		}
+		err := adminClient.AddPortalToRole(sysKey, portal["name"].(string), roleId.(string), int(level.(float64)))
+		if err != nil {
+			fatal(fmt.Sprintf("Could not add portal to role: %s\n", err.Error()))
 		}
 	}
 }
@@ -663,6 +684,37 @@ func setupDevice(device map[string]interface{}) {
 	deviceMap[deviceName] = newDevice
 	appendState("devices", deviceName)
 	myPrintf("Set up device %+v\n", newDevice)
+}
+
+func setupPortals(portals []interface{}) {
+	for _, portal := range portals {
+		setupPortal(portal.(map[string]interface{}))
+	}
+}
+
+func setupPortal(portal map[string]interface{}) {
+	portalName := portal["name"].(string)
+	config := portal["config"].(map[string]interface{})
+	configBytes, err := json.Marshal(config)
+	if err != nil {
+		fatal(fmt.Sprintf("Could not marshal portal config: %s", err))
+	}
+	var portalRoles map[string]interface{}
+	portalRoles, _ = portal["roles"].(map[string]interface{})
+	delete(portal, "roles")
+
+	portal["config"] = string(configBytes)
+	newPortal, err := adminClient.CreateDashboard(sysKey, portalName, portal)
+	if err != nil {
+		fatal(fmt.Sprintf("Could not create portal: %s\n", err.Error()))
+	}
+	if portalRoles != nil {
+		setupPortalRoles(portal, portalRoles)
+	}
+	portalMap := scriptVars["portals"].(map[string]interface{})
+	portalMap[portalName] = newPortal
+	appendState("portals", portalName)
+	myPrintf("Set up portal %+v\n", portalName)
 }
 
 func setupEdges(edges []interface{}) {
