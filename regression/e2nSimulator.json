@@ -18,7 +18,7 @@
     "TheHammer": [
         ["connectEdge", "Cutting Edge", "foo@bar.com"],
         ["set", "i", 0],
-        ["sync", "Wait for subscriber", ["+", "@NumberOfHammers", 1]],
+        ["syncAll", "Wait for subscriber"],
         ["repeat", "@Iterations", [
             ["set", "i", ["+", "@i", 1]],
             ["setElem", "payload", "state", "@i"],
@@ -30,7 +30,7 @@
     "TheNovi": [
         ["connectNovi", "swm@clearblade.com"],
         ["subscribeTriggers"],
-        ["sync", "Wait for subscriber", ["+", "@NumberOfHammers", 1]],
+        ["syncAll", "Wait for subscriber"],
         ["repeat", ["*", "@NumberOfHammers", "@Iterations"], [
             ["waitTrigger", "Device", "DeviceUpdated", 60]
             ]
