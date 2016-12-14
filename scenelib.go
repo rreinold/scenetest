@@ -61,21 +61,9 @@ func (s *syncStmt) run(ctx map[string]interface{}, args []interface{}) (interfac
 	}
 	syncKey := args[0].(string)
 	syncCount := int(args[1].(float64))
-	syncLock.Lock()
-	mySyncStuff, ok := syncMap[syncKey]
-	if !ok {
-		mySyncStuff = &SyncStuff{0, make(chan bool, syncCount)}
-		syncMap[syncKey] = mySyncStuff
+	if err := doTheSync(syncKey, syncCount); err != nil {
+		return nil, err
 	}
-	mySyncStuff.count++
-	if mySyncStuff.count >= syncCount {
-		for i := 0; i < syncCount; i++ {
-			mySyncStuff.c <- true
-		}
-		mySyncStuff.count = 0 // so we can use this sync point again in the test
-	}
-	syncLock.Unlock()
-	<-mySyncStuff.c // wait for everybody to sync up
 	return nil, nil
 }
 
@@ -89,6 +77,17 @@ func (s *syncAllStmt) run(ctx map[string]interface{}, args []interface{}) (inter
 	}
 	syncKey := args[0].(string)
 	syncCount := TotalCount
+	if err := doTheSync(syncKey, syncCount); err != nil {
+		return nil, err
+	}
+	return nil, nil
+}
+
+func (s *syncAllStmt) help() string {
+	return "[\"syncAll\", <lockName>]"
+}
+
+func doTheSync(syncKey string, syncCount int) error {
 	syncLock.Lock()
 	mySyncStuff, ok := syncMap[syncKey]
 	if !ok {
@@ -104,11 +103,7 @@ func (s *syncAllStmt) run(ctx map[string]interface{}, args []interface{}) (inter
 	}
 	syncLock.Unlock()
 	<-mySyncStuff.c // wait for everybody to sync up
-	return nil, nil
-}
-
-func (s *syncAllStmt) help() string {
-	return "[\"syncAll\", <lockName>]"
+	return nil
 }
 
 func (s *sleepStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
