@@ -31,13 +31,12 @@ const (
 )
 
 var (
-	MsgAddr      string
-	PlatformAddr string
-	ScriptFile   string
-	SetupFile    string
-	TeardownFile string
-	InfoFile     string
-	//JustParse      bool
+	MsgAddr        string
+	PlatformAddr   string
+	ScriptFile     string
+	SetupFile      string
+	TeardownFile   string
+	InfoFile       string
 	GetSomeHelp    bool
 	SceneRoot      string
 	FileSearchPath []string
@@ -48,6 +47,7 @@ var (
 	StartNovi      bool
 	StartEdges     bool
 	StartFile      string
+	TotalCount     int
 )
 
 var (
@@ -251,7 +251,7 @@ func getEdgeInfo(edgeName string) (*Edge, error) {
 	if rval, ok := edgeMap[edgeName]; ok {
 		return rval, nil
 	}
-	return nil, fmt.Errorf("Edge '%s' is unknown to scenetest", edgeName)
+	return nil, fmt.Errorf("Edge '%s' is unknown to scenetest: %+v", edgeName, edgeMap)
 }
 
 func (e *Edge) makeNiceAddrs() (string, string) {

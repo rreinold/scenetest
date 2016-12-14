@@ -1,0 +1,17 @@
+Here's what you need to do to run the scenetest device simulator.
+
+build and run a clearblade instance
+
+build scenetest -- make sure you do git pull on Go-SDK and scenetest
+
+start the clearblade instance
+
+The following is for a clearblade running on your local laptop:
+
+    scenetest setup -info Novi.json -platform-url "http://127.0.0.1:9000" -messaging-url "127.0.0.1:1883" setup/novi.json
+
+Then, do:
+
+    scenetest run -info Novi.json  regression/deviceSimulator.json
+
+Obviously, on the setup command, changes the url and ip address as necessary

@@ -104,13 +104,14 @@ func runSerial(scenarios []interface{}) {
 		//scenario := duh.(map[string]interface{})
 		for i := 0; i < count; i++ {
 			nm := fmt.Sprintf("%s(%d)", name, i+1)
-			runOneScenario(nm, scenario, nil)
+			runOneScenario(nm, scenario, nil, nil)
 		}
 	}
 }
 
 func runParallel(scenarios []interface{}) {
-	totalCount := 0
+	TotalCount = 0
+	startChan := make(chan bool)
 	doneChan := make(chan bool)
 	for _, scenarioSpec := range scenarios {
 		name, count, err := parseScenario(scenarioSpec)
@@ -122,15 +123,18 @@ func runParallel(scenarios []interface{}) {
 			fatal(fmt.Sprintf("Couldn't find script %s", name))
 		}
 		name, scenario := getNameAndSteps(name, duh)
-		//scenario := duh.(map[string]interface{})
-		totalCount += count
+		TotalCount += count
 		for i := 0; i < count; i++ {
 			nm := fmt.Sprintf("%s(%d)", name, i+1)
-			go runOneScenario(nm, scenario, doneChan)
+			go runOneScenario(nm, scenario, startChan, doneChan)
 		}
 
 	}
-	for ; totalCount > 0; totalCount-- {
+
+	for i := 0; i < TotalCount; i++ {
+		startChan <- true
+	}
+	for ; TotalCount > 0; TotalCount-- {
 		<-doneChan
 	}
 }
@@ -146,7 +150,7 @@ func putVarsInContext(context map[string]interface{}) map[string]interface{} {
 	return context
 }
 
-func runOneScenario(name string, scenario map[string]interface{}, doneChan chan<- bool) {
+func runOneScenario(name string, scenario map[string]interface{}, startChan <-chan bool, doneChan chan<- bool) {
 
 	context := map[string]interface{}{}
 	context["scenario_name"] = name
@@ -155,6 +159,15 @@ func runOneScenario(name string, scenario map[string]interface{}, doneChan chan<
 	context = putVarsInContext(context)
 
 	steps := getVar("steps", scenario, [][]interface{}{}).([]interface{})
+
+	// We wait to be notified on startChan because we want all scenarios created
+	// before any of them start. This is primarily for the ["syncall", <syncName>]
+	// command. One of the biggest mistakes I (swm) make is miscalculating the
+	// number of scenarios in a test. A common practice is to wait until all scenarios
+	// get to a certain point before proceeding.
+	if startChan != nil {
+		<-startChan
+	}
 
 	for _, step := range steps {
 		sliceStep := step.([]interface{})

@@ -58,7 +58,6 @@ func saveSetupState(originalJson map[string]interface{}) {
 		fatal(fmt.Sprintf("MarshalIndent failed: %s\n", err.Error()))
 	}
 
-	fmt.Printf("THE INFO FILE IS: %s\n", InfoFile)
 	err = ioutil.WriteFile(InfoFile, marshalled, os.ModePerm)
 	if err != nil {
 		fatal(fmt.Sprintf("Could not save setup information to '%s':%s\n", InfoFile, err.Error()))

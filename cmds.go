@@ -50,7 +50,22 @@ func (s *runCommand) Run() {
 	scriptVars = getJSON(InfoFile)
 	cb.CB_ADDR = scriptVars["platformUrl"].(string)
 	cb.CB_MSG_ADDR = scriptVars["messagingUrl"].(string)
+	if infoFileAndScriptFileDoNotMatch() {
+	}
 	executeTestScript(getJSON(ScriptFile))
+}
+
+func infoFileAndScriptFileDoNotMatch() bool {
+	/*
+		infoFileName, ok := InfoFile["Name"]
+		if !ok {
+
+		}
+		scriptName, ok := ScriptFile["setupName"]
+		if !ok {
+		}
+	*/
+	return true
 }
 
 func (s *teardownCommand) Run() {

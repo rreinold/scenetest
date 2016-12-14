@@ -1,5 +1,6 @@
 {
     "name": "Simulate Devices Sending Location Coordinates",
+    "setupName": "Device Test System",
     "scenarios": [ ["TheHammer", "@NumberOfHammers"] ],
     "sequencing": "Parallel",
 

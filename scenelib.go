@@ -26,6 +26,7 @@ type setStmt struct{}
 type setGlobalStmt struct{}
 type assertStmt struct{}
 type syncStmt struct{}
+type syncAllStmt struct{}
 type failStmt struct{}
 type ignoreStmt struct{}
 type breakStmt struct{}
@@ -42,6 +43,7 @@ func init() {
 	funcMap["fail"] = &failStmt{}
 	funcMap["ignore"] = &ignoreStmt{}
 	funcMap["sync"] = &syncStmt{}
+	funcMap["syncAll"] = &syncAllStmt{}
 	funcMap["repeat"] = &repeatStmt{}
 	funcMap["for"] = &forStmt{}
 	funcMap["break"] = &breakStmt{}
@@ -79,6 +81,34 @@ func (s *syncStmt) run(ctx map[string]interface{}, args []interface{}) (interfac
 
 func (s *syncStmt) help() string {
 	return "[\"sync\", <lockName>, count]"
+}
+
+func (s *syncAllStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	if err := argCheck(args, 1, ""); err != nil {
+		return nil, err
+	}
+	syncKey := args[0].(string)
+	syncCount := TotalCount
+	syncLock.Lock()
+	mySyncStuff, ok := syncMap[syncKey]
+	if !ok {
+		mySyncStuff = &SyncStuff{0, make(chan bool, syncCount)}
+		syncMap[syncKey] = mySyncStuff
+	}
+	mySyncStuff.count++
+	if mySyncStuff.count >= syncCount {
+		for i := 0; i < syncCount; i++ {
+			mySyncStuff.c <- true
+		}
+		mySyncStuff.count = 0 // so we can use this sync point again in the test
+	}
+	syncLock.Unlock()
+	<-mySyncStuff.c // wait for everybody to sync up
+	return nil, nil
+}
+
+func (s *syncAllStmt) help() string {
+	return "[\"syncAll\", <lockName>]"
 }
 
 func (s *sleepStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
