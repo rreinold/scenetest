@@ -48,24 +48,24 @@ func (s *runCommand) Run() {
 	mustHaveAll("info", InfoFile)
 	ScriptFile = getFileOrDie()
 	scriptVars = getJSON(InfoFile)
+	theScript := getJSON(ScriptFile)
 	cb.CB_ADDR = scriptVars["platformUrl"].(string)
 	cb.CB_MSG_ADDR = scriptVars["messagingUrl"].(string)
-	if infoFileAndScriptFileDoNotMatch() {
+	if infoFileAndScriptFileDoNotMatch(scriptVars, theScript) {
 	}
-	executeTestScript(getJSON(ScriptFile))
+	executeTestScript(theScript)
 }
 
-func infoFileAndScriptFileDoNotMatch() bool {
-	/*
-		infoFileName, ok := InfoFile["Name"]
-		if !ok {
-
-		}
-		scriptName, ok := ScriptFile["setupName"]
-		if !ok {
-		}
-	*/
-	return true
+func infoFileAndScriptFileDoNotMatch(testInfo, testScript map[string]interface{}) bool {
+	infoFileName, ok := testInfo["name"].(string)
+	if !ok {
+		fatal("info file does not have the \"name\" key/value pair")
+	}
+	scriptName, ok := testScript["systemName"].(string)
+	if !ok {
+		fatal("test script file does not have the \"systemName\" key/value pair")
+	}
+	return infoFileName == scriptName
 }
 
 func (s *teardownCommand) Run() {

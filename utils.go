@@ -52,6 +52,7 @@ func saveSetupState(originalJson map[string]interface{}) {
 	scriptVars["platformUrl"] = PlatformAddr
 	scriptVars["messagingUrl"] = MsgAddr
 	scriptVars["teardown"] = setupState
+	scriptVars["name"] = originalJson["name"].(string)
 
 	marshalled, err = json.MarshalIndent(scriptVars, "", "    ")
 	if err != nil {

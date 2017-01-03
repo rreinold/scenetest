@@ -1,12 +1,12 @@
 {
     "name": "Simulate Devices Sending Location Coordinates",
-    "setupName": "Device Test System",
+    "systemName": "Device Test System",
     "scenarios": [ ["TheHammer", "@NumberOfHammers"] ],
     "sequencing": "Parallel",
 
     "globals": {
         "NumberOfHammers": 100,
-        "SleepMilliSeconds": 100,
+        "SleepMilliSeconds": 200,
         "Iterations": 100000
     },
     "locals": {
