@@ -5,15 +5,11 @@
     "sequencing": "Parallel",
 
     "globals": {
-        "NumberOfHammers": 10,
+        "NumberOfHammers": 1,
         "SleepMilliSeconds": 200,
-        "Iterations": 10
+        "Iterations": 1
     },
     "locals": {
-        "payload": {
-            "deviceName": "Dorky Torque Wrench",
-            "state": 0
-        }
     },
 
     // This is the main worker.
@@ -21,11 +17,7 @@
         ["setUser", "foo@bar.com"],
         ["set", "i", 0],
         ["repeat", "@Iterations", [
-            ["set", "i", ["+", "@i", 1]],
-            ["setElem", "payload", "state", "@i"],
-            ["publish", "device/update", "@payload", 0],
-            ["publish", "device/schuckdate", "@payload", 0],
-            ["sleep", "@SleepMilliSeconds"] 
+            ["updateDevice", "Noisy Hammer", {"state": "WHOA NELLY!"}]
             ]
         ]
     ]

@@ -57,15 +57,18 @@ func (s *runCommand) Run() {
 }
 
 func infoFileAndScriptFileDoNotMatch(testInfo, testScript map[string]interface{}) bool {
-	infoFileName, ok := testInfo["name"].(string)
-	if !ok {
-		fatal("info file does not have the \"name\" key/value pair")
-	}
-	scriptName, ok := testScript["systemName"].(string)
-	if !ok {
-		fatal("test script file does not have the \"systemName\" key/value pair")
-	}
-	return infoFileName == scriptName
+	/*
+		infoFileName, ok := testInfo["name"].(string)
+		if !ok {
+			fatal("info file does not have the \"name\" key/value pair")
+		}
+		scriptName, ok := testScript["systemName"].(string)
+		if !ok {
+			fatal("test script file does not have the \"systemName\" key/value pair")
+		}
+		return infoFileName == scriptName
+	*/
+	return false
 }
 
 func (s *teardownCommand) Run() {

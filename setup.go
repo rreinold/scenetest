@@ -392,6 +392,7 @@ func setupCollection(col map[string]interface{}) {
 	if err != nil {
 		fatal(err.Error())
 	}
+	processEdgeInfo("collection", colId, col)
 	colsMap := scriptVars["collections"].(map[string]interface{})
 	colsMap[col["name"].(string)] = colId
 	appendState("collections", colId)
@@ -704,7 +705,7 @@ func setupPortal(portal map[string]interface{}) {
 	delete(portal, "roles")
 
 	portal["config"] = string(configBytes)
-	newPortal, err := adminClient.CreateDashboard(sysKey, portalName, portal)
+	newPortal, err := adminClient.CreatePortal(sysKey, portalName, portal)
 	if err != nil {
 		fatal(fmt.Sprintf("Could not create portal: %s\n", err.Error()))
 	}

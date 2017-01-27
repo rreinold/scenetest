@@ -143,7 +143,7 @@
     "collections": [
         {
             "name": "DaCollection",
-            "count": 5,
+            "deployToEdges": "all",
             "columns": {
                 "name": "string",
                 "age": "int",
@@ -170,6 +170,7 @@
         },
         {
             "name": "DuhCollection",
+            "deployToEdges": "all",
             "columns": {
                 "name": "string",
                 "address": "string"
