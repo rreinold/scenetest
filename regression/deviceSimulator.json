@@ -7,7 +7,7 @@
     "globals": {
         "NumberOfHammers": 10,
         "SleepMilliSeconds": 200,
-        "Iterations": 10
+        "Iterations": 1000
     },
     "locals": {
         "payload": {
