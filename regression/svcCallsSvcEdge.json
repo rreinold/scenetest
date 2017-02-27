@@ -1,0 +1,25 @@
+{
+    "name": "Publish, cause trigger, trigger calls service (platform)",
+    "systemName": "Publish -- trigger calls service",
+    "scenarios": [ ["ThePubberCutting", 1 ], [ "ThePubberDouble", 1]  ],
+    "sequencing": "Parallel",
+
+    "globals": {
+    },
+    "locals": {
+        "payload": {
+            "description": "Hello all worlds",
+            "state": 0
+        }
+    },
+
+    // This is the main worker.
+    "ThePubberCutting": [
+        ["connectEdge", "Cutting Edge", "foo@bar.com"],
+        ["publish", "/Hello", "@payload", 0]
+    ],
+    "ThePubberDouble": [
+        ["connectEdge", "Double-Edged Sword", "foo@bar.com"],
+        ["publish", "/Hello", "@payload", 0]
+    ]
+}

@@ -1,0 +1,21 @@
+{
+    "name": "Publish, cause trigger, trigger calls service (platform)",
+    "systemName": "Publish -- trigger calls service",
+    "scenarios": [ ["ThePubber", 1 ] ],
+    "sequencing": "Parallel",
+
+    "globals": {
+    },
+    "locals": {
+        "payload": {
+            "description": "Hello all worlds",
+            "state": 0
+        }
+    },
+
+    // This is the main worker.
+    "ThePubber": [
+        ["setUser", "foo@bar.com"],
+        ["publish", "/Hello", "@payload", 0]
+    ]
+}

@@ -213,6 +213,30 @@
     ],
     "codeServices": [
         {
+            "name": "HelloClearBlade",
+            "code": "@js/HelloClearBlade.js",
+            "dependencies": "clearblade,log",
+            "parameters": [],
+            "deployToEdges": "all",
+            "roles":{
+                "a": 15,
+                "Authenticated": 15,
+                "Anonymous": 0
+            }
+        },
+        {
+            "name": "HelloClearBladeTriggerHandler",
+            "code": "@js/HelloClearBladeTriggerHandler.js",
+            "dependencies": "clearblade,log",
+            "parameters": [],
+            "deployToEdges": "all",
+            "roles":{
+                "a": 15,
+                "Authenticated": 15,
+                "Anonymous": 0
+            }
+        },
+        {
             "name": "msgHistoryTimer",
             "code": "@js/msgHistoryTimer.js",
             "dependencies": "clearblade,log",
@@ -429,6 +453,14 @@
         }
     ],
     "triggers": [
+        {
+            "name": "HelloClearBladeTrigger",
+            "service_name":"HelloClearBladeTriggerHandler",
+            "def_module": "Messaging",
+            "def_name": "Publish",
+            "deployToEdges": "all",
+            "key_value_pairs": {"topic": "/Hello"}
+        },
         {
             "name": "RealDeviceUpdateHandler",
             "service_name":"realUpdateDeviceTrigger",
