@@ -42,13 +42,10 @@ func (s *setUserStmt) run(ctx map[string]interface{}, args []interface{}) (inter
 	}
 
 	// Now, might as well set up mqtt
-	if err := userClient.InitializeMQTT("", "", 60); err != nil {
+	if err := userClient.InitializeMQTT("", "", 60, nil, nil); err != nil {
 		return nil, err
 	}
 	fmt.Printf("mqtt CLIENT: %+v\n", userClient.MQTTClient)
-	if err := userClient.ConnectMQTT(nil, nil); err != nil {
-		return nil, err
-	}
 
 	ctx["userClient"] = userClient
 	if err := userClient.Publish("/who/am/i", []byte(fmt.Sprintf("%p", userClient.MQTTClient)), 2); err != nil {
@@ -112,10 +109,7 @@ func (s *setUserEdgeStmt) run(ctx map[string]interface{}, args []interface{}) (i
 	ctx["adminClient"] = authDevWithAddrs(h, m)
 
 	// Now, might as well set up mqtt
-	if err := userClient.InitializeMQTT("", "", 60); err != nil {
-		return nil, err
-	}
-	if err := userClient.ConnectMQTT(nil, nil); err != nil {
+	if err := userClient.InitializeMQTT("", "", 60, nil, nil); err != nil {
 		return nil, err
 	}
 

@@ -110,10 +110,7 @@ func reconnPublish(context map[string]interface{}, topic string, body []byte, qo
 
 func reinitMQTT(uc cb.Client) error {
 	uc.SetMqttClient(nil)
-	if err := uc.InitializeMQTT("", "", 60); err != nil {
-		return err
-	}
-	if err := uc.ConnectMQTT(nil, nil); err != nil {
+	if err := uc.InitializeMQTT("", "", 60, nil, nil); err != nil {
 		return err
 	}
 	return nil

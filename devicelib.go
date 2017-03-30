@@ -96,10 +96,7 @@ func (dcn *deviceConnectNovi) run(ctx map[string]interface{}, args []interface{}
 		return nil, err
 	}
 
-	if err := deviceClient.InitializeMQTT("", "", 60); err != nil {
-		return nil, err
-	}
-	if err := deviceClient.ConnectMQTT(nil, nil); err != nil {
+	if err := deviceClient.InitializeMQTT("", "", 60, nil, nil); err != nil {
 		return nil, err
 	}
 	if err := deviceClient.Publish("/who/am/i", []byte(fmt.Sprintf("%p", deviceClient.MQTTClient)), 2); err != nil {

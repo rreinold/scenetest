@@ -1,0 +1,10 @@
+{
+    "name": "Simple Querying",
+    "scenarios": [["scenario1", 1] ],
+    "sequencing": "Parallel",
+    "scenario1": [
+        ["setUser", "foo@bar.com"],
+        ["query", "DaCollection", [], [], [], 1, 5],
+        ["print", "@returnValue"]
+    ]
+}
