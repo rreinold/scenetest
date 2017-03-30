@@ -202,7 +202,7 @@ func (a *allCollectionsStmt) help() string {
 //			-- gets all rows where id eq xyz
 
 func (q *queryStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
-	if err := argCheck(args, 1, "", []interface{}{}, []interface{}{}, []interface{}{}, 1, 1); err != nil {
+	if err := argCheck(args, 1, "", []interface{}{}, []interface{}{}, []interface{}{}, float64(1), float64(1)); err != nil {
 		return nil, fmt.Errorf("query: Bad argument(s): %s", err.Error())
 	}
 	myQuery := cb.Query{}

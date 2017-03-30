@@ -5,9 +5,9 @@
     "sequencing": "Parallel",
 
     "globals": {
-        "NumberOfHammers": 1,
+        "NumberOfHammers": 10,
         "SleepMilliSeconds": 200,
-        "Iterations": 1
+        "Iterations": 100
     },
     "locals": {
     },

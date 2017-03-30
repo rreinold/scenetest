@@ -51,6 +51,12 @@ func (s *runCommand) Run() {
 	theScript := getJSON(ScriptFile)
 	cb.CB_ADDR = scriptVars["platformUrl"].(string)
 	cb.CB_MSG_ADDR = scriptVars["messagingUrl"].(string)
+	if PlatformAddr != "" {
+		cb.CB_ADDR = PlatformAddr
+	}
+	if MsgAddr != "" {
+		cb.CB_MSG_ADDR = MsgAddr
+	}
 	if infoFileAndScriptFileDoNotMatch(scriptVars, theScript) {
 	}
 	executeTestScript(theScript)
