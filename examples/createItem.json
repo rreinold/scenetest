@@ -4,14 +4,9 @@
     "sequencing": "Parallel",
     "Just do stuff": [
         ["setUser", "foo@bar.com"],
-        ["repeat", 50,
+        ["repeat", 2000000,
             [
-                ["createItem", "YaddaYadda", {"yickety": "blabber", "yak": "blubber"}],
-                ["set", "newItemId", "@returnValue"],
-                ["query", "YaddaYadda", [], [[["yickety", "=", "blabber"]]]],
-                ["deleteItem", "YaddaYadda", "@newItemId"],
-                ["call", "HorribleService", {}],
-                ["query", "YaddaYadda", [], [[["yak", "=", "blubber"]]]]
+                ["createItem", "YaddaYadda", {"yickety": "blabber", "yak": "blubber"}]
             ]
         ]
     ]

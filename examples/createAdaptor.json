@@ -1,0 +1,9 @@
+{
+    "name": "Create and Delete Items",
+    "scenarios": [ ["Create an adaptor", 1] ],
+    "sequencing": "Parallel",
+    "Just do stuff": [
+        ["setUser", "foo@bar.com"],
+        ["createAdaptor", "mySuperAdaptor", {"description": "fuzzle muzzle", "protocol": "greek"}]
+    ]
+}

@@ -45,7 +45,6 @@ func (s *setUserStmt) run(ctx map[string]interface{}, args []interface{}) (inter
 	if err := userClient.InitializeMQTT("", "", 60, nil, nil); err != nil {
 		return nil, err
 	}
-	fmt.Printf("mqtt CLIENT: %+v\n", userClient.MQTTClient)
 
 	ctx["userClient"] = userClient
 	if err := userClient.Publish("/who/am/i", []byte(fmt.Sprintf("%p", userClient.MQTTClient)), 2); err != nil {
