@@ -27,7 +27,7 @@ func getVarOrFile(from map[string]interface{}, key string) string {
 	return val
 }
 
-func readFileFromEnvironment(filename string) (string, error) {
+func readFileFromEnvironment(filename string) ([]byte, error) {
 	filename = strings.TrimPrefix(filename, "@")
 	thisSearchPath := []string{""}
 	if !strings.HasPrefix(filename, "/") {
@@ -35,10 +35,10 @@ func readFileFromEnvironment(filename string) (string, error) {
 	}
 	for _, prefix := range thisSearchPath {
 		if bytes, err := ioutil.ReadFile(prefix + filename); err == nil {
-			return string(bytes), nil
+			return bytes, nil
 		}
 	}
-	return "", fmt.Errorf("File '%s' not found in environment", filename)
+	return nil, fmt.Errorf("File '%s' not found in environment", filename)
 }
 
 func saveSetupState(originalJson map[string]interface{}) {
@@ -90,7 +90,6 @@ func valueOf(context map[string]interface{}, thing interface{}) interface{} {
 		res, err := runOneStep(context, stmt)
 		if err != nil {
 			return err
-			//fatal(fmt.Sprintf("Substatement execution failed: %s", err.Error()))
 		}
 		thing = res
 	}
@@ -111,11 +110,12 @@ func valueOf(context map[string]interface{}, thing interface{}) interface{} {
 			}
 
 			//  Var doesn't exist -- see if there's a file to read from...
-			if contents, err := readFileFromEnvironment(varName); err == nil {
+			if contents, err := readFileFromEnvironment(varName); err != nil {
+				myPrintf("DEAD __ CONTEXT: %+v\n", context)
+				fatal(fmt.Sprintf("Undefined variable: %s", varName))
+			} else {
 				return contents
 			}
-			myPrintf("DEAD __ CONTEXT: %+v\n", context)
-			fatal(fmt.Sprintf("Undefined variable: %s", varName))
 		}
 	}
 	return thing

@@ -2,8 +2,8 @@
     "name": "Create and Delete Items",
     "scenarios": [ ["Create an adaptor", 1] ],
     "sequencing": "Parallel",
-    "Just do stuff": [
-        ["setUser", "foo@bar.com"],
+    "Create an adaptor": [
+        ["ignore", ["deleteAdaptor", "mySuperAdaptor"]],
         ["createAdaptor", "mySuperAdaptor", {"description": "fuzzle muzzle", "protocol": "greek"}]
     ]
 }

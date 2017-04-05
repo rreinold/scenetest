@@ -1,0 +1,18 @@
+{
+    "name": "Create and Delete Items",
+    "scenarios": [ ["Create an adaptor", 1] ],
+    "sequencing": "Parallel",
+    "locals": {
+        "adaptorMeta": {
+            "architecture": "Art Deco",
+            "os": "wizard of...",
+            "path_name": "hello_world"
+        }
+    },
+    "Create an adaptor": [
+        ["ignore", ["deleteAdaptorFile", "mySuperAdaptor", "SooperFile"]],
+        ["ignore", ["deleteAdaptor", "mySuperAdaptor"]],
+        ["createAdaptor", "mySuperAdaptor", {"description": "fuzzle muzzle", "protocol": "greek"}],
+        ["createAdaptorFile", "mySuperAdaptor", "SooperFile", "@hello_world", "@adaptorMeta"]
+    ]
+}
