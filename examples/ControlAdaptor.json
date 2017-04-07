@@ -6,8 +6,8 @@
         "adaptorMeta": {
             "architecture": "Art Deco",
             "os": "wizard of...",
-            "path_name": "hello_world.tar",
-            "deploy_command": "tar xvf hello_world.tar",
+            "path_name": "hw.tar.gz",
+            "deploy_command": "tar zxvf hw.tar.gz",
             "start_command": "foo.sh",
             "stop_command": "foo.sh"
         },
@@ -25,7 +25,7 @@
         ["ignore", ["deleteAdaptorFile", "mySuperAdaptor", "SooperFile"]],
         ["ignore", ["deleteAdaptor", "mySuperAdaptor"]],
         ["createAdaptor", "mySuperAdaptor", {"description": "fuzzle muzzle", "protocol": "greek"}],
-        ["createAdaptorFile", "mySuperAdaptor", "SooperFile", "@hello_world.tar", "@adaptorMeta"],
+        ["createAdaptorFile", "mySuperAdaptor", "SooperFile", "@hw.tar.gz", "@adaptorMeta"],
         ["deployAdaptor", "mySuperAdaptor", "@deploySpec"],
         ["controlAdaptor", "mySuperAdaptor", "@controlSpec"]
     ]

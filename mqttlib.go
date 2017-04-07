@@ -90,7 +90,7 @@ func (p *publishStmt) help() string {
 const Retries = 3
 
 func reconnPublish(context map[string]interface{}, topic string, body []byte, qos int) error {
-	userClient := context["userClient"].(cb.Client)
+	userClient := context["userClient"].(*cb.UserClient)
 	for i := 0; i < Retries; i++ {
 		err := userClient.Publish(topic, body, qos)
 		if err == nil {
@@ -108,7 +108,7 @@ func reconnPublish(context map[string]interface{}, topic string, body []byte, qo
 	return fmt.Errorf("Publish failed: Could not reconnect to mqtt")
 }
 
-func reinitMQTT(uc cb.Client) error {
+func reinitMQTT(uc *cb.UserClient) error {
 	uc.SetMqttClient(nil)
 	if err := uc.InitializeMQTT("", "", 60, nil, nil); err != nil {
 		return err
