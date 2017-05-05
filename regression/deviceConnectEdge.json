@@ -1,0 +1,21 @@
+{
+    "name": "Test a device/edge connection",
+    "scenarios": [ 
+        ["Connect", 1],
+        ["Waiter", 1]
+    ],
+    "sequencing": "Parallel",
+
+    "Connect": [
+        ["deviceConnectEdge", "Cutting Edge", "Noisy Hammer"],
+        ["syncAll", "Subscribed"],
+        ["updateDevice", "Noisy Hammer", {"state": "I Updated Myself!"}]
+    ],
+
+    "Waiter": [
+        ["setUser", "foo@bar.com"],
+        ["subscribeTriggers"],
+        ["syncAll", "Subscribed"],
+        ["waitTrigger", "Device", "DeviceUpdated", 60]
+    ]
+}

@@ -1,0 +1,37 @@
+{
+    "name": "Simulate Devices Sending Location Coordinates",
+    "systemName": "Device Test System",
+    "scenarios": [ ["TheHammer", "@NumberOfHammers"] ],
+    "sequencing": "Parallel",
+
+    "globals": {
+        "NumberOfHammers": 10,
+        "SleepMilliSeconds": 10,
+        "Iterations": 500000
+    },
+    "locals": {
+        "payload": {
+            "deviceName": "Dorky Torque Wrench",
+            "state": 0
+        }
+    },
+
+    // This is the main worker.
+    "TheHammer": [
+        ["setUser", "foo@bar.com"],
+        ["set", "i", 0],
+        ["repeat", "@Iterations", [
+            ["set", "i", ["+", "@i", 1]],
+            ["setElem", "payload", "state", "@i"],
+            ["publish", "device/justkidding", "@payload", 0],
+            ["publish", "device/schuckdate", "@payload", 0],
+            ["publish", "fred/flintstone", "@payload", 0],
+            ["publish", "wilma/flintstone", "@payload", 0],
+            ["publish", "message/history", "@payload", 0],
+            ["publish", "rob/history", "@payload", 0],
+            ["publish", "terry/history", "@payload", 0],
+            ["sleep", "@SleepMilliSeconds"] 
+            ]
+        ]
+    ]
+}

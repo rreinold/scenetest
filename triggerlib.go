@@ -100,7 +100,7 @@ func (st *subscribeTriggers) run(ctx map[string]interface{}, args []interface{})
 		return nil, fmt.Errorf("subscribeTriggers takes no arguments")
 	}
 	userClient := ctx["userClient"].(*cb.UserClient)
-	triggerChan, err := userClient.Subscribe("/clearblade/internal/trigger", 0)
+	triggerChan, err := userClient.Subscribe("clearblade/internal/trigger", 0)
 	if err != nil {
 		return nil, err
 	}
@@ -140,7 +140,7 @@ func (wt *waitTrigger) run(ctx map[string]interface{}, args []interface{}) (inte
 		}
 
 		if validateTrigger(eClass, eType, realStuff) {
-			return nil, nil
+			return realStuff, nil
 		}
 	}
 }

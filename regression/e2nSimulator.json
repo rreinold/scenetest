@@ -1,12 +1,16 @@
 {
     "name": "Simulate Devices Sending Location Coordinates",
-    "scenarios": [ ["TheHammer", "@NumberOfHammers"], ["TheNovi", 1] ],
+    "scenarios": [ 
+        ["CuttingEdge", "@NumberOfInstances"],
+        ["DoubleEdged", "@NumberOfInstances"],
+        ["TheNovi", 1]
+    ],
     "sequencing": "Parallel",
 
     "globals": {
-        "NumberOfHammers": 10,
+        "NumberOfInstances": 10,
         "SleepMilliSeconds": 250,
-        "Iterations": 100
+        "Iterations": 1000
     },
     "locals": {
         "payload": {
@@ -15,8 +19,21 @@
         }
     },
 
-    "TheHammer": [
+    "CuttingEdge": [
         ["connectEdge", "Cutting Edge", "foo@bar.com"],
+        ["set", "i", 0],
+        ["syncAll", "Wait for subscriber"],
+        ["repeat", "@Iterations", [
+            ["set", "i", ["+", "@i", 1]],
+            ["setElem", "payload", "state", "@i"],
+            ["publish", "device/update", "@payload", 0],
+            ["sleep", "@SleepMilliSeconds"] 
+            ]
+        ]
+    ],
+
+    "DoubleEdged": [
+        ["connectEdge", "Double-Edged Sword", "foo@bar.com"],
         ["set", "i", 0],
         ["syncAll", "Wait for subscriber"],
         ["repeat", "@Iterations", [
@@ -31,7 +48,7 @@
         ["connectNovi", "swm@clearblade.com"],
         ["subscribeTriggers"],
         ["syncAll", "Wait for subscriber"],
-        ["repeat", ["*", "@NumberOfHammers", "@Iterations"], [
+        ["repeat", ["*", ["*", "@NumberOfInstances", 2], "@Iterations"], [
             ["waitTrigger", "Device", "DeviceUpdated", 60]
             ]
         ]

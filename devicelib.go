@@ -10,6 +10,7 @@ type updateDevice struct{}
 type deleteDevice struct{}
 type getDevice struct{}
 type deviceConnectNovi struct{}
+type deviceConnectEdge struct{}
 
 func init() {
 	funcMap["createDevice"] = &createDevice{}
@@ -17,6 +18,7 @@ func init() {
 	funcMap["deleteDevice"] = &deleteDevice{}
 	funcMap["getDevice"] = &getDevice{}
 	funcMap["deviceConnectNovi"] = &deviceConnectNovi{}
+	funcMap["deviceConnectEdge"] = &deviceConnectEdge{}
 }
 
 func (gd *getDevice) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
@@ -109,6 +111,43 @@ func (dcn *deviceConnectNovi) run(ctx map[string]interface{}, args []interface{}
 	return deviceClient, nil
 }
 
+func (dce *deviceConnectEdge) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	if err := argCheck(args, 2, "", ""); err != nil {
+		return nil, err
+	}
+	edgeName := args[0].(string)
+	deviceName := args[1].(string)
+	scriptVarsLock.RLock()
+	defer scriptVarsLock.RUnlock()
+	sysKey := scriptVars["systemKey"].(string)
+	sysSec := scriptVars["systemSecret"].(string)
+	deviceInfo := scriptVars["devices"].(map[string]interface{})[deviceName].(map[string]interface{})
+	activeKey := deviceInfo["active_key"].(string)
+
+	edgeInfo, err := getEdgeInfo(edgeName)
+	if err != nil {
+		return nil, err
+	}
+	h, m := edgeInfo.makeNiceAddrs()
+
+	deviceClient := cb.NewDeviceClientWithAddrs(h, m, sysKey, sysSec, deviceName, activeKey)
+	if _, err := deviceClient.AuthenticateDeviceWithKey(sysKey, deviceName, activeKey); err != nil {
+		return nil, err
+	}
+
+	if err := deviceClient.InitializeMQTT("", "", 60, nil, nil); err != nil {
+		return nil, err
+	}
+	if err := deviceClient.Publish("/who/am/i", []byte(fmt.Sprintf("%p", deviceClient.MQTTClient)), 2); err != nil {
+		return nil, err
+	}
+
+	ctx["deviceClient"] = deviceClient
+	ctx["userClient"] = deviceClient // keeps existing code that uses userClient working
+	ctx["deviceName"] = deviceName
+	return deviceClient, nil
+}
+
 func (gd *getDevice) help() string {
 	return "[\"getDevice\", \"deviceName\"]"
 }
@@ -127,4 +166,8 @@ func (ct *deleteDevice) help() string {
 
 func (ct *deviceConnectNovi) help() string {
 	return "[\"deviceConnectNovi\", \"deviceName\"]"
+}
+
+func (ct *deviceConnectEdge) help() string {
+	return "[\"deviceConnectEdge\", \"edgeName\", \"deviceName\"]"
 }

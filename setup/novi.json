@@ -47,6 +47,7 @@
 
     ],
     "users": [
+        /*
         {
             "email": "swm@w2macfab.com",
             "password": "IAmFoo",
@@ -103,6 +104,7 @@
             "job": "None",
             "roles": ["a", "b", "c"]
         },
+        */
 
         {
             "email": "foo@bar.com",
@@ -212,6 +214,18 @@
         }
     ],
     "codeServices": [
+        {
+            "name": "JustUpdateDevice",
+            "code": "@js/justUpdateDevice.js",
+            "dependencies": "clearblade,log",
+            "parameters": [],
+            "deployToEdges": "all",
+            "roles":{
+                "a": 15,
+                "Authenticated": 15,
+                "Anonymous": 0
+            }
+        },
         {
             "name": "HelloClearBlade",
             "code": "@js/HelloClearBlade.js",
@@ -556,7 +570,7 @@
             "description": "Does something",
             "start_time": "Now",
             "repeats": 1,
-            "frequency": 1,
+            "frequency": 20,
             "service_name":"example"
         }
     ],
@@ -742,6 +756,19 @@
             "allow_certificate_auth": false,
             "certificate": "I do not have one",
             "torque": 0,
+            "roles": ["a", "e"]
+        },
+        {
+            "name": "DoneDevice",
+            "type": "Done",
+            "state": "Not Done",
+            "description": "This is a dummmy device for specific scenetests",
+            "enabled": true,
+            "allow_key_auth": true,
+            "active_key": "I Be Active",
+            "keys": "I Be Active:I Am Not Active",
+            "allow_certificate_auth": false,
+            "certificate": "I do not have one",
             "roles": ["a", "e"]
         }
     ]

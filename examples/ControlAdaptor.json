@@ -1,32 +1,53 @@
 {
-    "name": "Create and Delete Items",
-    "scenarios": [ ["Create an adaptor", 1] ],
+    "name": "Mess with adaptors",
+    "scenarios": [ ["Do adaptor stuff", 1] ],
     "sequencing": "Parallel",
     "locals": {
         "adaptorMeta": {
             "architecture": "Art Deco",
             "os": "wizard of...",
-            "path_name": "hw.tar.gz",
             "deploy_command": "tar zxvf hw.tar.gz",
+            "undeploy_command": "rm foo.sh hello_world hw.tar.gz hw.out",
             "start_command": "foo.sh",
-            "stop_command": "foo.sh"
+            "stop_command": "foo.sh",
+            "status_command": "cat hw.out",
+            "logs_command": "ls -l"
+        },
+        "zipFileMeta": {
+            "path_name": "hw.tar.gz"
         },
         "deploySpec": {
-            "SooperFile": ["Cutting Edge", "Double-Edged Sword"]
+            "edges": [ ]
         },
-        "controlSpec": {
-            "SooperFile": {
-                "edgeSpec": ["Cutting Edge", "Double-Edged Sword"],
-                "command": "start"
-            }
+        "startSpec": {
+            "edges": ["Cutting Edge", "Double-Edged Sword"],
+            "command": "start"
+        },
+        "statusSpec": {
+            "edges": ["Cutting Edge", "Double-Edged Sword"],
+            "command": "status"
+        },
+        "undeploySpec": {
+            "edges": [],
+            "command": "undeploy"
         }
     },
-    "Create an adaptor": [
-        ["ignore", ["deleteAdaptorFile", "mySuperAdaptor", "SooperFile"]],
+    "Do adaptor stuff": [
+        ["ignore", ["deleteAdaptorFile", "mySuperAdaptor", "ZipFile"]],
         ["ignore", ["deleteAdaptor", "mySuperAdaptor"]],
-        ["createAdaptor", "mySuperAdaptor", {"description": "fuzzle muzzle", "protocol": "greek"}],
-        ["createAdaptorFile", "mySuperAdaptor", "SooperFile", "@hw.tar.gz", "@adaptorMeta"],
+        ["createAdaptor", "mySuperAdaptor", "@adaptorMeta"],
+        ["print", "@returnValue"],
+        ["createAdaptorFile", "mySuperAdaptor", "ZipFile", "@hw.tar.gz", "@zipFileMeta"],
+        ["print", "@returnValue"],
         ["deployAdaptor", "mySuperAdaptor", "@deploySpec"],
-        ["controlAdaptor", "mySuperAdaptor", "@controlSpec"]
+        ["print", "@returnValue"],
+        ["controlAdaptor", "mySuperAdaptor", "@startSpec"],
+        ["print", "@returnValue"],
+        ["controlAdaptor", "mySuperAdaptor", "@statusSpec"],
+        ["print", "@returnValue"],
+        ["getAdaptorFiles", "mySuperAdaptor"],
+        ["print", "@returnValue"],
+        ["controlAdaptor", "mySuperAdaptor", "@undeploySpec"],
+        ["print", "@returnValue"]
     ]
 }

@@ -5,6 +5,7 @@ package main
 import (
 	"fmt"
 	"reflect"
+	"strconv"
 )
 
 // +, -, *, /, %
@@ -402,13 +403,18 @@ func numberTypeOrFail(arg interface{}) (float64, error) {
 		return float64(arg.(float32)), nil
 	case float64:
 		return arg.(float64), nil
+	case string: // convenience for people passing stuff like "12", or an mqtt msg that is really an int
+		i, err := strconv.Atoi(arg.(string))
+		if err != nil {
+			return 0, err
+		}
+		return float64(i), nil
 	default:
 		return 0, fmt.Errorf("Argument %+v is not a number", arg)
 	}
 }
 
 func findTheTruth(arg interface{}) bool {
-	fmt.Printf("FINDING THE TRUTH: %+v\n", arg)
 	switch arg.(type) {
 	case bool:
 		return arg.(bool)

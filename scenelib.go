@@ -16,6 +16,7 @@ type SyncStuff struct {
 var syncMap = map[string]*SyncStuff{}
 var syncLock *sync.Mutex
 
+type exitStmt struct{}
 type sleepStmt struct{}
 type repeatStmt struct{}
 type forStmt struct{}
@@ -35,6 +36,7 @@ type setElemStmt struct{}
 type concatStmt struct{}
 
 func init() {
+	funcMap["exit"] = &exitStmt{}
 	funcMap["set"] = &setStmt{}
 	funcMap["setGlobal"] = &setGlobalStmt{}
 	funcMap["print"] = &printStmt{}
@@ -513,4 +515,16 @@ func (r *concatStmt) run(ctx map[string]interface{}, args []interface{}) (interf
 
 func (r *concatStmt) help() string {
 	return "[\"concat\", \"<stringArg>\", <intArg>]"
+}
+
+func (e *exitStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	if err := argCheck(args, 1, float64(0)); err != nil {
+		return nil, err
+	}
+	exitStatus := int(args[0].(float64))
+	return exitStatus, nil
+}
+
+func (e *exitStmt) help() string {
+	return "[\"exit\", <exitStatusInt>]"
 }

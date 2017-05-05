@@ -3,17 +3,36 @@ function msgHistoryTimer(req, resp) {
     ClearBlade.init({request:req});
     var messaging = ClearBlade.Messaging({}, function(){});
     if (ClearBlade.isEdge() === true) {
-        messaging.getAndDeleteMessageHistory("device/updateForTimer", 100, function(failed, results) {
+        messaging.getAndDeleteMessageHistory("device/updateForTimer", 0, null, null, null, function(failed, results) {
             if (failed) {
-                logStdErr("getAndDeleteMessageHistory FAILED: " + JSON.stringify(results))
+                logStdErr("getAndDeleteMessageHistory FAILED: " + JSON.stringify(results));
             } else {
-                logStdErr("getAndDeleteMessageHistory SUCCEEDED: " + JSON.stringify(results))
+                logStdErr("getAndDeleteMessageHistory SUCCEEDED: " + JSON.stringify(results));
                 if (results.length > 0) {
-                    resObj = JSON.parse(results[0].payload)
-                    ClearBlade.updateDevice(resObj.deviceName, {state:resObj.state.toString()}, false);
+                    logStdErr("GOT SOME\n");
+                    highest = highestStateValue(results);
+                    ClearBlade.updateDevice(highest.deviceName, {state:highest.state.toString()}, false);
+                    messaging.publish("scenetest/deviceMessageCount", results.length.toString())
                 }
             }
         });
         resp.success(ClearBlade.edgeId() + " Everybody loves somebody sometime");
     }
+}
+
+function highestStateValue(results) {
+    log("a");
+    highest = {"deviceName": "Does not exist", "state": 0};
+    for (i = 0; i < results.length; i ++) {
+        log("b");
+        payload = JSON.parse(results[i].payload);
+        log(payload.state.toString());
+        if (payload.state > highest.state) {
+            log("YOWZA")
+            highest = payload;
+        }
+    }
+    log("c");
+    logStdErr("HIGHEST: " + highest.state.toString());
+    return highest;
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	cb "github.com/clearblade/Go-SDK"
+	"os"
 	"sync"
 	"time"
 )
@@ -104,7 +105,7 @@ func runSerial(scenarios []interface{}) {
 		//scenario := duh.(map[string]interface{})
 		for i := 0; i < count; i++ {
 			nm := fmt.Sprintf("%s(%d)", name, i+1)
-			runOneScenario(nm, scenario, nil, nil)
+			runOneScenario(nm, scenario, nil, nil, i)
 		}
 	}
 }
@@ -126,7 +127,7 @@ func runParallel(scenarios []interface{}) {
 		TotalCount += count
 		for i := 0; i < count; i++ {
 			nm := fmt.Sprintf("%s(%d)", name, i+1)
-			go runOneScenario(nm, scenario, startChan, doneChan)
+			go runOneScenario(nm, scenario, startChan, doneChan, i)
 		}
 
 	}
@@ -150,12 +151,13 @@ func putVarsInContext(context map[string]interface{}) map[string]interface{} {
 	return context
 }
 
-func runOneScenario(name string, scenario map[string]interface{}, startChan <-chan bool, doneChan chan<- bool) {
+func runOneScenario(name string, scenario map[string]interface{}, startChan <-chan bool, doneChan chan<- bool, myInstance int) {
 
 	context := map[string]interface{}{}
 	context["scenario_name"] = name
 	context["adminClient"] = adminClient
 	context["__nestingLevel"] = int(0)
+	context["myInstance"] = myInstance
 	context = putVarsInContext(context)
 
 	steps := getVar("steps", scenario, [][]interface{}{}).([]interface{})
@@ -204,6 +206,9 @@ func runOneStep(context map[string]interface{}, step []interface{}) (interface{}
 			context["returnValue"] = rval
 			if !ShutUp {
 				myNestingPrintf(context, "%s:\t%s:\t%s succeeded\n", timeStr, myName, method)
+			}
+			if method == "exit" {
+				os.Exit(rval.(int))
 			}
 			return rval, nil
 		} else if err.Error() == "break" {

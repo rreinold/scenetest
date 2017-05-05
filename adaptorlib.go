@@ -11,6 +11,7 @@ type createAdaptorFile struct{}
 type updateAdaptorFile struct{}
 type deleteAdaptorFile struct{}
 type getAdaptorFile struct{}
+type getAdaptorFiles struct{}
 
 func init() {
 	funcMap["createAdaptor"] = &createAdaptor{}
@@ -23,6 +24,7 @@ func init() {
 	funcMap["updateAdaptorFile"] = &updateAdaptorFile{}
 	funcMap["deleteAdaptorFile"] = &deleteAdaptorFile{}
 	funcMap["getAdaptorFile"] = &getAdaptorFile{}
+	funcMap["getAdaptorFiles"] = &getAdaptorFiles{}
 }
 
 func (gd *getAdaptor) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
@@ -81,6 +83,17 @@ func (gd *getAdaptorFile) run(ctx map[string]interface{}, args []interface{}) (i
 	defer scriptVarsLock.RUnlock()
 	sysKey := scriptVars["systemKey"].(string)
 	return adminClient.GetAdaptorFile(sysKey, adaptorName, adaptorFileName)
+}
+
+func (gd *getAdaptorFiles) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	if err := argCheck(args, 1, ""); err != nil {
+		return nil, err
+	}
+	adaptorName := args[0].(string)
+	scriptVarsLock.RLock()
+	defer scriptVarsLock.RUnlock()
+	sysKey := scriptVars["systemKey"].(string)
+	return adminClient.GetAdaptorFiles(sysKey, adaptorName)
 }
 
 func (ct *createAdaptorFile) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
@@ -164,6 +177,10 @@ func (ct *deleteAdaptor) help() string {
 
 func (gd *getAdaptorFile) help() string {
 	return "[\"getAdaptorFile\", \"adaptorName\", \"adaptorFileName\"]"
+}
+
+func (gd *getAdaptorFiles) help() string {
+	return "[\"getAdaptorFiles\", \"adaptorName\"]"
 }
 
 func (ct *createAdaptorFile) help() string {

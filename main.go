@@ -181,15 +181,9 @@ func parseProvidedFiles() {
 	}
 }
 
-func weInTheHouse() {
-	globalLock.Lock()
-}
-
-func weOuttaTheHouse() {
-	globalLock.Unlock()
-}
-
 func getGlobal(name string) interface{} {
+	globalLock.RLock()
+	defer globalLock.RUnlock()
 	if val, ok := globals[name]; ok {
 		return val
 	}
@@ -197,6 +191,8 @@ func getGlobal(name string) interface{} {
 }
 
 func setGlobal(name string, val interface{}) {
+	globalLock.Lock()
+	defer globalLock.Unlock()
 	globals[name] = val
 }
 

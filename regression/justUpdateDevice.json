@@ -1,0 +1,19 @@
+{
+    "name": "Test one update of one device",
+    "systemName": "Device Test System",
+    "scenarios": [ ["Cutting Edge", 1] ],
+    "sequencing": "Parallel",
+    "locals": {
+        "updateStuff": {
+            "updates": {
+                "state": "I cannot believe this worked"
+            }
+        }
+    },
+
+    "Cutting Edge": 
+    [
+        ["connectEdge", "Cutting Edge", "foo@bar.com"],
+        ["call", "JustUpdateDevice", "@updateStuff"]
+    ]
+}
