@@ -4,7 +4,6 @@
         ["Connect", 1],
         ["Waiter", 1]
     ],
-    "sequencing": "Parallel",
 
     "Connect": [
         ["deviceConnectEdge", "Cutting Edge", "Noisy Hammer"],
@@ -13,7 +12,7 @@
     ],
 
     "Waiter": [
-        ["setUser", "foo@bar.com"],
+        ["deviceConnectNovi", "foo@bar.com"],
         ["subscribeTriggers"],
         ["syncAll", "Subscribed"],
         ["waitTrigger", "Device", "DeviceUpdated", 60]

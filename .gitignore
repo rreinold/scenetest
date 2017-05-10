@@ -10,3 +10,6 @@ Cluster.json
 Staging.json
 Edge*.json
 Novi.json
+W2.json
+*.gz
+*.sh

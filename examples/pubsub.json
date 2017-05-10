@@ -9,7 +9,7 @@
     },
     "producer": [
         ["setUser", "foo@bar.com"],
-        ["sync", "all subscribed", ["+", "@producers", "@consumers"]],
+        ["syncAll", "all subscribed"],
         ["repeat", "@iterations", 
             [
                 ["publish", "/clearblade/test/spewer", "This is the spew", 1]
@@ -19,7 +19,7 @@
     "consumer": [
         ["setUser", "bar@bar.com"],
         ["subscribe", "/clearblade/test/spewer", 1],
-        ["sync", "all subscribed", ["+", "@producers", "@consumers"]],
+        ["syncAll", "all subscribed"],
         ["repeat", ["*", "@iterations", "@producers"], 
             [
                 ["waitMessage", "/clearblade/test/spewer", 100]

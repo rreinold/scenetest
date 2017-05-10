@@ -810,13 +810,18 @@ func processEdgeInfo(resourceType, resourceName string, resource map[string]inte
 	}
 	delete(resource, "deployToEdges")
 	edgesToProcess := gatherAppropriateEdges(edgeInfo)
-	edgeSyncStuff := setupState["edgeSync"].(map[string]map[string][]string) // mouthful
-	for _, edgeName := range edgesToProcess {
-		oneEdgeSync := edgeSyncStuff[edgeName]
-		resourceSlice := oneEdgeSync[string(resourceType)]
-		resourceSlice = append(resourceSlice, resourceName)
-		oneEdgeSync[string(resourceType)] = resourceSlice
-	}
+	edgeSyncStuff := setupState["edgeSync"].(map[string][]string)
+	key := makeKeyForEdgeStuff(resourceType, resourceName)
+	edgeSyncStuff[key] = edgesToProcess
+
+	/*
+		for _, edgeName := range edgesToProcess {
+			oneEdgeSync := edgeSyncStuff[edgeName]
+			resourceSlice := oneEdgeSync[string(resourceType)]
+			resourceSlice = append(resourceSlice, resourceName)
+			oneEdgeSync[string(resourceType)] = resourceSlice
+		}
+	*/
 }
 
 func gatherAppropriateEdges(edgeInfo interface{}) []string {
@@ -858,25 +863,73 @@ func getAllEdgesNames() []string {
 	return rval
 }
 
-func makeEdgeSyncStructure() map[string]map[string][]string {
-	theThing := map[string]map[string][]string{}
-	allEdges := getAllEdgesNames()
-	for _, edge := range allEdges {
-		theThing[edge] = map[string][]string{
-			cb.ServiceSync: []string{},
-			cb.LibrarySync: []string{},
-			cb.TriggerSync: []string{},
+func makeEdgeSyncStructure() map[string][]string {
+	// The key is now defined by makeKeyForEdgeStuff() below. The
+	// slice-of-strings value is a list of edge names.
+	// For now, scenetest always deploys stuff to the platform.
+	return map[string][]string{}
+	/*
+		theThing := map[string]map[string][]string{}
+		allEdges := getAllEdgesNames()
+		for _, edge := range allEdges {
+			theThing[edge] = map[string][]string{
+				cb.ServiceSync: []string{},
+				cb.LibrarySync: []string{},
+				cb.TriggerSync: []string{},
+			}
 		}
+		return theThing
+	*/
+}
+
+func makeKeyForEdgeStuff(resourceType, resourceName string) string {
+	return resourceType + ":::" + resourceName
+}
+
+func unpackKeyForEdgeStuff(key string) (string, string) {
+	pieces := strings.Split(key, ":::")
+	return pieces[0], pieces[1]
+}
+
+func makeEdgeListQuery(edges []string) *cb.Query {
+	var outerQ *cb.Query
+
+	for _, edgeName := range edges {
+		if outerQ == nil {
+			outerQ = cb.NewQuery()
+			outerQ.EqualTo("name", edgeName)
+			continue
+		}
+		q := cb.NewQuery()
+		q.EqualTo("name", edgeName)
+		outerQ.Or(q)
 	}
-	return theThing
+	return outerQ
 }
 
 func setupEdgeSyncInfo() {
-	theInfo := setupState["edgeSync"].(map[string]map[string][]string)
-	for edgeName, edgeStuff := range theInfo {
-		_, err := adminClient.SyncResourceToEdge(sysKey, edgeName, edgeStuff, nil)
-		if err != nil {
-			fatalf("Call to SyncResourceToEdge failed: %s\n", err.Error())
+	theInfo := setupState["edgeSync"].(map[string][]string)
+	fmt.Printf("THE INFO: %+v\n", theInfo)
+	for key, edges := range theInfo {
+		resourceType, resourceName := unpackKeyForEdgeStuff(key)
+		q := makeEdgeListQuery(edges)
+		if _, err := adminClient.CreateDeployResourcesForSystem(sysKey, resourceName, resourceType, true, q); err != nil {
+			myPrintf("Call to CreateDeployResourcesForSystem failed: %%s\n", err)
 		}
+		fmt.Printf("ADDED: (%s): %s, %s, %+v\n", sysKey, resourceType, resourceName, edges)
 	}
+	/*
+		for edgeName, edgeStuff := range theInfo {
+			fmt.Printf("EDGE NAME: %s\n", edgeName)
+			q := makeEdgeQuery(edgeName)
+			for resourceType, resourceNames := range edgeStuff {
+				for _, resourceName := range resourceNames {
+					if _, err := adminClient.CreateDeployResourcesForSystem(sysKey, resourceName, resourceType, true, q); err != nil {
+						myPrintf("Call to CreateDeployResourcesForSystem failed: %%s\n", err)
+					}
+					fmt.Printf("ADDED: (%s): %s, %s, %s\n", sysKey, edgeName, resourceType, resourceName)
+				}
+			}
+		}
+	*/
 }

@@ -215,6 +215,18 @@
     ],
     "codeServices": [
         {
+            "name": "BlowUpMemory",
+            "code": "@js/BlowUpMemory.js",
+            "dependencies": "clearblade,log",
+            "parameters": [],
+            "deployToEdges": "all",
+            "roles":{
+                "a": 15,
+                "Authenticated": 15,
+                "Anonymous": 0
+            }
+        },
+        {
             "name": "JustUpdateDevice",
             "code": "@js/justUpdateDevice.js",
             "dependencies": "clearblade,log",

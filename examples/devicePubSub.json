@@ -1,0 +1,40 @@
+{
+    "name": "Let's do producers and consumers with mqtt on edges and platform",
+    "scenarios": [ 
+        ["Cutting Edge Producer", "@producers"], 
+        ["Double-Edged Sword Producer", "@producers"], 
+        ["Platform Consumer", 1] 
+    ],
+    "globals": {
+        "producers": 1,
+        "iterations": 1000
+    },
+    "Cutting Edge Producer": [
+        ["setUser", "foo@bar.com"],
+        ["syncAll", "all subscribed"],
+        ["repeat", "@iterations", 
+            [
+                ["publish", "/clearblade/test/spewer", "This is the spew", 1]
+            ]
+        ]
+    ],
+    "Double-Edge Sword Producer": [
+        ["setUser", "foo@bar.com"],
+        ["syncAll", "all subscribed"],
+        ["repeat", "@iterations", 
+            [
+                ["publish", "/clearblade/test/spewer", "This is the spew", 1]
+            ]
+        ]
+    ],
+    "Platform Consumer": [
+        ["setUser", "bar@bar.com"],
+        ["subscribe", "/clearblade/test/spewer", 1],
+        ["syncAll", "all subscribed"],
+        ["repeat", ["*", 2, ["*", "@iterations", "@producers"]], 
+            [
+                ["waitMessage", "/clearblade/test/spewer", 100]
+            ]
+        ]
+    ]
+}

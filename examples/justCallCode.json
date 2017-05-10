@@ -3,16 +3,13 @@
     // the result. Very simple but powerful when testing in 
     // a cluster configured in several ways
     "name": "Muck with code",
-    "scenarios": [ ["Caller", 50] ],
+    "scenarios": [ ["Caller", 10] ],
     "sequencing": "Parallel",
-    "Caller": {
-        "name": "Just callin' some code",
-        "steps": [
-            ["setUser", "foo@bar.com"],
-            ["repeat", 50, [
-                ["call", "handlePublish", {}],
-                ["print", "@returnValue"] ]
-            ]
+    "Caller": [
+        ["setUser", "foo@bar.com"],
+        ["repeat", 5000, [
+            ["call", "handlePublish", {}],
+            ["print", "@returnValue"] ]
         ]
-    }
+    ]
 }

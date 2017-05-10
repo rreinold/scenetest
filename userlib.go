@@ -18,7 +18,9 @@ type getUserColumnsStmt struct{}
 func init() {
 	funcMap["setUser"] = &setUserStmt{}
 	funcMap["setDeveloper"] = &setDeveloperStmt{}
+	funcMap["developerConnectPlatform"] = &setDeveloperStmt{}
 	funcMap["connectNovi"] = &setUserStmt{}
+	funcMap["connectPlatform"] = &setUserStmt{}
 	funcMap["connectEdge"] = &setUserEdgeStmt{}
 	funcMap["createUser"] = &createUserStmt{}
 	funcMap["createDeveloper"] = &createDeveloperStmt{}

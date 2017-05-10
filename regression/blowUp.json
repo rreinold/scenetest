@@ -1,0 +1,25 @@
+{
+    "name": "Stupid timer that blows up memory",
+    "scenarios": [ 
+        ["BlowerUpper", 1]
+    ],
+
+    "locals": {
+        "Blower Upper Timer": {
+            "name": "Blower Upper Timer",
+            "description": "Just waste memory and crash",
+            "start_time": "Now",
+            "repeats": -1,
+            "frequency": 10,
+            "service_name": "BlowUpMemory"
+        }
+    },
+
+    "BlowerUpper": [
+        ["setUser", "foo@bar.com"],
+        ["ignore", ["deleteTimer", "Blower Upper Timer"]],
+        ["createTimer", "@Blower Upper Timer"],
+        ["sleep", 3600000],
+        ["deleteTimer", "Blower Upper Timer"]
+    ]
+}

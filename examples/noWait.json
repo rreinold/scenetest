@@ -2,16 +2,13 @@
     "name": "Name of this test run",
     "scenarios": [ ["scenario1", 5] ],
     "sequencing": "Parallel",
-    "scenario1": {
-        "name": "Just do stuff",
-        "steps": [
-            ["setUser", "foo@bar.com"],
-            ["repeat", 1000, 
-                [
-                    ["createItem", "DuhCollection", {"name":"Fred","address":"Homeless"}],
-                    ["call", "example", {}]
-                ]
+    "scenario1": [
+        ["setUser", "foo@bar.com"],
+        ["repeat", 1000, 
+            [
+                ["createItem", "DuhCollection", {"name":"Fred","address":"Homeless"}],
+                ["call", "example", {}]
             ]
         ]
-    }
+    ]
 }
