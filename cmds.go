@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	cb "github.com/clearblade/Go-SDK"
@@ -48,7 +49,7 @@ func (s *runCommand) Run() {
 	mustHaveAll("info", InfoFile)
 	ScriptFile = getFileOrDie()
 	scriptVars = getJSON(InfoFile)
-	theScript := getJSON(ScriptFile)
+	theScript := overrideGlobalsAndLocals(getJSON(ScriptFile))
 	cb.CB_ADDR = scriptVars["platformUrl"].(string)
 	cb.CB_MSG_ADDR = scriptVars["messagingUrl"].(string)
 	if PlatformAddr != "" {
@@ -60,6 +61,35 @@ func (s *runCommand) Run() {
 	if infoFileAndScriptFileDoNotMatch(scriptVars, theScript) {
 	}
 	executeTestScript(theScript)
+}
+
+func overrideGlobalsAndLocals(testScript map[string]interface{}) map[string]interface{} {
+	varDict := map[string]interface{}{}
+	if Globals != "" {
+		if err := json.Unmarshal([]byte(Globals), &varDict); err != nil {
+			fatalf("Malformed 'globals' argument: %s\n", err)
+		}
+		testScript = putVarsIntoDict("globals", testScript, varDict)
+	}
+	if Locals != "" {
+		if err := json.Unmarshal([]byte(Locals), &varDict); err != nil {
+			fatalf("Malformed 'locals' argument: %s\n", err)
+		}
+		testScript = putVarsIntoDict("locals", testScript, varDict)
+	}
+	return testScript
+}
+
+func putVarsIntoDict(varName string, target, source map[string]interface{}) map[string]interface{} {
+	if _, has := target[varName]; !has {
+		target[varName] = map[string]interface{}{}
+	}
+	targetVars := target[varName].(map[string]interface{})
+	for key, val := range source {
+		targetVars[key] = val
+	}
+	target[varName] = targetVars
+	return target
 }
 
 func infoFileAndScriptFileDoNotMatch(testInfo, testScript map[string]interface{}) bool {

@@ -35,6 +35,8 @@ var (
 	PlatformAddr   string
 	ScriptFile     string
 	SetupFile      string
+	Globals        string
+	Locals         string
 	TeardownFile   string
 	InfoFile       string
 	GetSomeHelp    bool
@@ -71,6 +73,8 @@ func init() {
 	flag.StringVar(&EdgeInfo, "edge-info", "", "name|ip|httpport|mqttport,name|ip|httpport|mqttport -- edge config")
 	flag.BoolVar(&StartNovi, "start-novi", false, "Start novi before processing setup script")
 	flag.BoolVar(&StartEdges, "start-edges", false, "Start all edges after processing setup script")
+	flag.StringVar(&Globals, "globals", "", "Override script 'globals' variables -- JSON string")
+	flag.StringVar(&Locals, "locals", "", "Override script 'locals' variables -- JSON string")
 
 	scriptVars["roles"] = map[string]interface{}{}
 	scriptVars["users"] = map[string]interface{}{}

@@ -4,7 +4,7 @@
     "sequencing": "Parallel",
     "Just do stuff": [
         ["setUser", "foo@bar.com"],
-        ["repeat", 2000000,
+        ["repeat", 20000,
             [
                 ["createItem", "YaddaYadda", {"yickety": "blabber", "yak": "blubber"}]
             ]

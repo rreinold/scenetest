@@ -7,5 +7,5 @@ function updateDeviceTrigger(req, resp) {
 
     ClearBlade.updateDevice("Dorky Torque Wrench", body, true);
 
-    resp.success("I think it worked");
+    //resp.success("I think it worked");
 }
