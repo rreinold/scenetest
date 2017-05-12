@@ -35,10 +35,11 @@ var (
 	PlatformAddr   string
 	ScriptFile     string
 	SetupFile      string
-	Globals        string
-	Locals         string
 	TeardownFile   string
 	InfoFile       string
+	Globals        string
+	Locals         string
+	Overrides      string
 	GetSomeHelp    bool
 	SceneRoot      string
 	FileSearchPath []string
@@ -75,6 +76,7 @@ func init() {
 	flag.BoolVar(&StartEdges, "start-edges", false, "Start all edges after processing setup script")
 	flag.StringVar(&Globals, "globals", "", "Override script 'globals' variables -- JSON string")
 	flag.StringVar(&Locals, "locals", "", "Override script 'locals' variables -- JSON string")
+	flag.StringVar(&Overrides, "overrides", "", "Override file name for globals and locals-- must be in cbjson format")
 
 	scriptVars["roles"] = map[string]interface{}{}
 	scriptVars["users"] = map[string]interface{}{}

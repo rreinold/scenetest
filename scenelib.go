@@ -38,7 +38,9 @@ type concatStmt struct{}
 func init() {
 	funcMap["exit"] = &exitStmt{}
 	funcMap["set"] = &setStmt{}
+	funcMap[":="] = &setStmt{}
 	funcMap["setGlobal"] = &setGlobalStmt{}
+	funcMap["global :="] = &setGlobalStmt{}
 	funcMap["print"] = &printStmt{}
 	funcMap["assert"] = &assertStmt{}
 	funcMap["sleep"] = &sleepStmt{}

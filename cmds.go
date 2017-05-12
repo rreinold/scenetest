@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	cb "github.com/clearblade/Go-SDK"
+	"github.com/clearblade/cbjson"
 	procs "github.com/clearblade/scenetest/processes"
 	"time"
 )
@@ -64,7 +65,27 @@ func (s *runCommand) Run() {
 }
 
 func overrideGlobalsAndLocals(testScript map[string]interface{}) map[string]interface{} {
+	//
+	// there are three flags involved -- overrides, globals, and locals. overrides
+	// overrides globals and locals. If that makes any sense.
+	//
 	varDict := map[string]interface{}{}
+	var ok bool
+	if Overrides != "" {
+
+		overrides, _, err := cbjson.GetJSONFile(Overrides)
+		if err != nil {
+			fatalf("Could not process '-overrides' file: %s\n", err)
+		}
+
+		if varDict, ok = overrides["globals"].(map[string]interface{}); ok {
+			testScript = putVarsIntoDict("globals", testScript, varDict)
+		}
+		if varDict, ok = overrides["locals"].(map[string]interface{}); ok {
+			testScript = putVarsIntoDict("locals", testScript, varDict)
+		}
+		return testScript
+	}
 	if Globals != "" {
 		if err := json.Unmarshal([]byte(Globals), &varDict); err != nil {
 			fatalf("Malformed 'globals' argument: %s\n", err)
