@@ -18,11 +18,11 @@
     ],
     "consumer": [
         ["setUser", "bar@bar.com"],
-        ["subscribe", "/clearblade/test/spewer", 1],
+        ["subscribe", "clearblade/test/spewer", 1],
         ["syncAll", "all subscribed"],
         ["repeat", ["*", "@iterations", "@producers"], 
             [
-                ["waitMessage", "/clearblade/test/spewer", 100]
+                ["waitMessage", "clearblade/test/spewer", 100]
             ]
         ]
     ]

@@ -1,10 +1,12 @@
 {
     "name": "Name of this test run",
     "scenarios": [ ["scenario1", 5] ],
-    "sequencing": "Parallel",
+    "globals": {
+        "@Iterations": 1000
+    },
     "scenario1": [
         ["setUser", "foo@bar.com"],
-        ["repeat", 1000, 
+        ["repeat", "@Iterations", 
             [
                 ["createItem", "DuhCollection", {"name":"Fred","address":"Homeless"}],
                 ["call", "example", {}]

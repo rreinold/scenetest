@@ -68,6 +68,12 @@ func (c *createServiceStmt) run(context map[string]interface{}, args []interface
 	if _, ok := args[0].(string); !ok {
 		return nil, fmt.Errorf("Service name must be a string")
 	}
+
+	switch args[1].(type) {
+	case []byte:
+		args[1] = string(args[1].([]byte))
+	}
+
 	if _, ok := args[1].(string); !ok {
 		return nil, fmt.Errorf("Service code must be a string")
 	}
@@ -102,11 +108,16 @@ func (c *createServiceStmt) help() string {
 
 func (u *updateServiceStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
 	//  Arg parsing nonsense
+	fmt.Printf("UPDATE SERVICE\n")
 	if len(args) < 2 {
 		return nil, fmt.Errorf(u.help())
 	}
 	if _, ok := args[0].(string); !ok {
 		return nil, fmt.Errorf("Service name must be a string")
+	}
+	switch args[1].(type) {
+	case []byte:
+		args[1] = string(args[1].([]byte))
 	}
 	if _, ok := args[1].(string); !ok {
 		return nil, fmt.Errorf("Service code must be a string")

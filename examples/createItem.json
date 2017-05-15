@@ -1,10 +1,12 @@
 {
     "name": "Create and Delete Items",
     "scenarios": [ ["Just do stuff", 10] ],
-    "sequencing": "Parallel",
+    "globals": {
+        "Iterations": 20000
+    },
     "Just do stuff": [
         ["setUser", "foo@bar.com"],
-        ["repeat", 20000,
+        ["repeat", "@Iterations",
             [
                 ["createItem", "YaddaYadda", {"yickety": "blabber", "yak": "blubber"}]
             ]

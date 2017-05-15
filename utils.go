@@ -78,10 +78,27 @@ func argCheck(args []interface{}, mandatory int, argTypes ...interface{}) error 
 			continue // nil means interface{}
 		}
 		if reflect.TypeOf(actualArg) != reflect.TypeOf(argType) {
+			if strVal, ok := specialCaseStringCoercion(actualArg, argType); ok {
+				args[i] = strVal
+				continue
+			}
 			return fmt.Errorf("Argument #%d has type mismatch: %v != %v", i, reflect.TypeOf(actualArg), reflect.TypeOf(argType))
 		}
 	}
 	return nil
+}
+
+func specialCaseStringCoercion(realArg, argType interface{}) (string, bool) {
+	fmt.Printf("SPECIAL\n")
+	switch argType.(type) {
+	case string:
+		switch realArg.(type) {
+		case []byte:
+			fmt.Printf("SPECIAL DID IT!\n")
+			return string(realArg.([]byte)), true
+		}
+	}
+	return "", false
 }
 
 func valueOf(context map[string]interface{}, thing interface{}) interface{} {

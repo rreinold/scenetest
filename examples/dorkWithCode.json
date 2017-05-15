@@ -9,13 +9,13 @@
         "name": "Just update some code",
         "steps": [
             ["setUser", "foo@bar.com"],
-            ["sync", "Ready, Set, Go!", 2],
+            ["syncAll", "Ready, Set, Go!"],
             ["repeat", 10, [
-                ["updateService", "HorribleService", "@HorribleService1.js", ["paramXXX"]],
+                ["updateService", "HorribleService", "@js/HorribleService1.js", ["paramXXX"]],
                 ["sync", "IChangedIt", 2],
-                ["updateService", "HorribleService", "@HorribleService2.js", ["paramYYY"]],
+                ["updateService", "HorribleService", "@js/HorribleService2.js", ["paramYYY"]],
                 ["sync", "IChangedIt", 2],
-                ["updateService", "HorribleService", "@HorribleService3.js", ["paramZZZ"]],
+                ["updateService", "HorribleService", "@js/HorribleService3.js", ["paramZZZ"]],
                 ["sync", "IChangedIt", 2] ]
             ],
             ["sync", "Finished", 2]
@@ -28,7 +28,7 @@
         "name": "Just callin' some code",
         "steps": [
             ["setUser", "foo@bar.com"],
-            ["sync", "Ready, Set, Go!", 2],
+            ["syncAll", "Ready, Set, Go!"],
             ["repeat", 30, [
                 ["sync", "IChangedIt", 2],
                 ["call", "HorribleService", {}],

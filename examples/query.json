@@ -1,23 +1,27 @@
 {
     "name": "Simple Querying",
-    "scenarios": [ ["setup", 1], ["scenario1", 10] ],
+    "scenarios": [ ["setup", 1], ["scenario1", "@NumberOfQueryers"] ],
     "sequencing": "Parallel",
+    "globals": {
+        "Iterations": 300,
+        "NumberOfQueryers": 10
+    },
     "setup": [
         ["setUser", "foo@bar.com"],
-        ["repeat", 300,
+        ["repeat", "@Iterations",
             [
                 ["createItem", "YaddaYadda", {"yickety": "blabber", "yak": "blubber"}]
             ]
         ],
-        ["sync", "Done Creating", 11]
+        ["syncAll", "Done Creating"]
     ],
     "scenario1": [
         ["setUser", "foo@bar.com"],
-        ["sync", "Done Creating", 11],
-        ["repeat", 300,
+        ["syncAll", "Done Creating"],
+        ["repeat", "@Iterations",
             [
-                ["query", "YaddaYadda", [], [[["yickety", "==", "blabber"]]]],
-                ["query", "YaddaYadda", [], [[["yak", "==", "blubber"]]]]
+                ["query", "YaddaYadda", [], [[["yickety", "=", "blabber"]]]],
+                ["query", "YaddaYadda", [], [[["yak", "=", "blubber"]]]]
             ]
         ]
     ]

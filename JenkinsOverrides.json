@@ -9,9 +9,13 @@
 
 {
     "globals": {
-        "NumberOfHammers": 50,
+        "NumberOfHammers": 10,
         "Iterations": 100,
-        "SleepMilliseconds": 100
+        "iterations": 100,
+        "producers": 5,
+        "consumers": 1,
+        "SleepMilliseconds": 100,
+        "NumberOfQueryers": 2
     },
     "locals": {
     }

@@ -4,10 +4,12 @@
     // a cluster configured in several ways
     "name": "Muck with code",
     "scenarios": [ ["Caller", 10] ],
-    "sequencing": "Parallel",
+    "globals": {
+        "Iterations": 5000
+    },
     "Caller": [
         ["setUser", "foo@bar.com"],
-        ["repeat", 5000, [
+        ["repeat", "@Iterations", [
             ["call", "handlePublish", {}],
             ["print", "@returnValue"] ]
         ]

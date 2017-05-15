@@ -2,13 +2,10 @@
     "name": "Create and Delete Items",
     "scenarios": [ ["scenario1", 1] ],
     "sequencing": "Parallel",
-    "scenario1": {
-        "name": "Just do stuff",
-        "steps": [
-            ["setUser", "foo@bar.com"],
-            ["createUserColumn", "mynewcolumn", "string"],
-            ["getUserColumns"],
-            ["print", "@returnValue"]
-        ]
-    }
+    "scenario1": [
+        ["setUser", "foo@bar.com"],
+        ["createUserColumn", "mynewcolumn", "string"],
+        ["getUserColumns"],
+        ["print", "@returnValue"]
+    ]
 }

@@ -7,8 +7,8 @@ go get
 go build
 
 ./scenetest setup -info Regression.json \
-    -platform-url "https://rtp.clearblade.com" \
-    -messaging-url rtp.clearblade.com:1883 \
+    -platform-url "http://127.0.0.1:9000" \
+    -messaging-url "127.0.0.1:1883" \
     setup/novi.json
 
 if [ $? -eq 0 ]; then
@@ -20,7 +20,7 @@ fi
 
 while read TestFileName; do
     echo "****************************** $TestFileName ******************************"
-    ./scenetest run -info Regression.json $TestFileName
+    ./scenetest run -overrides=JenkinsOverrides.json -info Regression.json $TestFileName
     if [ $? -eq 0 ]; then
         echo "SUCCESS"
     else
