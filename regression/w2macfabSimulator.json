@@ -25,7 +25,7 @@
     },
 
     "Main Entry": [
-        ["deviceConnectNovi", "NFC Reader 1"],
+        ["deviceConnectPlatform", "NFC Reader 1"],
         ["set", "i", 0],
         ["repeat", "@Iterations", [
             ["set", "i", ["%", ["+", "@i", 1], "@NumberOfTags"]],

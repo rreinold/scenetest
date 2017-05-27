@@ -3,7 +3,7 @@
     "scenarios": [ ["do it", 1] ],
     "sequencing": "Parallel",
     "do it": [
-        ["deviceConnectNovi", "Noisy Hammer"],
+        ["deviceConnectPlatform", "Noisy Hammer"],
         ["createItem", "DuhCollection", {"name":"Steve", "address":"Sticks"}]
     ]
 }

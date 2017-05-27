@@ -37,8 +37,8 @@ func getCommand(name string) ScenetestCmd {
 func (s *setupCommand) Run() {
 	mustHaveAll("platformUrl", PlatformAddr, "messagingUrl", MsgAddr, "info", InfoFile)
 	SetupFile = getFileOrDie()
-	if StartNovi {
-		startNovi()
+	if StartPlatform {
+		startPlatform()
 	}
 	performSetup(getJSON(SetupFile))
 	if StartEdges {
@@ -140,17 +140,17 @@ func (s *helpCommand) Run() {
 	showHelp(flag.Args())
 }
 
-func startNovi() {
+func startPlatform() {
 	name := "clearblade"
 	args := []string{"-tkey", "Oz49P0NCPD46Ojo6Og"}
-	novi := procs.GetProcessManager(PlatformAddr, name, args)
-	if novi == nil {
-		fatal("Could not start novi process")
+	platform := procs.GetProcessManager(PlatformAddr, name, args)
+	if platform == nil {
+		fatal("Could not start platform process")
 	}
-	novi.Start()
-	//log.Printf("NOVI PID: %d\n", novi.GetPid())
-	setupState["noviPid"] = fmt.Sprintf("%d", novi.GetPid())
-	scriptVars["noviPid"] = fmt.Sprintf("%d", novi.GetPid())
+	platform.Start()
+	//log.Printf("platform PID: %d\n", platform.GetPid())
+	setupState["platformPid"] = fmt.Sprintf("%d", platform.GetPid())
+	scriptVars["platformPid"] = fmt.Sprintf("%d", platform.GetPid())
 	time.Sleep(2 * time.Second)
 }
 

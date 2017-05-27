@@ -9,7 +9,7 @@ type createDevice struct{}
 type updateDevice struct{}
 type deleteDevice struct{}
 type getDevice struct{}
-type deviceConnectNovi struct{}
+type deviceConnectPlatform struct{}
 type deviceConnectEdge struct{}
 
 func init() {
@@ -17,7 +17,7 @@ func init() {
 	funcMap["updateDevice"] = &updateDevice{}
 	funcMap["deleteDevice"] = &deleteDevice{}
 	funcMap["getDevice"] = &getDevice{}
-	funcMap["deviceConnectNovi"] = &deviceConnectNovi{}
+	funcMap["deviceConnectPlatform"] = &deviceConnectPlatform{}
 	funcMap["deviceConnectEdge"] = &deviceConnectEdge{}
 }
 
@@ -82,7 +82,7 @@ func (ct *deleteDevice) run(ctx map[string]interface{}, args []interface{}) (int
 	}
 	return nil, client.DeleteDevice(sysKey, deviceName)
 }
-func (dcn *deviceConnectNovi) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+func (dcn *deviceConnectPlatform) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
 	if err := argCheck(args, 1, ""); err != nil {
 		return nil, err
 	}
@@ -164,8 +164,8 @@ func (ct *deleteDevice) help() string {
 	return "[\"deleteDevice\", \"deviceName\"]"
 }
 
-func (ct *deviceConnectNovi) help() string {
-	return "[\"deviceConnectNovi\", \"deviceName\"]"
+func (ct *deviceConnectPlatform) help() string {
+	return "[\"deviceConnectPlatform\", \"deviceName\"]"
 }
 
 func (ct *deviceConnectEdge) help() string {

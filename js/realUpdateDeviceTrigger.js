@@ -5,8 +5,8 @@ function realUpdateDeviceTrigger(req, resp) {
         publishTriggerWithBody(req, resp, "Device", "DeviceUpdated", JSON.stringify(req));
         //resp.success(ClearBlade.edgeId() + " Got the update device trigger pull");
     } else {
-        logStdErr("update device trigger on NOVI" + JSON.stringify(req));
+        logStdErr("update device trigger on Platform" + JSON.stringify(req));
         publishTriggerWithBody(req, resp, "Device", "DeviceUpdated", JSON.stringify(req));
-        //resp.success("Novi Ignoring update device trigger pull");
+        //resp.success("Platform Ignoring update device trigger pull");
     }
 }

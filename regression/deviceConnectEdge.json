@@ -12,7 +12,7 @@
     ],
 
     "Waiter": [
-        ["deviceConnectNovi", "foo@bar.com"],
+        ["deviceConnectPlatform", "foo@bar.com"],
         ["subscribeTriggers"],
         ["syncAll", "Subscribed"],
         ["waitTrigger", "Device", "DeviceUpdated", 60]

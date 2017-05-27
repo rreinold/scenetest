@@ -3,7 +3,7 @@
     "scenarios": [ ["do it", 1] ],
     "sequencing": "Parallel",
     "do it": [
-        //["deviceConnectNovi", "Noisy Hammer"]
-        ["connectNovi", "foo@bar.com"]
+        //["deviceConnectPlatform", "Noisy Hammer"]
+        ["connectPlatform", "foo@bar.com"]
     ]
 }

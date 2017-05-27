@@ -3,7 +3,7 @@
     "scenarios": [ 
         ["CuttingEdge", "@NumberOfInstances"], 
         ["DoubleEdge", "@NumberOfInstances"],
-        ["TheNovi", 1], 
+        ["ThePlatform", 1], 
         ["TimerGodCutting", 1],
         ["TimerGodDouble", 1],
         ["Counter Guy Cutting", 1],
@@ -75,8 +75,8 @@
         ]
     ],
 
-    "TheNovi": [
-        ["connectNovi", "swm@clearblade.com"],
+    "ThePlatform": [
+        ["connectPlatform", "swm@clearblade.com"],
         ["subscribeTriggers"],
         ["syncAll", "We are all ready"],
         ["repeat", 2000000, [

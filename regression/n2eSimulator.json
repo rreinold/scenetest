@@ -16,7 +16,7 @@
     },
 
     "TheHammer": [
-        ["connectNovi", "foo@bar.com"],
+        ["connectPlatform", "foo@bar.com"],
         ["set", "i", 0],
         ["syncAll", "Wait for subscriber"],
         ["repeat", "@Iterations", [

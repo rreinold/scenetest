@@ -47,7 +47,7 @@ var (
 	ShutUp         bool
 	Csv            bool
 	EdgeInfo       string
-	StartNovi      bool
+	StartPlatform  bool
 	StartEdges     bool
 	StartFile      string
 	TotalCount     int
@@ -72,7 +72,7 @@ func init() {
 	flag.BoolVar(&ShutUp, "silent", false, "Shut Up!")
 	flag.BoolVar(&Csv, "csv", false, "For CSV log file")
 	flag.StringVar(&EdgeInfo, "edge-info", "", "name|ip|httpport|mqttport,name|ip|httpport|mqttport -- edge config")
-	flag.BoolVar(&StartNovi, "start-novi", false, "Start novi before processing setup script")
+	flag.BoolVar(&StartPlatform, "start-platform", false, "Start platform before processing setup script")
 	flag.BoolVar(&StartEdges, "start-edges", false, "Start all edges after processing setup script")
 	flag.StringVar(&Globals, "globals", "", "Override script 'globals' variables -- JSON string")
 	flag.StringVar(&Locals, "locals", "", "Override script 'locals' variables -- JSON string")

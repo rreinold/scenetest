@@ -41,7 +41,7 @@ func teardownSystem(system map[string]interface{}) {
 	deleteDeveloper(system)
 	/*
 		stopEdges(system)
-		stopNovi(system)
+		stopPlatform(system)
 	*/
 }
 
@@ -150,14 +150,14 @@ func deleteDeveloper(system map[string]interface{}) {
 func stopEdges(system map[string]interface{}) {
 }
 
-func stopNovi(system map[string]interface{}) {
-	noviPidStr, ok := system["noviPid"].(string)
+func stopPlatform(system map[string]interface{}) {
+	platformPidStr, ok := system["platformPid"].(string)
 	if !ok {
 		return
 	}
-	noviPid, _ := strconv.Atoi(noviPidStr)
+	platformPid, _ := strconv.Atoi(platformPidStr)
 	platformUrl := system["platformUrl"].(string)
-	mgr := procs.GetProcessManagerWithPid(platformUrl, "clearblade", noviPid)
+	mgr := procs.GetProcessManagerWithPid(platformUrl, "clearblade", platformPid)
 	if mgr == nil {
 		log.Fatal("Could not find process manager for address '%s'\n", platformUrl)
 		os.Exit(1)

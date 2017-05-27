@@ -3,7 +3,7 @@
     "scenarios": [ 
         ["CuttingEdge", "@NumberOfInstances"],
         ["DoubleEdged", "@NumberOfInstances"],
-        ["TheNovi", 1]
+        ["ThePlatform", 1]
     ],
     "sequencing": "Parallel",
 
@@ -44,8 +44,8 @@
             ]
         ]
     ],
-    "TheNovi": [
-        ["connectNovi", "swm@clearblade.com"],
+    "ThePlatform": [
+        ["connectPlatform", "swm@clearblade.com"],
         ["subscribeTriggers"],
         ["syncAll", "Wait for subscriber"],
         ["repeat", ["*", ["*", "@NumberOfInstances", 2], "@Iterations"], [

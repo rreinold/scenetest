@@ -22,7 +22,7 @@
         // Noisy Hammer has a role which allows updates to
         // any device in the device table. However it cannot
         // delete devices...
-        ["deviceConnectNovi", "Noisy Hammer"],
+        ["deviceConnectPlatform", "Noisy Hammer"],
         ["updateDevice", "Noisy Hammer", {"state":"clueless"}],
         ["updateDevice", "Quiet Hammer", {"state":"clueless"}],
         ["createDevice", "Circular Saw", "@Circular Saw"],
@@ -32,7 +32,7 @@
         // Quiet Hammer can only update it's own record in
         // the device table, but is allowed to delete
         // devices...
-        ["deviceConnectNovi", "Quiet Hammer"],
+        ["deviceConnectPlatform", "Quiet Hammer"],
         ["updateDevice", "Quiet Hammer", {"state":"clued in"}],
         ["fail", ["updateDevice", "Noisy Hammer", {"state":"clued in"}]],
         ["deleteDevice", "Circular Saw"]

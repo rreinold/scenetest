@@ -12,7 +12,7 @@
     },
 
     "Mundane Device": [
-        ["deviceConnectNovi", "Mundane Device"],
+        ["deviceConnectPlatform", "Mundane Device"],
         ["sync", "Subscriber Ready", 2],
         ["publish", "/mundane/device", "@payload", 0],
         ["sync", "Some Publishes Completed", 2],
