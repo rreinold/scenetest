@@ -53,7 +53,7 @@ func saveSetupState(originalJson map[string]interface{}) {
 	scriptVars["messagingUrl"] = MsgAddr
 	scriptVars["teardown"] = setupState
 	scriptVars["name"] = originalJson["name"].(string)
-	scriptVars["IAMAnInfoFile"] = true // this is just a mechanism so people don't make a mistake running scenetest
+	scriptVars["IAmAnInfoFile"] = true // this is just a mechanism so people don't make a mistake running scenetest
 
 	marshalled, err = json.MarshalIndent(scriptVars, "", "    ")
 	if err != nil {

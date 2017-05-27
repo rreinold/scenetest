@@ -11,8 +11,8 @@
     "just try": {
         "name": "statements as args",
         "steps": [
-            ["print", ["elemOf", "@freddy", "jones"]],
-            ["print", ["fail", ["elemOf", "@freddy", "smithey"]]]
+            ["print", ["[]", "@freddy", "jones"]],
+            ["print", ["fail", ["[]", "@freddy", "smithey"]]]
         ]
     }
 }
