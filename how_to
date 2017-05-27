@@ -1,0 +1,19 @@
+
+# Please ask questions -- email swm@clearblade.com
+
+
+install go (golang) -- see golang.org -- install it in the normal place -- /usr/local/go
+
+Get scenetest from github: https://github.com/ClearBlade/scenetest.git
+
+go get
+
+go install
+# for this to work, you must have $GOPATH/bin in your PATH environment variable
+
+# NOTE: where I have "staging.clearblade.com", you can also substitute "platform.clearblade.com"
+
+scenetest setup -info Novi.json -platform-url "https://staging.clearblade.com" -messaging-url "staging.clearblade.com:1883" setup/novi.json
+
+scenetest run -info Novi.json examples/newTrigger.json
+scenetest run -info Novi.json examples/pubsub.json

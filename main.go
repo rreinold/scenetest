@@ -164,6 +164,17 @@ func getJSON(filename string) map[string]interface{} {
 	return theStuff
 }
 
+func getInfoFile(filename string) map[string]interface{} {
+	contents := getJSON(filename)
+	if isInfoFile, ok := contents["IAmAnInfoFile"].(bool); ok {
+		if isInfoFile {
+			return contents
+		}
+	}
+	fatalf("The file '%s' is not a scenetest info file. Perhaps you used a setup file by mistake?\n", filename)
+	return nil // not reached
+}
+
 func goodbye(err error) {
 	myPrintf("%s\n", err.Error())
 	os.Exit(1)

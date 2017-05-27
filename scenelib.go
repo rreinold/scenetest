@@ -54,6 +54,7 @@ func init() {
 	funcMap["if"] = &ifStmt{}
 	funcMap["ifElse"] = &ifElseStmt{}
 	funcMap["elemOf"] = &elemOfStmt{}
+	funcMap["[]"] = &elemOfStmt{}
 	funcMap["setElem"] = &setElemStmt{}
 	funcMap["concat"] = &concatStmt{}
 	syncLock = new(sync.Mutex)

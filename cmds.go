@@ -49,7 +49,7 @@ func (s *setupCommand) Run() {
 func (s *runCommand) Run() {
 	mustHaveAll("info", InfoFile)
 	ScriptFile = getFileOrDie()
-	scriptVars = getJSON(InfoFile)
+	scriptVars = getInfoFile(InfoFile)
 	theScript := overrideGlobalsAndLocals(getJSON(ScriptFile))
 	cb.CB_ADDR = scriptVars["platformUrl"].(string)
 	cb.CB_MSG_ADDR = scriptVars["messagingUrl"].(string)

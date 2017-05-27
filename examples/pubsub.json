@@ -5,7 +5,7 @@
     "globals": {
         "producers": 5,
         "consumers": 1,
-        "iterations": 1000
+        "iterations": 10
     },
     "producer": [
         ["setUser", "foo@bar.com"],

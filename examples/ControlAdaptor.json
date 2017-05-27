@@ -16,15 +16,18 @@
         "zipFileMeta": {
             "path_name": "hw.tar.gz"
         },
+        "shellFileMeta": {
+            "path_name": "bar.sh"
+        },
         "deploySpec": {
             "edges": [ ]
         },
         "startSpec": {
-            "edges": ["Cutting Edge", "Double-Edged Sword"],
+            "edges": [ ],
             "command": "start"
         },
         "statusSpec": {
-            "edges": ["Cutting Edge", "Double-Edged Sword"],
+            "edges": [ ],
             "command": "status"
         },
         "undeploySpec": {
@@ -34,20 +37,35 @@
     },
     "Do adaptor stuff": [
         ["ignore", ["deleteAdaptorFile", "mySuperAdaptor", "ZipFile"]],
+        ["ignore", ["deleteAdaptorFile", "mySuperAdaptor", "Shell Script"]],
         ["ignore", ["deleteAdaptor", "mySuperAdaptor"]],
-        ["createAdaptor", "mySuperAdaptor", "@adaptorMeta"],
-        ["print", "@returnValue"],
-        ["createAdaptorFile", "mySuperAdaptor", "ZipFile", "@hw.tar.gz", "@zipFileMeta"],
-        ["print", "@returnValue"],
-        ["deployAdaptor", "mySuperAdaptor", "@deploySpec"],
-        ["print", "@returnValue"],
-        ["controlAdaptor", "mySuperAdaptor", "@startSpec"],
-        ["print", "@returnValue"],
-        ["controlAdaptor", "mySuperAdaptor", "@statusSpec"],
-        ["print", "@returnValue"],
-        ["getAdaptorFiles", "mySuperAdaptor"],
-        ["print", "@returnValue"],
-        ["controlAdaptor", "mySuperAdaptor", "@undeploySpec"],
-        ["print", "@returnValue"]
+        ["repeat", 1, [
+            ["createAdaptor", "mySuperAdaptor", "@adaptorMeta"],
+            ["print", "@returnValue"],
+            ["createAdaptorFile", "mySuperAdaptor", "ZipFile", "@hw.tar.gz", "@zipFileMeta"],
+            ["print", "@returnValue"],
+            ["createAdaptorFile", "mySuperAdaptor", "Shell Script", "@bar.sh", "@shellFileMeta"],
+            ["deployAdaptor", "mySuperAdaptor", "@deploySpec"],
+            ["print", "@returnValue"],
+            ["controlAdaptor", "mySuperAdaptor", "@startSpec"],
+            ["print", "@returnValue"],
+            ["controlAdaptor", "mySuperAdaptor", "@statusSpec"],
+            ["print", "@returnValue"]]
+            /*
+            ["controlAdaptor", "mySuperAdaptor", "@undeploySpec"],
+            ["print", "@returnValue"],
+            ["getAdaptorFiles", "mySuperAdaptor"],
+            ["print", "@returnValue"],
+            ["deleteAdaptorFile", "mySuperAdaptor", "ZipFile"],
+            ["print", "@returnValue"],
+            ["createAdaptorFile", "mySuperAdaptor", "ZipFile", "@hw.tar.gz", "@zipFileMeta"]]
+            ["deleteAdaptorFile", "mySuperAdaptor", "Shell Script"],
+            ["print", "@returnValue"],
+            ["getAdaptorFiles", "mySuperAdaptor"],
+            ["print", "@returnValue"]],
+            ["deleteAdaptor", "mySuberAdaptor"],
+            ["print", "@returnValue"]]
+            */
+        ]
     ]
 }

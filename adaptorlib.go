@@ -111,12 +111,13 @@ func (ct *createAdaptorFile) run(ctx map[string]interface{}, args []interface{})
 }
 
 func (ct *updateAdaptorFile) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
-	if err := argCheck(args, 3, "", "", map[string]interface{}{}); err != nil {
+	if err := argCheck(args, 4, "", "", []byte{}, map[string]interface{}{}); err != nil {
 		return nil, err
 	}
 	adaptorName := args[0].(string)
 	adaptorFileName := args[1].(string)
-	adaptorChanges := args[2].(map[string]interface{})
+	adaptorChanges := args[3].(map[string]interface{})
+	adaptorChanges["file"] = args[2].([]byte)
 	scriptVarsLock.RLock()
 	defer scriptVarsLock.RUnlock()
 	sysKey := scriptVars["systemKey"].(string)

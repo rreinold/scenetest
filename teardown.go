@@ -26,19 +26,23 @@ func teardownSystem(system map[string]interface{}) {
 	sysKey = system["systemKey"].(string)
 	authTheDevGod(system)
 
-	deleteEdges(system)
-	deleteDevices(system)
-	deleteTimers(system)
-	deleteTriggers(system)
-	deleteLibraries(system)
-	deleteServices(system)
-	deleteCollections(system)
-	deleteUsers(system)
-	deleteRoles(system)
+	/*
+		deleteEdges(system)
+		deleteDevices(system)
+		deleteTimers(system)
+		deleteTriggers(system)
+		deleteLibraries(system)
+		deleteServices(system)
+		deleteCollections(system)
+		deleteUsers(system)
+		deleteRoles(system)
+	*/
 	deleteSystem(system)
 	deleteDeveloper(system)
-	stopEdges(system)
-	stopNovi(system)
+	/*
+		stopEdges(system)
+		stopNovi(system)
+	*/
 }
 
 func deleteEdges(system map[string]interface{}) {

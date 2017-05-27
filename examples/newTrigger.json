@@ -1,20 +1,24 @@
 {
     "name": "Name of this test run",
-    "scenarios": [ ["Creator", 10] ],
+    "scenarios": [ ["Creator", "@NumCreators"], ["Eater", 1] ],
     "globals": {
-        "Iterations": 100
+        "Iterations": 100,
+        "NumCreators": 10
     },
-    "Creator": {
-        "name": "Just do stuff",
-        "steps": [
-            ["setUser", "foo@bar.com"],
-            ["subscribeTriggers"],
-            ["sync", "all subscribed", 1],
-            ["repeat", "@Iterations", [
-                ["createItem", "DuhCollection", {"name":"Fred","address":"Homeless"}],
-                ["repeat", 5, [ ["waitTrigger", "Data", "ItemCreated", 300] ] ],
-                ["call", "example", {}] ]
-            ]
+    "Creator": [
+        ["setUser", "foo@bar.com"],
+        ["syncAll", "all subscribed"],
+        ["repeat", "@Iterations", [
+            ["createItem", "DuhCollection", {"name":"Fred","address":"Homeless"}],
+            ["call", "example", {}] ]
         ]
-    }
+    ],
+    "Eater": [
+        ["setUser", "bar@bar.com"],
+        ["subscribeTriggers"],
+        ["syncAll", "all subscribed"],
+        ["repeat", ["*", "@Iterations", "@NumCreators"], [
+            ["waitTrigger", "Data", "ItemCreated", 60]]
+        ]
+    ]
 }
