@@ -36,30 +36,31 @@
         }
     },
     "Do adaptor stuff": [
-        ["ignore", ["deleteAdaptorFile", "mySuperAdaptor", "ZipFile"]],
-        ["ignore", ["deleteAdaptorFile", "mySuperAdaptor", "Shell Script"]],
+        ["ignore", ["deleteAdaptorFile", "mySuperAdaptor", "hw.tar.gz"]],
+        ["ignore", ["deleteAdaptorFile", "mySuperAdaptor", "bar.sh"]],
         ["ignore", ["deleteAdaptor", "mySuperAdaptor"]],
         ["repeat", 1, [
             ["createAdaptor", "mySuperAdaptor", "@adaptorMeta"],
             ["print", "@returnValue"],
-            ["createAdaptorFile", "mySuperAdaptor", "ZipFile", "@hw.tar.gz", "@zipFileMeta"],
+            ["createAdaptorFile", "mySuperAdaptor", "hw.tar.gz", "@hw.tar.gz", "@zipFileMeta"],
             ["print", "@returnValue"],
-            ["createAdaptorFile", "mySuperAdaptor", "Shell Script", "@bar.sh", "@shellFileMeta"],
+            ["createAdaptorFile", "mySuperAdaptor", "bar.sh", "@bar.sh", "@shellFileMeta"],
             ["deployAdaptor", "mySuperAdaptor", "@deploySpec"],
             ["print", "@returnValue"],
             ["controlAdaptor", "mySuperAdaptor", "@startSpec"],
             ["print", "@returnValue"],
             ["controlAdaptor", "mySuperAdaptor", "@statusSpec"],
-            ["print", "@returnValue"]]
+            ["print", "@returnValue"],
+            ["updateAdaptorFile", "mySuperAdaptor", "hw.tar.gz", "@hw.tar.gz", "@zipFileMeta"]]
             /*
             ["controlAdaptor", "mySuperAdaptor", "@undeploySpec"],
             ["print", "@returnValue"],
             ["getAdaptorFiles", "mySuperAdaptor"],
             ["print", "@returnValue"],
-            ["deleteAdaptorFile", "mySuperAdaptor", "ZipFile"],
+            ["deleteAdaptorFile", "mySuperAdaptor", "hw.tar.gz"],
             ["print", "@returnValue"],
-            ["createAdaptorFile", "mySuperAdaptor", "ZipFile", "@hw.tar.gz", "@zipFileMeta"]]
-            ["deleteAdaptorFile", "mySuperAdaptor", "Shell Script"],
+            ["createAdaptorFile", "mySuperAdaptor", "hw.tar.gz", "@hw.tar.gz", "@zipFileMeta"]]
+            ["deleteAdaptorFile", "mySuperAdaptor", "bar.sh"],
             ["print", "@returnValue"],
             ["getAdaptorFiles", "mySuperAdaptor"],
             ["print", "@returnValue"]],
