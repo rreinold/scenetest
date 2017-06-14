@@ -1,0 +1,30 @@
+{
+    "name": "Let's do producers and consumers with mqtt",
+    "scenarios": [ ["producer", "@producers"], ["consumer", "@consumers"] ],
+    "sequencing": "Parallel",
+    "globals": {
+        "edgeName": "Please supply an edge name in an ovvrrides file",
+        "producers": 5,
+        "consumers": 1,
+        "iterations": 10
+    },
+    "producer": [
+        ["connectEdge", "@edgeName", "foo@bar.com"],
+        ["syncAll", "all subscribed"],
+        ["repeat", "@iterations", 
+            [
+                ["publish", "/clearblade/test/spewer", "This is the spew", 1]
+            ]
+        ]
+    ],
+    "consumer": [
+        ["connectEdge", "@edgeName", "bar@bar.com"],
+        ["subscribe", "clearblade/test/spewer", 1],
+        ["syncAll", "all subscribed"],
+        ["repeat", ["*", "@iterations", "@producers"], 
+            [
+                ["waitMessage", "clearblade/test/spewer", 100]
+            ]
+        ]
+    ]
+}

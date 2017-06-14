@@ -9,7 +9,7 @@
 
 {
     "globals": {
-        "NumberOfHammers": 50,
+        "NumberOfHammers": 10,
         "Iterations": 100,
         "SleepMilliseconds": 100
     },
