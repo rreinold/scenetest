@@ -9,8 +9,8 @@
 
 {
     "globals": {
-        "NumberOfHammers": 50,
-        "Iterations": 100,
+        "NumberOfHammers": 5,
+        "Iterations": 10,
         "SleepMilliseconds": 100
     },
     "locals": {
