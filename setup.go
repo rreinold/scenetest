@@ -673,19 +673,6 @@ func setupTimer(timer map[string]interface{}) {
 	myPrintf("Set up timer %s\n", timerName)
 }
 
-// func addCustomDeviceFields(device map[string]interface{}) map[string]interface{} {
-// 	rval := map[string]interface{}{}
-// 	for key, val := range device {
-// 		switch key {
-// 		case "device_key", "name", "system_key", "type", "state", "description", "enabled", "allow_key_auth", "active_key", "keys", "allow_certificate_auth", "certificate", "created_date", "last_active_date":
-// 		default:
-// 			adminClient.CreateDeviceColumn(sysKey, key, )
-// 			rval[key] = val
-// 		}
-// 	}
-// 	return rval
-// }
-
 func setupDeviceColumns(deviceColumns []interface{}) {
 	for _, deviceColumn := range deviceColumns {
 		setupDeviceColumn(deviceColumn.(map[string]interface{}))
@@ -709,7 +696,6 @@ func setupDevices(devices []interface{}) {
 
 func setupDevice(device map[string]interface{}) {
 	deviceName := device["name"].(string)
-	// customColumns := getCustomDeviceFields(device)
 	roles := device["roles"].([]interface{})
 	delete(device, "roles")
 	newDevice, err := adminClient.CreateDevice(sysKey, deviceName, device)
