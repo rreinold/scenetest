@@ -1,9 +1,9 @@
 {
     "name": "Simulate Devices Sending Location Coordinates",
-    "scenarios": [ 
-        ["CuttingEdge", "@NumberOfInstances"], 
+    "scenarios": [
+        ["CuttingEdge", "@NumberOfInstances"],
         ["DoubleEdge", "@NumberOfInstances"],
-        ["ThePlatform", 1], 
+        ["ThePlatform", 1],
         ["TimerGodCutting", 1],
         ["TimerGodDouble", 1],
         ["Counter Guy Cutting", 1],
@@ -22,7 +22,6 @@
 
     "locals": {
         "payload": {
-            "deviceName": "Dorky Torque Wrench",
             "state": 0
         },
         "Message History Timer": {
@@ -57,7 +56,7 @@
             ["set", "i", ["+", "@i", 1]],
             ["setElem", "payload", "state", "@i"],
             ["publish", "device/updateForTimer", "@payload", 0],
-            ["sleep", "@SleepMilliSeconds"] 
+            ["sleep", "@SleepMilliSeconds"]
             ]
         ]
     ],
@@ -70,7 +69,7 @@
             ["set", "i", ["+", "@i", 1]],
             ["setElem", "payload", "state", "@i"],
             ["publish", "device/updateForTimer", "@payload", 0],
-            ["sleep", "@SleepMilliSeconds"] 
+            ["sleep", "@SleepMilliSeconds"]
             ]
         ]
     ],
@@ -83,7 +82,7 @@
             ["waitTrigger", "Device", "DeviceUpdated", 6000]]
         ]
     ],
-    
+
     "Counter Guy Cutting": [
         ["setGlobal", "howManyCutting", 0],
         ["connectEdge", "Cutting Edge", "foo@bar.com"],
@@ -102,7 +101,7 @@
             ]]
         ]]
     ],
-    
+
     "Counter Guy Double": [
         ["setGlobal", "howManyDouble", 0],
         ["connectEdge", "Double-Edged Sword", "foo@bar.com"],

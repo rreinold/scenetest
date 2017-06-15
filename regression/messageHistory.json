@@ -11,7 +11,7 @@
     },
     "locals": {
         "payload": {
-            "deviceName": "Dorky Torque Wrench",
+            "name": "Dorky Torque Wrench",
             "state": 0
         }
     },
@@ -30,7 +30,7 @@
             ["publish", "message/history", "@payload", 0],
             ["publish", "rob/history", "@payload", 0],
             ["publish", "terry/history", "@payload", 0],
-            ["sleep", "@SleepMilliSeconds"] 
+            ["sleep", "@SleepMilliSeconds"]
             ]
         ]
     ]
