@@ -22,7 +22,7 @@ function msgHistoryTimer(req, resp) {
 
 function highestStateValue(results) {
     log("a");
-    highest = {"deviceName": "Does not exist", "state": 0};
+    highest = {"name": "Does not exist", "state": 0};
     for (i = 0; i < results.length; i ++) {
         log("b");
         payload = JSON.parse(results[i].payload);

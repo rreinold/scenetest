@@ -138,6 +138,12 @@ func setupSystem(system map[string]interface{}) {
 		warn("No timers found")
 	}
 
+	if deviceColumns, ok := system["deviceColumns"]; ok {
+		setupDeviceColumns(deviceColumns.([]interface{}))
+	} else {
+		warn("No device columns found")
+	}
+
 	if devices, ok := system["devices"]; ok {
 		setupDevices(devices.([]interface{}))
 	} else {
@@ -667,6 +673,34 @@ func setupTimer(timer map[string]interface{}) {
 	myPrintf("Set up timer %s\n", timerName)
 }
 
+// func addCustomDeviceFields(device map[string]interface{}) map[string]interface{} {
+// 	rval := map[string]interface{}{}
+// 	for key, val := range device {
+// 		switch key {
+// 		case "device_key", "name", "system_key", "type", "state", "description", "enabled", "allow_key_auth", "active_key", "keys", "allow_certificate_auth", "certificate", "created_date", "last_active_date":
+// 		default:
+// 			adminClient.CreateDeviceColumn(sysKey, key, )
+// 			rval[key] = val
+// 		}
+// 	}
+// 	return rval
+// }
+
+func setupDeviceColumns(deviceColumns []interface{}) {
+	for _, deviceColumn := range deviceColumns {
+		setupDeviceColumn(deviceColumn.(map[string]interface{}))
+	}
+}
+
+func setupDeviceColumn(deviceColumn map[string]interface{}) {
+	sysKey := setupState["systemKey"].(string)
+	adminClient = setupState["adminClient"].(*cb.DevClient)
+	if err := adminClient.CreateDeviceColumn(sysKey, deviceColumn["column_name"].(string), deviceColumn["type"].(string)); err != nil {
+		fatal(err.Error())
+	}
+	myPrintf("Added column to %s_edge_devices table: %s\n", sysKey, deviceColumn["column_name"].(string))
+}
+
 func setupDevices(devices []interface{}) {
 	for _, device := range devices {
 		setupDevice(device.(map[string]interface{}))
@@ -675,10 +709,14 @@ func setupDevices(devices []interface{}) {
 
 func setupDevice(device map[string]interface{}) {
 	deviceName := device["name"].(string)
+	// customColumns := getCustomDeviceFields(device)
+	roles := device["roles"].([]interface{})
+	delete(device, "roles")
 	newDevice, err := adminClient.CreateDevice(sysKey, deviceName, device)
 	if err != nil {
 		fatal(fmt.Sprintf("Could not create device: %s\n", err.Error()))
 	}
+	newDevice["roles"] = roles
 	addDeviceToRoles(newDevice, deviceName)
 
 	deviceMap := scriptVars["devices"].(map[string]interface{})

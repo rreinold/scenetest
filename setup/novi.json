@@ -127,7 +127,7 @@
         "Anonymous": 0,
         "a": 15,
         "b": 0,
-        "c": 0, 
+        "c": 0,
         "d": 0,
         "e": 0
     },
@@ -598,12 +598,32 @@
             "description": "Fake Description"
         }
     ],
+    "deviceColumns": [
+        {
+            "column_name":"userId",
+            "type":"string"
+        },
+        {
+            "column_name":"job",
+            "type":"string"
+        },
+
+        {
+            "column_name":"location",
+            "type":"string"
+        },
+        {
+            "column_name":"torque",
+            "type":"int"
+        }
+
+    ],
     "devices": [
         {
             "name": "047229EAFC3880",
             "type": "Tag Card",
             "state": "Lost",
-            "userId": "swm@w2macfab.com",
+            "userid": "swm@w2macfab.com",
             "job": "",
             "description": "Shut up",
             "enabled": true,
@@ -619,7 +639,7 @@
             "name": "041C19EAFC3881",
             "type": "Tag Card",
             "state": "Lost",
-            "userId": "ray@w2macfab.com",
+            "userid": "ray@w2macfab.com",
             "job": "",
             "description": "Shut up",
             "enabled": true,
@@ -635,7 +655,7 @@
             "name": "048C25EAFC3880",
             "type": "Tag Card",
             "state": "Lost",
-            "userId": "robert@w2macfab.com",
+            "userid": "robert@w2macfab.com",
             "job": "",
             "description": "Shut up",
             "enabled": true,
@@ -651,7 +671,7 @@
             "name": "0421430AF04981",
             "type": "Tag Sticker",
             "state": "Lost",
-            "userId": "zack@w2macfab.com",
+            "userid": "zack@w2macfab.com",
             "job": "",
             "description": "Shut up",
             "enabled": true,
@@ -667,7 +687,7 @@
             "name": "04C9440AF04980",
             "type": "Tag Sticker",
             "state": "Lost",
-            "userId": "carlos@w2macfab.com",
+            "userid": "carlos@w2macfab.com",
             "job": "",
             "description": "Shut up",
             "enabled": true,
@@ -683,7 +703,7 @@
             "name": "047C400AF04980",
             "type": "Tag Sticker",
             "state": "Lost",
-            "userId": "billy@w2macfab.com",
+            "userid": "billy@w2macfab.com",
             "job": "",
             "description": "Shut up",
             "enabled": true,
@@ -699,7 +719,7 @@
             "name": "04EE420AF04980",
             "type": "Tag Sticker",
             "state": "Lost",
-            "userId": "bob@w2macfab.com",
+            "userid": "bob@w2macfab.com",
             "job": "",
             "description": "Shut up",
             "enabled": true,
@@ -715,7 +735,7 @@
             "name": "04BB400AF04980",
             "type": "Tag Sticker",
             "state": "Lost",
-            "userId": "johnny@w2macfab.com",
+            "userid": "johnny@w2macfab.com",
             "job": "",
             "description": "Shut up",
             "enabled": true,
