@@ -16,8 +16,7 @@
         "DoubleDone": false,
         "NumberOfInstances": 10,
         "SleepMilliSeconds": 250,
-        "Iterations": 1000,
-        "totalMessages": 10000
+        "Iterations": 1000
     },
 
     "locals": {
@@ -92,11 +91,10 @@
         ["repeat", 2000000, [
             ["waitMessage", "scenetest/deviceMessageCount", 6000],
             ["setGlobal", "howManyCutting", ["+", "@howManyCutting", "@returnValue"]],
-            ["if", [">=", "@howManyCutting", "@totalMessages"], [
+            ["if", [">=", "@howManyCutting", ["*", "@NumberOfInstances", "@Iterations"]], [
                 ["setGlobal", "CuttingDone", true],
                 ["deleteTimer", "Dump Msg History Timer"],
                 ["if", ["==", "@DoubleDone", true], [
-                    ["deleteTimer", "Dump Msg History Timer"],
                     ["exit", 0]]
                 ]
             ]]
@@ -111,7 +109,7 @@
         ["repeat", 2000000, [
             ["waitMessage", "scenetest/deviceMessageCount", 6000],
             ["setGlobal", "howManyDouble", ["+", "@howManyDouble", "@returnValue"]],
-            ["if", [">=", "@howManyDouble", "@totalMessages"], [
+            ["if", [">=", "@howManyDouble", ["*", "@NumberOfInstances", "@Iterations"]], [
                 ["setGlobal", "DoubleDone", true],
                 ["deleteTimer", "Dump Msg History Timer"],
                 ["if", ["==", "@CuttingDone", true], [
