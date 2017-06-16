@@ -1,0 +1,20 @@
+//
+//  This file contains a single map that is used to
+//  override globals and locals for a test run. You
+//  you do 'scenetest run -override=Override.json ...'
+//  use the variable settings here. A test file
+//  can contain other globals and locals not mentioned
+//  here and they will work just fine.
+//
+
+{
+    "globals": {
+        "NumberOfHammers": 20,
+        "Iterations": 10000,
+        "SleepMilliseconds": 1000,
+        // Here is another comment
+        "NumberOfInstances": 20
+    },
+    "locals": {
+    }
+}

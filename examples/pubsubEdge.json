@@ -6,12 +6,12 @@
         "edgeName": "Please supply an edge name in an ovvrrides file",
         "producers": 5,
         "consumers": 1,
-        "iterations": 10
+        "Iterations": 100000
     },
     "producer": [
         ["connectEdge", "@edgeName", "foo@bar.com"],
         ["syncAll", "all subscribed"],
-        ["repeat", "@iterations", 
+        ["repeat", "@Iterations", 
             [
                 ["publish", "/clearblade/test/spewer", "This is the spew", 1]
             ]
@@ -21,7 +21,7 @@
         ["connectEdge", "@edgeName", "bar@bar.com"],
         ["subscribe", "clearblade/test/spewer", 1],
         ["syncAll", "all subscribed"],
-        ["repeat", ["*", "@iterations", "@producers"], 
+        ["repeat", ["*", "@Iterations", "@producers"], 
             [
                 ["waitMessage", "clearblade/test/spewer", 100]
             ]
