@@ -11,7 +11,7 @@ function msgHistoryTimer(req, resp) {
                 if (results.length > 0) {
                     logStdErr("GOT SOME\n");
                     highest = highestStateValue(results);
-                    ClearBlade.updateDevice(highest.deviceName, {state:highest.state.toString()}, false);
+                    ClearBlade.updateDevice(highest.deviceName, {state:highest.state.toString()}, true);
                     messaging.publish("scenetest/deviceMessageCount", results.length.toString())
                 }
             }
@@ -28,7 +28,7 @@ function highestStateValue(results) {
         payload = JSON.parse(results[i].payload);
         log(payload.state.toString());
         if (payload.state > highest.state) {
-            log("YOWZA")
+            logStdErr("YOWZA")
             highest = payload;
         }
     }

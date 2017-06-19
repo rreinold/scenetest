@@ -21,7 +21,8 @@
 
     "locals": {
         "payload": {
-            "state": 0
+            "state": 0,
+            "deviceName": "Dorky Torque Wrench"
         },
         "Message History Timer": {
             "name": "Dump Msg History Timer",
