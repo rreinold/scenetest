@@ -89,8 +89,9 @@
         ["subscribe", "scenetest/deviceMessageCount", 1],
         ["syncAll", "We are all ready"],
         ["repeat", 2000000, [
-            ["waitMessage", "scenetest/deviceMessageCount", 6000],
+            ["waitMessage", "scenetest/deviceMessageCount", 60],
             ["setGlobal", "howManyCutting", ["+", "@howManyCutting", "@returnValue"]],
+            ["print", "CUTTING", "@howManyCutting", ["*", "@NumberOfInstances", "@Iterations"]],
             ["if", [">=", "@howManyCutting", ["*", "@NumberOfInstances", "@Iterations"]], [
                 ["setGlobal", "CuttingDone", true],
                 ["deleteTimer", "Dump Msg History Timer"],
@@ -109,6 +110,7 @@
         ["repeat", 2000000, [
             ["waitMessage", "scenetest/deviceMessageCount", 6000],
             ["setGlobal", "howManyDouble", ["+", "@howManyDouble", "@returnValue"]],
+            ["print", "DOUBLE", "@howManyDouble", ["*", "@NumberOfInstances", "@Iterations"]],
             ["if", [">=", "@howManyDouble", ["*", "@NumberOfInstances", "@Iterations"]], [
                 ["setGlobal", "DoubleDone", true],
                 ["deleteTimer", "Dump Msg History Timer"],

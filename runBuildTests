@@ -3,7 +3,7 @@
 export SCENETEST_PATH=`pwd`
 
 git pull
-go get
+go get -u
 go build
 
 ./scenetest setup -info Regression.json \
