@@ -598,7 +598,7 @@
             "description": "Fake Description"
         }
     ],
-    /*
+
     "deviceColumns": [
         {
             "column_name":"userId",
@@ -619,7 +619,7 @@
         }
 
     ],
-    */
+    
     "devices": [
         {
             "name": "047229EAFC3880",

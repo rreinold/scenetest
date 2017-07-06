@@ -11,8 +11,7 @@
     "globals": {
         "NumberOfHammers": 10,
         "Iterations": 100,
-        "SleepMilliseconds": 100,
-        "NumberOfInstances": 10
+        "SleepMilliseconds": 100
     },
     "locals": {
     }
