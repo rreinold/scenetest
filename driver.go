@@ -28,12 +28,9 @@ func executeTestScript(theScript map[string]interface{}) {
 		globals = glbs
 	}
 	if sequencing == "Serial" {
-		runSerial(scenarios)
-	} else if sequencing == "Parallel" {
-		runParallel(scenarios)
-	} else {
-		panic(fmt.Errorf("Bad sequencing: %s\n", sequencing))
+		panic("Cannot user Serial as a run mode -- discontinued. :-)")
 	}
+	runParallel(scenarios)
 }
 
 func authDevForScriptRun() *cb.DevClient {

@@ -1,0 +1,23 @@
+{
+    "name": "Test if devices can connect and to novi and mqtt and do updates",
+    "scenarios": [ ["do it", 1], ["dont", 1] ],
+    "sequencing": "Parallel",
+    "globals": {
+    },
+    "do it": [
+        ["deviceConnectEdge", "Cutting Edge", "Noisy Hammer"],
+        ["syncAll", "Let's Go"],
+        ["updateDevice", "Noisy Hammer", {"state":"I Am Cutting"}],
+        ["sleep", 3000],
+        ["getDevice", "Noisy Hammer"],
+        ["print", "@returnValue"]
+    ],
+    "dont": [
+        ["deviceConnectEdge", "Double-Edged Sword", "Noisy Hammer"],
+        ["syncAll", "Let's Go"],
+        ["updateDevice", "Noisy Hammer", {"state":"I Am Double"}],
+        ["sleep", 3000],
+        ["getDevice", "Noisy Hammer"],
+        ["print", "@returnValue"]
+    ]
+}
