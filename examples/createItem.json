@@ -1,14 +1,31 @@
 {
-    "name": "Create and Delete Items",
+    "name": "Create a bunch of items",
     "scenarios": [ ["Just do stuff", 10] ],
     "globals": {
-        "Iterations": 20000
+        "Iterations": 100000
+    },
+    "locals": {
+        "row": {
+            "present_value": "0",
+            "time": 0,
+            "device_name": "fred"
+        },
+        "deviceNames": [
+            "wrench",
+            "hammer",
+            "screw driver",
+            "chain saw",
+            "broom"
+        ]
     },
     "Just do stuff": [
         ["setUser", "foo@bar.com"],
         ["repeat", "@Iterations",
             [
-                ["createItem", "YaddaYadda", {"yickety": "blabber", "yak": "blubber"}]
+                ["setElem", "row", "present_value", ["random", 1000]],
+                ["setElem", "row", "time", ["currentTime"]],
+                ["setElem", "row", "device_name", ["randomSet", "@deviceNames"]],
+                ["createItem", "BACNET Data", "@row"] 
             ]
         ]
     ]

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"reflect"
 	"strconv"
 	"sync"
@@ -34,6 +35,9 @@ type breakStmt struct{}
 type elemOfStmt struct{}
 type setElemStmt struct{}
 type concatStmt struct{}
+type currentTimeStmt struct{}
+type randomStmt struct{}
+type randomSetStmt struct{}
 
 func init() {
 	funcMap["exit"] = &exitStmt{}
@@ -57,7 +61,12 @@ func init() {
 	funcMap["[]"] = &elemOfStmt{}
 	funcMap["setElem"] = &setElemStmt{}
 	funcMap["concat"] = &concatStmt{}
+	funcMap["currentTime"] = &currentTimeStmt{}
+	funcMap["random"] = &randomStmt{}
+	funcMap["rand"] = &randomStmt{}
+	funcMap["randomSet"] = &randomSetStmt{}
 	syncLock = new(sync.Mutex)
+	rand.Seed(time.Now().Unix())
 }
 
 func (s *syncStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
@@ -530,4 +539,42 @@ func (e *exitStmt) run(ctx map[string]interface{}, args []interface{}) (interfac
 
 func (e *exitStmt) help() string {
 	return "[\"exit\", <exitStatusInt>]"
+}
+
+func (c *currentTimeStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	if err := argCheck(args, 0); err != nil {
+		return nil, err
+	}
+	result := time.Now().Format(time.RFC3339)
+	return result, nil
+}
+
+func (e *currentTimeStmt) help() string {
+	return "[\"currentTime\"]"
+}
+
+func (c *randomStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	if err := argCheck(args, 1, float64(0)); err != nil {
+		return nil, err
+	}
+	maxNum := int(args[0].(float64))
+	result := rand.Intn(maxNum)
+	return strconv.Itoa(result), nil
+}
+
+func (e *randomStmt) help() string {
+	return "[\"random\", <int max number> ]"
+}
+
+func (c *randomSetStmt) run(ctx map[string]interface{}, args []interface{}) (interface{}, error) {
+	if err := argCheck(args, 1, []interface{}{}); err != nil {
+		return nil, err
+	}
+	setIF := args[0].([]interface{})
+	result := rand.Intn(len(setIF))
+	return setIF[result].(string), nil
+}
+
+func (e *randomSetStmt) help() string {
+	return "[\"randomSet\", <slice of elements to randomize> ]"
 }

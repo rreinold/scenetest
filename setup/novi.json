@@ -47,65 +47,6 @@
 
     ],
     "users": [
-        /*
-        {
-            "email": "swm@w2macfab.com",
-            "password": "IAmFoo",
-            "roles": ["a", "b", "c"],
-            "state": "Clocked Out",
-            "job": "None"
-        },
-        {
-            "email": "ray@w2macfab.com",
-            "password": "IAmFoo",
-            "roles": ["a", "b", "c"],
-            "state": "Clocked Out",
-            "job": "None"
-        },
-        {
-            "email": "robert@w2macfab.com",
-            "password": "IAmFoo",
-            "roles": ["a", "b", "c"],
-            "state": "Clocked Out",
-            "job": "None"
-        },
-        {
-            "email": "zack@w2macfab.com",
-            "password": "IAmFoo",
-            "roles": ["a", "b", "c"],
-            "state": "Clocked Out",
-            "job": "None"
-        },
-        {
-            "email": "carlos@w2macfab.com",
-            "password": "IAmFoo",
-            "state": "Clocked Out",
-            "job": "None",
-            "roles": ["a", "b", "c"]
-        },
-        {
-            "email": "billy@w2macfab.com",
-            "password": "IAmFoo",
-            "state": "Clocked Out",
-            "job": "None",
-            "roles": ["a", "b", "c"]
-        },
-        {
-            "email": "bob@w2macfab.com",
-            "password": "IAmFoo",
-            "state": "Clocked Out",
-            "job": "None",
-            "roles": ["a", "b", "c"]
-        },
-        {
-            "email": "johnny@w2macfab.com",
-            "password": "IAmFoo",
-            "state": "Clocked Out",
-            "job": "None",
-            "roles": ["a", "b", "c"]
-        },
-        */
-
         {
             "email": "foo@bar.com",
             "password": "IAmFoo",
@@ -169,6 +110,20 @@
                     "hair_color": "Brown"
                 }
             ]
+        },
+        {
+            "name": "BACNET Data",
+            "deployToEdges": "all",
+            "columns": {
+                "time": "timestamp",
+                "device_name": "string",
+                "present_value": "string"
+            },
+            "roles":{
+                "Authenticated": 15,
+                "Anonymous": 0,
+                "a": 3
+            }
         },
         {
             "name": "DuhCollection",

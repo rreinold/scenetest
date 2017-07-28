@@ -40,6 +40,7 @@ func performSetup(setupInfo interface{}) {
 	switch setupInfo.(type) {
 	case map[string]interface{}:
 		globalSetupInfo = setupInfo.(map[string]interface{})
+		setupState["edgeDeploy"] = makeEdgeDeployStructure()
 		setupState["edgeSync"] = makeEdgeSyncStructure()
 		setupSystem(setupInfo.(map[string]interface{}))
 	default:
@@ -161,7 +162,7 @@ func setupSystem(system map[string]interface{}) {
 	} else {
 		warn("No devices found")
 	}
-	setupEdgeSyncInfo()
+	setupEdgeDeployInfo()
 }
 
 func setupMainDeveloper(dev map[string]interface{}) {
@@ -398,7 +399,7 @@ func setupCollection(col map[string]interface{}) {
 	if err != nil {
 		fatal(err.Error())
 	}
-	processEdgeInfo("collection", colId, col)
+	processEdgeDeployInfo("collection", colId, col)
 	colsMap := scriptVars["collections"].(map[string]interface{})
 	colsMap[col["name"].(string)] = colId
 	appendState("collections", colId)
@@ -572,7 +573,7 @@ func mkSvcParams(params []interface{}) []string {
 }
 
 func setupCodeService(svc map[string]interface{}) {
-	processEdgeInfo("service", svc["name"].(string), svc)
+	processEdgeDeployInfo("service", svc["name"].(string), svc)
 	svcName := getString(svc, "name")
 	svcEuid := getString(svc, "euid")
 	svcCode := getVarOrFile(svc, "code")
@@ -612,7 +613,7 @@ func setupCodeLibraries(libs []interface{}) {
 }
 
 func setupCodeLibrary(lib map[string]interface{}) {
-	processEdgeInfo("library", lib["name"].(string), lib)
+	processEdgeDeployInfo("library", lib["name"].(string), lib)
 	libName := lib["name"].(string)
 	delete(lib, "name")
 	libCode := getVarOrFile(lib, "code")
@@ -634,7 +635,7 @@ func setupTriggers(triggers []interface{}) {
 }
 
 func setupTrigger(trigger map[string]interface{}) {
-	processEdgeInfo("trigger", trigger["name"].(string), trigger)
+	processEdgeDeployInfo("trigger", trigger["name"].(string), trigger)
 	trigName := trigger["name"].(string)
 	delete(trigger, "name")
 	newTrig, err := adminClient.CreateEventHandler(sysKey, trigName, trigger)
@@ -827,14 +828,24 @@ func appendState(stateKey, value string) {
 	setupState[stateKey] = theList
 }
 
-func processEdgeInfo(resourceType, resourceName string, resource map[string]interface{}) {
+/*
+func processEdgeSyncInfo(resourceType, resourceName string, resource map[string]interface{}) {
+	edgeInfo, ok := resource["syncToEdges"]
+	if !ok {
+		return
+	}
+	delete(resource, "syncToEdges")
+}
+*/
+
+func processEdgeDeployInfo(resourceType, resourceName string, resource map[string]interface{}) {
 	edgeInfo, ok := resource["deployToEdges"]
 	if !ok {
 		return
 	}
 	delete(resource, "deployToEdges")
 	edgesToProcess := gatherAppropriateEdges(edgeInfo)
-	edgeSyncStuff := setupState["edgeSync"].(map[string][]string)
+	edgeSyncStuff := setupState["edgeDeploy"].(map[string][]string)
 	key := makeKeyForEdgeStuff(resourceType, resourceName)
 	edgeSyncStuff[key] = edgesToProcess
 
@@ -887,23 +898,24 @@ func getAllEdgesNames() []string {
 	return rval
 }
 
-func makeEdgeSyncStructure() map[string][]string {
+func makeEdgeDeployStructure() map[string][]string {
+	return map[string][]string{}
+}
+
+func makeEdgeSyncStructure() map[string]map[string][]string {
 	// The key is now defined by makeKeyForEdgeStuff() below. The
 	// slice-of-strings value is a list of edge names.
 	// For now, scenetest always deploys stuff to the platform.
-	return map[string][]string{}
-	/*
-		theThing := map[string]map[string][]string{}
-		allEdges := getAllEdgesNames()
-		for _, edge := range allEdges {
-			theThing[edge] = map[string][]string{
-				cb.ServiceSync: []string{},
-				cb.LibrarySync: []string{},
-				cb.TriggerSync: []string{},
-			}
+	theThing := map[string]map[string][]string{}
+	allEdges := getAllEdgesNames()
+	for _, edge := range allEdges {
+		theThing[edge] = map[string][]string{
+			cb.ServiceSync: []string{},
+			cb.LibrarySync: []string{},
+			cb.TriggerSync: []string{},
 		}
-		return theThing
-	*/
+	}
+	return theThing
 }
 
 func makeKeyForEdgeStuff(resourceType, resourceName string) string {
@@ -931,8 +943,8 @@ func makeEdgeListQuery(edges []string) *cb.Query {
 	return outerQ
 }
 
-func setupEdgeSyncInfo() {
-	theInfo := setupState["edgeSync"].(map[string][]string)
+func setupEdgeDeployInfo() {
+	theInfo := setupState["edgeDeploy"].(map[string][]string)
 	fmt.Printf("THE INFO: %+v\n", theInfo)
 	for key, edges := range theInfo {
 		resourceType, resourceName := unpackKeyForEdgeStuff(key)

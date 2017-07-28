@@ -1,0 +1,28 @@
+{
+    "name": "test random",
+    "scenarios": [ ["random", 1] ],
+    "locals": {
+        "deviceNames": [
+            "hammer",
+            "wrench",
+            "sensor",
+            "screw driver",
+            "chain saw"
+        ]
+    },
+    "random": [
+        ["print", ["randomSet", "@deviceNames"] ],
+        ["print", ["randomSet", "@deviceNames"] ],
+        ["print", ["randomSet", "@deviceNames"] ],
+        ["print", ["randomSet", "@deviceNames"] ],
+        ["print", ["randomSet", "@deviceNames"] ],
+        ["print", ["randomSet", "@deviceNames"] ],
+        ["print", ["randomSet", "@deviceNames"] ],
+        ["print", ["randomSet", "@deviceNames"] ],
+        ["print", ["randomSet", "@deviceNames"] ],
+        ["print", ["randomSet", "@deviceNames"] ],
+        ["print", ["randomSet", "@deviceNames"] ],
+        ["print", ["randomSet", "@deviceNames"] ],
+        ["print", ["randomSet", "@deviceNames"] ]
+    ]
+}

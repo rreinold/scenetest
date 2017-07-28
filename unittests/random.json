@@ -1,0 +1,19 @@
+{
+    "name": "test random",
+    "scenarios": [ ["random", 1] ],
+    "random": [
+        ["print", ["random", 100] ],
+        ["print", ["random", 100] ],
+        ["print", ["random", 100] ],
+        ["print", ["random", 100] ],
+        ["print", ["random", 100] ],
+        ["print", ["random", 100] ],
+        ["print", ["random", 100] ],
+        ["print", ["random", 100] ],
+        ["print", ["random", 100] ],
+        ["print", ["random", 100] ],
+        ["print", ["random", 100] ],
+        ["print", ["random", 100] ],
+        ["print", ["random", 100] ]
+    ]
+}

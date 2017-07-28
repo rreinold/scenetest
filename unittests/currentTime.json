@@ -1,0 +1,7 @@
+{
+    "name": "test current time",
+    "scenarios": [ ["current", 1] ],
+    "current": [
+        ["print", ["currentTime"] ]
+    ]
+}
