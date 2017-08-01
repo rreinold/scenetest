@@ -1,8 +1,8 @@
 {
     "name": "Create a bunch of items",
-    "scenarios": [ ["Just do stuff", 10] ],
+    "scenarios": [ ["Just do stuff", 2] ],
     "globals": {
-        "Iterations": 100000
+        "Iterations": 500000
     },
     "locals": {
         "row": {
@@ -11,11 +11,8 @@
             "device_name": "fred"
         },
         "deviceNames": [
-            "wrench",
             "hammer",
-            "screw driver",
-            "chain saw",
-            "broom"
+            "chain saw"
         ]
     },
     "Just do stuff": [

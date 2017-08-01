@@ -1,0 +1,19 @@
+{
+    "name": "Simulate complicated queryQuerying",
+    "scenarios": [ ["scenario1", "@NumberOfQueryers"] ],
+    "sequencing": "Parallel",
+    "globals": {
+        "Iterations": 1,
+        "NumberOfQueryers": 1
+    },
+    "scenario1": [
+        ["setUser", "foo@bar.com"],
+        ["syncAll", "Done Creating"],
+        ["repeat", "@Iterations",
+            [
+                ["call", "fetchSensorHistory", {}]
+                //["print", "@returnValue"]
+            ]
+        ]
+    ]
+}

@@ -1,0 +1,22 @@
+{
+    "name": "Simulate complicated queryQuerying",
+    "scenarios": [ ["scenario1", "@NumberOfQueryers"] ],
+    "sequencing": "Parallel",
+    "globals": {
+        "NumberOfQueryers": 1
+    },
+    "scenario1": [
+        ["setUser", "foo@bar.com"],
+        ["syncAll", "Done Creating"],
+        ["query", 
+            "BACNET Data",  // Table
+            ["time", "present_value"],  // Columns
+            [[["device_name", "=", "chain saw"], ["time", ">", "2017-07-28T18:54:20Z"]]], // Query
+            ["time", "descending"], // ordering
+            1, // page number
+            1000000 // page size
+        ],
+        //["print", "@returnValue"],
+        ["print", "@returnCount"]
+    ]
+}
