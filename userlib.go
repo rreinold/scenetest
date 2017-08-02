@@ -35,7 +35,10 @@ func (s *setUserStmt) run(ctx map[string]interface{}, args []interface{}) (inter
 	sysKey := scriptVars["systemKey"].(string)
 	sysSec := scriptVars["systemSecret"].(string)
 	email := getArg(args, 0).(string)
-	userInfo := scriptVars["users"].(map[string]interface{})[email].(map[string]interface{})
+	userInfo, ok := scriptVars["users"].(map[string]interface{})[email].(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("Unknown user: %s", email)
+	}
 	password := userInfo["password"].(string)
 	userClient := cb.NewUserClient(sysKey, sysSec, email, password)
 	if err := userClient.Authenticate(); err != nil {
@@ -92,7 +95,10 @@ func (s *setUserEdgeStmt) run(ctx map[string]interface{}, args []interface{}) (i
 	email := args[1].(string)
 	sysKey := scriptVars["systemKey"].(string)
 	sysSec := scriptVars["systemSecret"].(string)
-	userInfo := scriptVars["users"].(map[string]interface{})[email].(map[string]interface{})
+	userInfo, ok := scriptVars["users"].(map[string]interface{})[email].(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("Unknown user: %s", email)
+	}
 	password := userInfo["password"].(string)
 
 	edgeInfo, err := getEdgeInfo(edgeName)
