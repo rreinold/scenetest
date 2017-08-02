@@ -135,6 +135,8 @@ func runParallel(scenarios []interface{}) {
 	for ; TotalCount > 0; TotalCount-- {
 		<-doneChan
 	}
+	close(startChan)
+	close(doneChan)
 }
 
 func putVarsInContext(context map[string]interface{}) map[string]interface{} {

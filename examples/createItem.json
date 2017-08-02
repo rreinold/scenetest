@@ -2,7 +2,7 @@
     "name": "Create a bunch of items",
     "scenarios": [ ["Just do stuff", 2] ],
     "globals": {
-        "Iterations": 500000
+        "Iterations": 5
     },
     "locals": {
         "row": {
