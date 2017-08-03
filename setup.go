@@ -441,32 +441,20 @@ func setupConnectCollections(cols []interface{}) {
 
 func setupConnectCollection(col map[string]interface{}) {
 	//  Create the collection
-	config := col["config"].(map[string]interface{})
-	dbType := config["dbtype"].(string)
-	if dbType != "MySQL" {
-		fatal("scenetest currently only supports MySQL databases for connect collections\n")
-	}
-	// XXXSWM -- Fix this here and rework the go sdk. This is silly.
-	my := &cb.MySqlConfig{
-		Name:      config["name"].(string),
-		User:      config["user"].(string),
-		Password:  config["password"].(string),
-		Host:      config["address"].(string),
-		Port:      "3306",
-		DBName:    config["dbname"].(string),
-		Tablename: config["tablename"].(string),
-	}
-	//config["appID"] = setupState["systemKey"].(string)
-	colId, err := adminClient.NewConnectCollection(sysKey, my)
+	collectionConfig, err := cb.GenerateConnectCollection(col)
 	if err != nil {
 		fatal(err.Error())
 	}
-	colsMap := scriptVars["connectCollections"].(map[string]interface{})
-	colsMap[config["name"].(string)] = colId
-	appendState("connectCollections", colId)
+	colId, err := adminClient.NewConnectCollection(sysKey, collectionConfig)
+	if err != nil {
+		fatal(err.Error())
+	}
+	colsMap := scriptVars["collections"].(map[string]interface{})
+	colsMap[col["name"].(string)] = colId
+	appendState("collections", colId)
 
 	setupCollectionRoles(colId, col)
-	myPrintf("Set up connect collection %s\n", config["name"].(string))
+	myPrintf("Set up connect collection %s\n", col["name"].(string))
 }
 
 func addThingToRoles(id string, roleNames []interface{}) {

@@ -11,7 +11,7 @@ type deleteItemStmt struct{}
 type deleteAllItemsStmt struct{}
 type createCollectionStmt struct{}
 
-//type createConnectCollectionStmt struct{}
+type createConnectCollectionStmt struct{}
 type deleteCollectionStmt struct{}
 type allCollectionsStmt struct{}
 
@@ -21,7 +21,7 @@ func init() {
 	funcMap["deleteItem"] = &deleteItemStmt{}
 	funcMap["deleteAllItems"] = &deleteAllItemsStmt{}
 	funcMap["createCollection"] = &createCollectionStmt{}
-	//funcMap["createConnectCollection"] = &createConnectCollectionStmt{}
+	funcMap["createConnectCollection"] = &createConnectCollectionStmt{}
 	funcMap["deleteCollection"] = &deleteCollectionStmt{}
 	funcMap["allCollections"] = &allCollectionsStmt{}
 }
@@ -118,7 +118,7 @@ func (c *createCollectionStmt) help() string {
 	return "[\"createCollection\", \"<collectionName>\"]"
 }
 
-/*
+
 func (c *createConnectCollectionStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
 	scriptVarsLock.Lock()
 	defer scriptVarsLock.Unlock()
@@ -126,22 +126,26 @@ func (c *createConnectCollectionStmt) run(context map[string]interface{}, args [
 		return nil, err
 	}
 	collectionConfig := args[0].(map[string]interface{})
+	config, err := cb.GenerateConnectCollection(collectionConfig)
+	if err != nil {
+		return nil, err
+	}
 	adminClient := context["adminClient"].(*cb.DevClient)
 	systemKey := scriptVars["systemKey"].(string)
-	rval, err := adminClient.NewConnectCollection(systemKey, collectionConfig)
+
+	rval, err := adminClient.NewConnectCollection(systemKey, config)
 	if err != nil {
 		return nil, err
 	}
 	allCollections := scriptVars["collections"].(map[string]interface{})
-
-	//allCollections[colName] = rval
+	allCollections[collectionConfig["name"].(string)] = rval
 	return rval, nil
 }
 
 func (c *createConnectCollectionStmt) help() string {
 	return "[\"createConnectCollection\", \"{<collectionConfig>}\"]"
 }
-*/
+
 
 func (d *deleteCollectionStmt) run(context map[string]interface{}, args []interface{}) (interface{}, error) {
 	if err := argCheck(args, 1, ""); err != nil {
