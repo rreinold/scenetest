@@ -35,8 +35,19 @@ func getCommand(name string) ScenetestCmd {
 }
 
 func (s *setupCommand) Run() {
-	mustHaveAll("platformUrl", PlatformAddr, "messagingUrl", MsgAddr, "info", InfoFile)
-	SetupFile = getFileOrDie()
+	mustHaveAll("platformUrl", PlatformAddr, "messagingUrl", MsgAddr)
+
+	args := flag.Args()
+
+	switch(len(args)){
+		case 0:
+			SetupFile = DEFAULT_SETUP_FILE
+			break
+		case 1:
+			SetupFile = args[0]
+		default:
+			goodbye(fmt.Errorf("Unexpected number of file arguments"))
+	}
 	if StartPlatform {
 		startPlatform()
 	}
@@ -47,8 +58,19 @@ func (s *setupCommand) Run() {
 }
 
 func (s *runCommand) Run() {
-	mustHaveAll("info", InfoFile)
-	ScriptFile = getFileOrDie()
+
+	args := flag.Args()
+
+	switch(len(args)){
+		case 0:
+			ScriptFile = DEFAULT_RUN_FILE
+			break
+		case 1:
+			ScriptFile = args[0]
+		default:
+			goodbye(fmt.Errorf("Unexpected number of file arguments"))
+	}
+
 	scriptVars = getInfoFile(InfoFile)
 	theScript := overrideGlobalsAndLocals(getJSON(ScriptFile))
 	cb.CB_ADDR = scriptVars["platformUrl"].(string)
