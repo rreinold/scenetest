@@ -45,6 +45,7 @@ func (s *setupCommand) Run() {
 			break
 		case 1:
 			SetupFile = args[0]
+			break
 		default:
 			goodbye(fmt.Errorf("Unexpected number of file arguments"))
 	}

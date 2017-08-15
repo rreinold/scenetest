@@ -75,7 +75,7 @@ var (
 func init() {
 
 	DEFAULT_SETUP_FILE	=	"./setup.json"
-	DEFAULT_INFO_FILE	=	"./temp/ResourceMap.json"
+	DEFAULT_INFO_FILE	=	"./resourceMap.json"
 	DEFAULT_RUN_FILE	=	"./run.json" 
 
 	var err error
